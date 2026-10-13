@@ -47,7 +47,7 @@ function mapGroup(trace,pointIds,points,kind){
  const unique=new Set(pointIds);
  const steps=trace.filter(x=>unique.has(x.pointId));
  const guides=steps.flatMap(step=>{
-  // The first dependency is a DRAWING REFERENCE, not a seam or cut edge.
+  // The first dependency yields a TRACE CONNECTOR; it may NOT correspond\n  // to a physical construction line instructed in Aldrich's diagram.
   const fromId=step.usedPoints[0];
   if(!fromId)return [];
   const a=points[fromId],b=points[step.pointId];
@@ -56,7 +56,7 @@ function mapGroup(trace,pointIds,points,kind){
   return [{
     fromPointId:fromId,toPointId:step.pointId,
     sourceStepId:step.stepId,
-    referenceKind:"CONSTRUCTION_GUIDE",...native
+    referenceKind:"DEPENDENCY_CONNECTOR_NOT_BOOK_LINE",...native
   }];
  });
  return {
