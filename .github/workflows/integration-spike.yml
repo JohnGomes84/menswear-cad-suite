@@ -32,11 +32,7 @@ jobs:
       - name: Install existing CAD shell toolchain
         run: npm ci --prefix prototype/web-app --no-audit --no-fund
       - name: Install pinned experimental FreeSewing integration
-        run: npm install --prefix prototype/integration-spike --no-package-lock --ignore-scripts --no-audit --no-fund
-      - name: Capture exact reproducible npm dependency tree
-        run: |
-          npm install --prefix prototype/integration-spike --package-lock-only --ignore-scripts --no-audit --no-fund
-          node -e 'console.log("ZZLOCKBEGINZZ" + JSON.stringify(require("fs").readFileSync("prototype/integration-spike/package-lock.json","utf8")) + "ZZLOCKENDZZ")'
+        run: npm ci --prefix prototype/integration-spike --ignore-scripts --no-audit --no-fund
       - name: Bundle existing source-traced Aldrich interpreter (no copied rules)
         run: |
           mkdir -p prototype/integration-spike/generated
