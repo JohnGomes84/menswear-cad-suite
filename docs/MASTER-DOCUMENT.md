@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.7 — pesquisa da Issue #4 ampliada; contrato candidato da Issue #5 documentado como DRAFT
+**Versão da baseline:** 1.8 — propostas DRAFT de formalização do Gate B, diagnóstico CI/CD, SARIF e cache
 **Data:** 13/10/2026  
-**Status:** PR #14 está na `main`; a POC genérica segue em 14/14 testes. QA de pontos 14–18 permanece apenas documental/condicional. A Issue #4 continua aberta por escolhas de curvas, fitting line, comprimento da fixture, centros e revisão de modelagem. A Issue #5 tem um contrato técnico candidato, ainda sem aprovação, dados de manga, código ou execução de QA. O `PILOT-001` não foi validado e código de produção continua bloqueado.
+**Status:** PR #15 está na `main`; a POC genérica segue em 14/14 testes. As decisões das Issues #1–#5 e o Gate B permanecem pendentes de aprovações de modelagem e QA específico. As propostas de cache, diagnósticos e SARIF registradas nesta versão não estão implementadas nem aprovadas para produção.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -503,3 +503,87 @@ A regra do livro `0–3 = diagonal corporal 5–17 + 3 cm` define um segmento re
 
 
 A proposta documental da versão 1.7 foi integrada na `main` pelo [PR #14](https://github.com/JohnGomes84/menswear-cad-suite/pull/14); a Issue #5 permanece aberta para revisão e decisões de modelagem.
+
+
+## 26. Formalização proposta do Gate B, diagnósticos CI/CD e cache (baseline 1.8 DRAFT)
+
+**Estado normativo:** esta seção consolida propostas discutidas em 13/10/2026. Ela não aprova decisões de modelagem, não fecha Issues #1–#5, não altera critérios já aceitos sem revisão e não autoriza implementação de produção. O Gate B permanece NO-GO. A aprovação deve ser registrada por decisão/revisão rastreável e evidência QA; `NOT_RUN` e `NOT_YET_DEFINED` nunca contam como PASS.
+
+### 26.1 Matriz consolidada de fechamento das Issues #1–#5
+
+| Issue | Decisão que deve ser formalmente aprovada | Evidência e QA para aceite |
+|---|---|---|
+| #1 — comprimento da manga | Aprovar se `L-M` corresponde a `one_piece_sleeve_length`; protocolo operacional completo (marcos, postura, trajeto, unidade); manter `shirt_sleeve_length` (`A-L-N`) separado; aceitar fixture `650−20=630 mm`, com 20 mm como construção, não ease. | Rationale e referência Aldrich, PDF pp. 35–36 e 261; atualizar SPEC/perfil/formato/QA; executar QA-MEAS-001, 003 e 006. Alternativas não aprovadas ficam fora de uso. |
+| #2 — `close_wrist` | Aprovar/rejeitar alias a partir de `wrist_circumference`; protocolo e unidade; interpretação do segmento 2–4, centro e espelhamento; manter medida corporal, dimensão do molde e cuff acabado distintos. Fixture candidata `178/2+50=139 mm`; `+50 mm` é constante construtiva, não ease presumida. | Rationale e referência Aldrich, PDF pp. 35–36, 39 e 261; atualizar SPEC/formato/QA; executar QA-MEAS-002, 004, 005 e 006. Campo não aprovado permanece `NOT_YET_DEFINED`. |
+| #3 — margens por aresta | Aprovar classificação de cada um dos 11 trechos; linha líquida versus corte; abrangência de exceções; centros/dobras; cantos/terminais; separar `seam_geometry` de `cut_geometry`; impedir margem duplicada. | Referência Aldrich, PDF pp. 35–36 e 38; ledger de auditoria completo; executar QA-MARG-001–006 no motor. `PASS_DOC` não substitui teste geométrico. |
+| #4 — matriz/curvas | Aprovar ou corrigir referencial e pontos condicionais; escolher comprimento da camisa; definir fitting line, curvas/tangências paramétricas e construção de centro/frente/costas. | Rationale e referências Aldrich, PDF pp. 35–36 e 38; congelar golden case após revisão; executar QA-POINT-004/005 e regressão do bloco real. Não transpor instrução raglan da p. 121 ao bloco plano. |
+| #5 — `SeamPair`/`AssemblyEase` | Aprovar arestas membros, orientação, piques/marcos, segmentação, ease ou `NONE_APPROVED` por trecho, membro, quantidade, distribuição, tolerância física, estados e invalidação. `+3 cm` da diagonal 5–17 não define ease. | Rationale e referência Aldrich, PDF p. 36; schema/contrato versionado; testes QA-SEAM-001–006 e QA-EASE-001–004; evidência de montagem em papel/toile apropriada. |
+
+Para cada decisão aprovada, conservar `decisionId`, Issue/critério, decisão e regra/valor, unidades, fonte (livro/edição/página/figura), rationale, revisor e papel, data, evidências (PR/commit/teste/toile) e vínculo à decisão substituída. Estados `PROPOSED`, `APPROVED`, `REJECTED` e `NOT_YET_DEFINED` representam decisões; `NOT_RUN`, `PASS`, `FAIL` e `WARNING` representam execução/QA e não devem ser colapsados.
+
+A declaração de Gate B exige critérios #1–#5 fechados quando aplicáveis, golden case, QA integrado e evidência física definida no plano; não equivale ao fechamento documental. As Issues #6/#7 e os gates de geometria/QA continuam com seu próprio processo de aceitação.
+
+### 26.2 Auditoria final da Issue #3 — 11 trechos e política de junções
+
+O ledger deve registrar, em cada linha: peça/aresta/endpoints; origem Aldrich; classificação/estado; linha de costura e linha de corte; largura e origem da margem; exceção; terminais/cantos e arestas adjacentes; decisão, revisores/data e rationale; QA e evidência. Os 11 trechos são: (1) decote do corpo; (2) centro do corpo 0–4; (3) ombro 10–17; (4) cava 17–12–5; (5) lateral 5–7–8; (6) barra 4–8; (7) cabeça da manga 3–5–6–7–8–0; (8) costura inferior 3–4; (9) manga 0–1; (10) centro 1–2; (11) bordo inferior 2–4.
+
+Pendências específicas: confirmar a aplicação da chamada `no seam allowance` no decote; identificar linha líquida versus contorno de corte; decidir se centros representam dobra, abertura, eixo ou costura; tratar terminações sem acrescentar margem de bainha às barras indicadas; especificar encontros ombro/decote, ombro/cava, cava/lateral, lateral/barra e cabeça/underarm.
+
+**Proibição de compensação silenciosa:** não fazer snap, prolongamento, aparo, mitra, arredondamento, junção por offset global ou escolha de interseção sem política aprovada. A linha de costura deve permanecer preservada; uma junção sem regra deve emitir diagnóstico estruturado (`JOIN_POLICY_MISSING` ou código mais específico aprovado), manter o estado bloqueado e impedir exportação de geometria de corte. A classificação de valores e as políticas de canto ainda requerem decisão; opções geométricas descritas em pesquisa não são padrão implícito.
+
+Plano de QA: QA-MARG-001 confere cobertura/classe/proveniência; QA-MARG-002 proíbe offset duplicado sobre margem já incluída; QA-MARG-003 testa exceções sem margem/bainha; QA-MARG-004 cobre centro/dobra e duplicação; QA-MARG-005 exige política aprovada ou erro explícito em junções; QA-MARG-006 valida caminhos independentes `seam_geometry`/`cut_geometry` e largura/origem por aresta. Casos positivos e negativos devem ser executados no motor; revisão documental sozinha não passa esses testes.
+
+### 26.3 Diagnósticos canônicos e projeção SARIF
+
+Manter JSON canônico do produto, separado da exportação SARIF. Campos mínimos propostos: `schemaVersion`, metadados do run (tool/version, commit, Gate, operação e status), `diagnostics[]`; cada diagnóstico contém ID determinístico, `code`, `severity`, `status`, chave/texto de mensagem, localização/JSON Pointer quando real, referências de entidades, bloqueios/preservações, e proveniência/regra. O código é estável e independente de idioma; texto não deve ser usado como chave por automação.
+
+Para `JOIN_POLICY_MISSING`, a operação de corte fica `BLOCKED`; registrar as arestas/peça, localização existente, política ausente e artefatos bloqueados. Preservar `seam_geometry`; não fabricar `cut_geometry`. Erro de domínio não deve ser confundido com exceção interna do servidor.
+
+A projeção para interoperabilidade usa SARIF 2.1.0: `$schema`, `version`, `runs[]`, `tool.driver` e regra declarada em `tool.driver.rules[]`; resultado contém `ruleId`, `ruleIndex` quando emitido, `level`, `message.text`, `locations` com URI/region reais quando disponíveis, `partialFingerprints` quando há localização estável e `properties` para metadados CAD. `invocations[].executionSuccessful` descreve execução da ferramenta, não aprovação do Gate. O CI publica JSON/SARIF e resumo; resultado bloqueante da operação solicitada bloqueia o artefato correspondente. Para GitHub Code Scanning, não inventar caminho/linha: findings sem localização de arquivo permanecem no JSON canônico/relatório próprio, pois o consumidor requer localização física para exibir resultado. Validar contra schema e regras de ingestão do consumidor.
+
+Referências normativas: [OASIS SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) e [regras SARIF do GitHub Code Scanning](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support).
+
+### 26.4 Comprimento de arco e chaves de cache do `SeamPair`
+
+O comprimento canônico de um intervalo é `L(a,b)=∫_a^b ||C'(t)||dt` na curva paramétrica da linha de costura. O comprimento não deve vir da tesselação de visualização. A POC usa Simpson adaptativo em Bézier cúbica, mas retorna apenas um número e seu `eps_mm` padrão é experimental, não uma tolerância física nem contrato aprovado.
+
+A proposta de interface retorna `length_mm`, estimativa de erro, convergência, `algorithm_id/version`, parâmetros efetivos, fingerprint/revisão de curva, intervalo, orientação e unidade/referencial. Rejeitar explicitamente curva/intervalo inválido e não convergência; não marcar aproximação como válida. Dividir curvas compostas nas junções; para piques por distância de arco, resolver o parâmetro correspondente e mapear reversão sem ambiguidade. Testar reta exata, independência da tesselação, reversão, aditividade, inversão arc-length↔parâmetro, convergência ao apertar precisão, degeneração e invalidação. Comparação com subdivisão Bézier por corda/polígono de controle pode atuar como oráculo independente.
+
+Separar cache geométrico do cache de avaliação:
+
+```text
+ArcLengthCacheKey = hash(
+  cacheKeyFormatMajor,
+  canonicalCurveFingerprint + curveRevision,
+  curveType/controlPoints/knots/weights/domain,
+  interval + orientation,
+  unit + coordinateFrame,
+  algorithmId + algorithmVersion,
+  effectiveNumericalParameters
+)
+
+SeamEvaluationKey = hash(
+  evaluationKeyFormatMajor,
+  memberEdges + revisions + segmentMapping + markerRevisions,
+  arcLengthResultKeys,
+  easeDecision + distributionPolicy + versions,
+  assemblyTolerance + policyVersion,
+  validationRuleVersion
+)
+```
+
+Mudança de geometria, intervalo, orientação, pique, algoritmo ou parâmetro numérico relevante invalida o comprimento afetado e sua avaliação dependente. Mudança de ease/distribuição/tolerância invalida a avaliação, não necessariamente o comprimento. Mudança minor/patch pode reutilizar resultado somente com compatibilidade documentada e parâmetros efetivos equivalentes; mudança semanticamente incompatível incrementa namespace/versão do algoritmo ou formato. Se equivalência não for demonstrável, fazer miss e recalcular. Alias/migração de metadados só preserva valor quando sua interpretação não muda. A versão do produto não deve, sozinha, invalidar todos os caches.
+
+### 26.5 Testes propostos para diagnóstico, SARIF e cache
+
+**Unitários de diagnóstico/junção:** ausência de política emite código estável e bloqueio; nenhuma correção geométrica silenciosa; `seam_geometry` permanece; saída de corte bloqueada; IDs/localização/proveniência coerentes; ordem/deduplicação determinísticas; mensagens localizadas não mudam regra; política aprovada resolve o achado; política inválida produz erro; múltiplas junções relatadas sem perda.
+
+**Unitários de serialização SARIF:** schema 2.1.0; `ruleId` declarado e `ruleIndex` consistente; nível/mensagem/location válidos; URI determinístico; fingerprint estável; propriedades de domínio preservadas; `executionSuccessful` independente de Gate; ausência de localização física não é mascarada com dado inventado. Validar arquivo contra schema e validador/ingestão do consumidor.
+
+**Unitários de cache:** chave idêntica para entradas idênticas; mudanças separadamente em geometria, domínio/controles, revisão, intervalo, orientação, unidade/referencial, algoritmo e parâmetros causam miss; parâmetros irrelevantes não causam invalidação; atualização minor compatível pode reutilizar; atualização incompatível não reutiliza sem migração/equivalência; changes semânticos de ease/tolerância invalidam apenas avaliação; degeneração/não convergência não são armazenadas como resultado válido.
+
+**Integração CI/CD:** cache hit e miss; alteração de curva/pique invalida trechos dependentes; ease/tolerância mudadas reutilizam comprimento e recalculam avaliação; `JOIN_POLICY_MISSING` ao pedir corte bloqueia o artefato e publica JSON/SARIF; SARIF malformado ou regra não declarada falha a etapa de relatório (não resulta em “zero findings”); diagnóstico resolvido após decisão aprovada desaparece no novo run sem apagar histórico; códigos e fingerprints permanecem estáveis entre idioma e commits semânticos equivalentes.
+
+### 26.6 Pendências para promover esta proposta
+
+Ainda dependem de revisão: regra/modelagem e tolerâncias para cada medida, ponto, margem e costura; políticas de junção; algoritmo e parâmetros numéricos de produção; estimador/limite de erro; schema canônico de diagnósticos; versão de chave/formato e compatibilidade; convenções SARIF e gates CI. Os testes acima estão **propostos, não implementados/executados**, salvo a POC sintética preexistente. Nenhum elemento desta seção fecha Issues #1–#5, aprova Gate B ou libera exportação industrial.
