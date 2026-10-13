@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.8 — propostas DRAFT de formalização do Gate B, diagnóstico CI/CD, SARIF e cache
+**Versão da baseline:** 1.9 DRAFT — evidências da POC sintética e contratos de falha numérica
 **Data:** 13/10/2026  
-**Status:** PR #15 está na `main`; a POC genérica segue em 14/14 testes. As decisões das Issues #1–#5 e o Gate B permanecem pendentes de aprovações de modelagem e QA específico. As propostas de cache, diagnósticos e SARIF registradas nesta versão não estão implementadas nem aprovadas para produção.
+**Status:** PRs #17, #18 e #19 incorporados à `main`; POC sintética tem 27/27 testes PASS_CI. Gate A permanece IN_REVIEW até decisão formal de geometria/QA; Issues #1–#5 e Gate B continuam pendentes/NO-GO. Cache, diagnósticos e SARIF são propostas não implementadas nem aprovadas para produção.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -389,7 +389,7 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 |---|---|---|
 | 0. Descoberta de produto | Produto web, público, editor e piloto escolhidos | Fechada |
 | 1. Especificação | Domínio, geometria, formato, QA, medidas, margens, costuras, regras | Em revisão; ainda há bloqueantes específicos |
-| 1.5. Fechamento dirigido do domínio + POC geométrica sintética | Mecanismos genéricos do kernel, experimentos, medições e saídas diagnósticas | POC inicial incorporada à `main` pelo PR #8; 14 testes passaram também após o merge; revisão de engenharia/QA pendente |
+| 1.5. Fechamento dirigido do domínio + POC geométrica sintética | Mecanismos genéricos do kernel, experimentos, medições e saídas diagnósticas | PRs #8, #18 e #19 incorporados; 27/27 testes PASS_CI; Gate A ainda em revisão formal de geometria/QA |
 | 2. POC geométrica específica do `PILOT-001` | Aplicação do kernel ao flat shirt após resolver regras de domínio e montagem | Bloqueada pelas pendências específicas da seção 14.1 |
 | 3. Exportação piloto | Escala, PDF paginado/plotter, SVG e calibração física | Posterior à POC |
 | 4. Implementação do piloto | Fluxo web de perfil a molde validado | Bloqueada até evidência técnica e prova |
@@ -587,3 +587,16 @@ Mudança de geometria, intervalo, orientação, pique, algoritmo ou parâmetro n
 ### 26.6 Pendências para promover esta proposta
 
 Ainda dependem de revisão: regra/modelagem e tolerâncias para cada medida, ponto, margem e costura; políticas de junção; algoritmo e parâmetros numéricos de produção; estimador/limite de erro; schema canônico de diagnósticos; versão de chave/formato e compatibilidade; convenções SARIF e gates CI. Os testes acima estão **propostos, não implementados/executados**, salvo a POC sintética preexistente. Nenhum elemento desta seção fecha Issues #1–#5, aprova Gate B ou libera exportação industrial.
+
+
+---
+
+## 27. Evidência incremental — POC sintética e falha explícita (baseline 1.9 DRAFT)
+
+Os [PRs #18](https://github.com/JohnGomes84/menswear-cad-suite/pull/18) e [#19](https://github.com/JohnGomes84/menswear-cad-suite/pull/19) foram integrados à `main`, sem implementação do molde real ou alterações de escopo do `PILOT-001`.
+
+A POC sintética passou de 14 para **27 casos de teste**, com [CI #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254) concluída com sucesso. Novos casos cobrem fixture analítica 3-4-5, parametrização de reta não uniforme, invariância por translação e escala, classificação de segmentos, derivada nula terminal, orçamento de integração esgotado, limite de subdivisão e entrada numérica não finita. A CI também verifica formato nominal de JSON/SVG/PDF e reprodutibilidade de hashes **no mesmo runner**; não houve conferência de escala por impressão física.
+
+Os métodos experimentais `_adaptive_simpson` e `CubicBezier.flatten` deixam agora de devolver silenciosamente uma estimativa quando seus respectivos limites numéricos não são satisfeitos: emitem `ArithmeticError`. Isso melhora a sinalização de falhas, mas **não** prova uma garantia geral de erro de comprimento ou tesselação, não substitui uma validação independente para curvas difíceis e não transforma o offset constante do Shapely em operação de margem por aresta.
+
+**Situação:** Gate A = `IN_REVIEW`; Gate B = `NO-GO`. O [registro de revisão do Gate A](qa/GATE-A-REVIEW.md) documenta as evidências e riscos remanescentes. Nenhuma regra, piquê funcional, `SeamPair`, `AssemblyEase`, margem ou construção do bloco real foi aprovada.
