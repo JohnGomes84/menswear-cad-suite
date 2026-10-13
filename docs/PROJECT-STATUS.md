@@ -80,3 +80,9 @@ Foi incluído na branch de pesquisa um benchmark Gauss-Legendre independente do 
 Foi criado na branch `prototype/web-shell-synthetic` um shell TypeScript/React/Vite/SVG em `prototype/web-app`. O editor usa **exclusivamente** uma curva Bézier sintética, suporta seleção/arraste de quatro pontos, zoom/pan, undo/redo em memória, JSON versionado (`0.1.0`) e avisos de proibição de corte.
 
 A suíte inicial registra **8 testes de contrato PASS_CI** e build Vite/TypeScript bem-sucedido na [execução #38457022142](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38457022142). A árvore npm foi fixada em `package-lock.json`; a execução final com `npm ci` deverá ser confirmada antes do merge. O histórico de desfazer **não** é reconstituído após reabrir o JSON (embora os eventos sejam persistidos); comprimento de arco TS e `SeamPair` não estão implementados. Isso não libera Gate B ou release.
+
+## Adaptador geométrico browser-side — revisão experimental
+
+Na branch de engenharia `feat/ts-generic-geometry-adapter` foi implementada uma função Bézier em TypeScript independente da renderização SVG, com comprimento de arco e piques sintéticos por distância acumulada. A cobertura inclui 11 testes de fixture analítica, comparação estática com o benchmark Python, invariâncias e falhas explícitas. A UI mostra resultado em mm como *POC* e mantém `PILOT-001` como `NOT_YET_DEFINED`.
+
+O adaptador ainda exige CI final, tratamento de curvas adversariais, política formal de erro e teste de interação no navegador. Não inclui `SeamEdge` real ou qualquer `SeamPair` do bloco da camisa, calça ou alfaiataria.
