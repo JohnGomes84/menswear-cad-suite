@@ -51,11 +51,12 @@ const eqPoint=(a:Vec2,b:Vec2)=>a.x===b.x&&a.y===b.y;
 const eqEntities=(a:readonly SketchEntity[],b:unknown):boolean =>
   Array.isArray(b) && a.length===b.length && a.every((v,i)=>{
     const w:unknown=b[i];
-    if(!record(w)||!Array.isArray(w.pointsMm)||w.pointsMm.length!==v.pointsMm.length)
-      return false;
+    if(!record(w))return false;
+    const points:unknown=w.pointsMm;
+    if(!Array.isArray(points)||points.length!==v.pointsMm.length)return false;
     return v.id===w.id&&v.pieceId===w.pieceId&&v.kind===w.kind&&
       v.mode===w.mode&&v.pointsMm.every((p,j)=>{
-        const q:unknown=w.pointsMm[j];
+        const q:unknown=points[j];
         return point(q)&&eqPoint(p,q);
       });
   });
