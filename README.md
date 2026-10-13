@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.18 DRAFT**
+- Documento Mestre: **baseline 1.19 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -76,3 +76,6 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 ## Auditoria do livro — fora do piloto da camisa
 
 `ALD-CH02-01`: auditoria **textual** do bloco de calças *flat* (uma e duas peças), PDF pp. 31–34, com fixture escalar de amostra. Geometria/diagramas/caimento ainda não aprovados. Veja `docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md`.
+
+
+**Pesquisa de calças CH02:** esqueleto de pontos da frente para blocos flat de uma e duas peças em milímetros, [documentado](docs/domain/CH02-DIAGRAM-001.md) e testado. Sem curva, contorno de corte ou molde aprovado.
