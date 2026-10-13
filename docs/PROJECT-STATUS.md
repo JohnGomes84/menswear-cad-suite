@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.10 DRAFT (proposta nesta branch)
+**Baseline corrente:** 1.16 DRAFT
 
 ## Situação executiva
 
@@ -99,3 +99,8 @@ Na branch `fix/web-persisted-undo-history`, `createEditor` passa a validar a cad
 - [CI do catálogo](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461068500): validou capítulos/IDs/status.
 - Estado dos gates: APP experimental, A IN_REVIEW, B NO-GO.
 - Pendências mais próximas: edição `ADD_ENTITY`/`REMOVE_ENTITY` com undo/redo, testes E2E reais de interação, auditoria método a método do livro e bloqueios de modelagem #1–#5.
+
+
+## Execução browser e transações de entidades — 13/10/2026
+
+PR #39 integrado com `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT`, JSON 0.3 e undo/redo entre sessões. [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286) passou **50/50 testes e build**. [CI Chromium #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072) passou **4/4 E2E** em branch de QA. Gate A IN_REVIEW e Gate B NO-GO.

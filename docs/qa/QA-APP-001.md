@@ -46,3 +46,8 @@ O projeto de demonstração deverá conter curvas **inteiramente sintéticas** e
 ## Evidência da cena multi-entidades (PR #35)
 
 Os testes `scene.test.ts` exercitam identidade de grupo/entidade, edição de linhas e Bézier, persistência JSON 0.2.0, undo/redo por entidade, invalidação de `redo` em divergência, rejeição de IDs duplicados, pontos não finitos, formatos desconhecidos e histórico adulterado. [CI #38461298308](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461298308): **35 testes web PASS e build aprovado** (soma dos testes dos laboratórios 0.1.0/0.2.0 e geometria TypeScript). Essa evidência **não** executou automação E2E do navegador, teste físico de escala ou QA do PILOT-001.
+
+
+## Evidência Chromium E2E — cena sintética 0.3
+
+[Execução #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072): **4/4 casos Chromium PASS** (criar/excluir/undo/redo, zoom/pan não alterando geometria, arrastar ponto/salvar/reabrir/desfazer, importar JSON inválido sem substituir projeto). [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286): **50/50 testes PASS** e build TypeScript/Vite aprovado. QA de moldes reais, impressão física, solver e constraints continuam NOT_RUN/NOT_YET_DEFINED.

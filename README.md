@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.11 DRAFT**
+- Documento Mestre: **baseline 1.16 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -59,3 +59,7 @@ O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experi
 - `docs/compliance/EXTERNAL-ASSET-REGISTER.md`
 - `docs/decisions/ADR-0001-product-scope.md`
 - `docs/decisions/ADR-0002-synthetic-poc-scope.md`
+
+## Laboratório transacional — QA atual
+
+Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 0.3.0; 50 testes de contrato e 4 E2E Chromium. Não representa moldes de roupas. [Guia](prototype/web-app/SCENE-LAB.md).
