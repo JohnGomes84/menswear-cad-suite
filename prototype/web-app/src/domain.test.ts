@@ -50,7 +50,7 @@ describe("synthetic project contract", () => {
   it("rejects invalid event history rather than trusting imported records", () => {
     const p = demoProject();
     const raw = { ...p, history: [{ kind: "EVAL", before: {x:0,y:0}, after: {x:2,y:3} }] };
-    expect(() => validateProject(raw)).toThrow("Histórico");
+    expect(() => validateProject(raw)).toThrow("Evento do histórico inválido");
   });
 
   it("disallows oversized project files", () => {
