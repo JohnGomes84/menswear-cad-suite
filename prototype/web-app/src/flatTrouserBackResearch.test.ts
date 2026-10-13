@@ -115,7 +115,7 @@ describe("Research gate and source fidelity",()=>{
   const r=draftFlatTrouserSectionsResearch("TWO_PIECE",basic);
   const byPoint=Object.fromEntries(r.sourceTrace.map(x=>[x.pointId,x]));
   expect(byPoint["23"].usedPoints).toEqual(["18","22","3"]);
-  expect(byPoint["25"].usedPoints).toEqual(["15"]);
+  expect(byPoint["25"].usedPoints).toEqual(["15","14","23"]);
   expect(byPoint["25"].source.pdfPage).toBe(33);
   expect(byPoint["21"].lengthMm).toBe(10);
   expect(byPoint["20"].lengthMm).toBe(73.75);
