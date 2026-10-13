@@ -88,3 +88,8 @@ O catálogo descreve *assuntos e funções* em linguagem própria. Fórmulas que
 Auditar os capítulos por família, criando `PATTERN-CATALOG-001` com **uma linha por método/bloco concreto** e estado de fonte `TEXT_REVIEWED`/`DIAGRAM_REVIEWED`; prioritariamente CH-01, CH-02, CH-06, CH-07, CH-09, CH-10 e CH-13. Continuar desenvolvimento horizontal do editor em paralelo.
 
 **Gate APP** permanece experimental. **Gate B** permanece NO-GO até completar os requisitos específicos do PILOT-001.
+
+
+## Registro operacional (adicionado em 13/10/2026)
+
+O inventário editorial foi desdobrado em [PATTERN-CATALOG-001.json](PATTERN-CATALOG-001.json), com **54 assuntos candidatos**, rastreados por 14 capítulos e 23 agrupamentos de arquitetura. O número de registros **não** é número de moldes prontos, de regras totais da obra ou de padrões distintos. Todos estão marcados como TOC_ONLY/NOT_STARTED. [Critérios de validação](PATTERN-CATALOG-001.md) e CI usam controle automático de unicidade e estados.
