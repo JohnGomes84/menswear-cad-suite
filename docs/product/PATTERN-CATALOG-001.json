@@ -16,7 +16,7 @@
   },
   "governance": {
     "evidenceLevel": "MIXED_TOC_AND_TEXT",
-    "caveat": "53 assuntos TOC_ONLY; 1 assunto CH02 TEXT_REVIEWED com inspeção visual PARCIAL da frente (não DIAGRAM_REVIEWED integral); scaffold matemático RESEARCH_ONLY não é implementação de molde.",
+    "caveat": "53 entradas TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED e revisão parcial de frente/costas no PDF p.34, com instruções de pontos executáveis apenas em RESEARCH_ONLY. Oito curvas documentadas, nenhuma spline de corte ou moldes implementados.",
     "copyright": "Only original concise descriptions; no diagrams, scans, formulas or copied pages.",
     "coverage": "All 14 chapters present; no claim of technical implementation."
   },
@@ -172,7 +172,7 @@
         ]
       },
       "ruleSetId": null,
-      "notes": "Capítulo 2, PDF 31–34: texto lido; diagrama p.34 inspecionado visualmente para eixos/posições da frente. Skeleton coordenado de pesquisa implementado em TS. Curvas, costas, costuras e moldes reais pendentes. Não promover a DIAGRAM_REVIEWED/APPROVED.",
+      "notes": "Texto das pp. 32–33 auditado e diagrama p.34 verificado em referências parciais de frente/costas de calças flat. Programas sequenciais FRONT e BACK RESEARCH_ONLY com pontos 0–18/0–25. Oito condições de curvas especificadas, spline/contorno/topologia/costura/prova física pendentes; não está implementado molde de corte.",
       "reviewEvidence": "docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md",
       "submethods": [
         {
@@ -185,8 +185,10 @@
         }
       ],
       "diagramEvidence": "docs/domain/CH02-DIAGRAM-001.md",
-      "diagramReview": "PARTIAL_FRONT_GRID",
-      "researchImplementation": "prototype/web-app/src/flatTrouserResearch.ts"
+      "diagramReview": "PARTIAL_FRONT_BACK_GUIDES",
+      "researchImplementation": "prototype/web-app/src/flatTrouserResearch.ts",
+      "backResearchImplementation": "prototype/web-app/src/aldCh02FlatTrouserBackProgram.ts",
+      "curveRequirements": "docs/domain/CH02-CURVE-REQUIREMENTS-001.json"
     },
     {
       "methodId": "ALD-CH02-02",
