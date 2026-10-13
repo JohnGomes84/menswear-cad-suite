@@ -42,8 +42,8 @@ describe("Chapter 2 flat trouser — source-checked research axes",()=>{
     expect(a["9"]).toEqual({x:-157.5,y:302});
     expect(a["10"]).toEqual({x:-157.5,y:702});
     expect(a["11"]).toEqual({x:-157.5,y:1102});
-    close(a["12"].x,-265.8333333333333);
-    close(a["13"].x,-49.16666666666667);
+    close(a["12"].x,-49.16666666666667);
+    close(a["13"].x,-265.8333333333333);
     close(a["12"].y,1102);
     close(a["13"].y,1102);
     close(a["14"].x,a["12"].x/2);
@@ -54,8 +54,41 @@ describe("Chapter 2 flat trouser — source-checked research axes",()=>{
     expect(a["1"].y).toBe(322);
     expect(a["4"].x).toBe(-335);
     expect(a["9"].x).toBe(-177.5);
-    close(a["12"].x,-299.1666666666667);
+    close(a["12"].x,-55.83333333333333);
+    close(a["13"].x,-299.1666666666667);
+    close(a["14"].x,-27.916666666666668);
+    close(a["15"].x,-327.0833333333333);
     expect(a["2"].y-a["1"].y).toBe(800);
+  });
+  it("uses the book diagram direction: 12 right of 11, 13 left, 14 right of 10",()=>{
+    const r=draftFlatTrouserFrontResearch("TWO_PIECE",values);
+    const p=r.frontPointsMm;
+    expect(p["12"].x).toBeGreaterThan(p["11"].x);
+    expect(p["13"].x).toBeLessThan(p["11"].x);
+    expect(p["14"].x).toBeGreaterThan(p["10"].x);
+    expect(p["15"].x).toBeLessThan(p["10"].x);
+    close(p["14"].x,-24.583333333333336);
+    close(p["15"].x,-290.4166666666667);
+  });
+  it("runs instructions with one step per point and correct source page",()=>{
+    for(const method of ["ONE_PIECE","TWO_PIECE"] as const){
+      const result=draftFlatTrouserFrontResearch(method,values);
+      const expected=method==="ONE_PIECE"?32:33;
+      expect(result.instructionTrace.map(x=>x.pointId))
+        .toEqual(Object.keys(result.frontPointsMm));
+      expect(result.instructionTrace.every(x=>x.source.pdfPage===expected)).toBe(true);
+      expect(result.instructionTrace.every(x=>x.source.chapter===2)).toBe(true);
+    }
+  });
+  it("recalculates dependent construction from different input measures",()=>{
+    const custom=draftFlatTrouserFrontResearch("TWO_PIECE",{
+      seatMm:1080,bodyRiseMm:300,insideLegMm:840,variant:"BASIC"
+    });
+    expect(custom.frontPointsMm["1"].y).toBe(320);
+    expect(custom.frontPointsMm["2"].y).toBe(1160);
+    expect(custom.frontPointsMm["4"].x).toBe(-310);
+    expect(custom.frontPointsMm["12"].x).toBeGreaterThan(custom.frontPointsMm["11"].x);
+    expect(custom.frontPointsMm["14"].y).toBe(740);
   });
   it("rejects nonphysical or nonfinite fixture values",()=>{
     expect(()=>draftFlatTrouserFrontResearch("ONE_PIECE",{...values,insideLegMm:0})).toThrow(RangeError);
