@@ -25,3 +25,8 @@ Este material é independente do domínio da camisa e ajuda a evitar uma arquite
 ## Primeiro registro textual: calça plana do capítulo 2
 
 [RESEARCH-CH02-FLAT-TROUSERS-001](../domain/RESEARCH-CH02-FLAT-TROUSERS-001.md) separa blocos **uma peça / duas peças**, variantes básica/folgada, medidas da amostra e relações aritméticas verificáveis. O arquivo [FLAT-TROUSER-SCALAR-FIXTURE-001.json](../domain/FLAT-TROUSER-SCALAR-FIXTURE-001.json) permite regressão de distâncias em mm. Diagramas, coordenadas, curvas, margens por aresta e prova física permanecem pendentes; **não é molde implementado**.
+
+
+## Evidência visual parcial (capítulo 2)
+
+O diagrama original da página **34 do PDF** foi inspecionado visualmente. `ALD-CH02-01` agora possui evidência de frente **`PARTIAL_FRONT_GRID`**, referenciada em [CH02-DIAGRAM-001](../domain/CH02-DIAGRAM-001.md), e cálculo de pontos em `prototype/web-app/src/flatTrouserResearch.ts`. O status de fonte **permanece `TEXT_REVIEWED`**, pois faltam revisão completa dos traçados de costas, curvas, exceções de costura e aprovação técnica. Nenhuma peça está implementada.

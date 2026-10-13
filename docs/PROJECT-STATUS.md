@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.18 DRAFT (auditoria textual inicial de calça plana)
+**Baseline corrente:** 1.19 DRAFT (auditoria textual inicial de calça plana)
 
 ## Situação executiva
 
@@ -124,3 +124,8 @@ PR #41 integrado; [CI Chromium #38464138662](https://github.com/JohnGomes84/mens
 ## Início efetivo de análise de outra família do livro — CH02
 
 O registro `ALD-CH02-01` recebeu estado **TEXT_REVIEWED** com fonte em pp. 31–34 do PDF, documento `docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md` e fixture aritmética para variantes básica/folgada. **53 registros** continuam `TOC_ONLY`; nenhum bloco real foi implementado ou validado. Diagramas e provas de modelagem ainda pendentes na Issue #44. Gate B PILOT-001 permanece NO-GO.
+
+
+## Primeiro esqueleto coordenado de calça CH02
+
+O diagrama da página 34 do livro foi inspecionado visualmente, permitindo orientar frente de calças flat de uma e duas peças. `src/flatTrouserResearch.ts` calcula apenas pontos/linhas auxiliares em mm, sem contorno ou curva aprovada. Documento `docs/domain/CH02-DIAGRAM-001.md`, catálogo marcado `PARTIAL_FRONT_GRID`. [CI #38467502627](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38467502627): **73/73 testes + build PASS**. Fonte e geometria parcial, prova de modelista/física pendente. Gate B NO-GO.
