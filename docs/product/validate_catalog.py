@@ -32,6 +32,12 @@ def validate(path=REGISTRY):
         assert row["category"] in {"SUPPORT", "BLOCK", "PROCESS", "FAMILY", "TRANSFORMATION", "REFERENCE"}
         assert row["geometrySpecification"] in {"NOT_YET_DEFINED", "DRAFT", "IN_REVIEW", "APPROVED"}
         assert row["slug"] and row["family"] and row["topic"]
+        if row["sourceVerification"] in {"TEXT_REVIEWED", "DIAGRAM_REVIEWED"}:
+            pages = row["sourceLocation"]["methodPdfPageRange"]
+            assert isinstance(pages, list) and len(pages) == 2
+            assert all(isinstance(p, int) and p > 0 for p in pages)
+            assert pages[0] <= pages[1]
+            assert isinstance(row.get("reviewEvidence"), str) and row["reviewEvidence"].endswith(".md")
         if row["implementation"] == "IMPLEMENTED":
             assert row["geometrySpecification"] == "APPROVED"
             assert row["ruleSetId"]
