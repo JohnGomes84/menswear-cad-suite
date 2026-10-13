@@ -113,3 +113,16 @@ test("synthetic-only safety notice has readable foreground/background contrast",
   });
   expect(ratio).toBeGreaterThanOrEqual(4.5);
 });
+
+test("directed horizontal constraint projects only a synthetic line and is undoable",async({page})=>{
+  await openScene(page);
+  await page.getByRole("button",{name:/line-a/}).click();
+  const line=page.getByTestId("entity-path-line-a");
+  const before=await line.getAttribute("d");
+  await page.getByRole("button",{name:"Horizontalizar extremos"}).click();
+  await expect(line).not.toHaveAttribute("d",before!);
+  await expect(line).toHaveAttribute("d",/M 20 115 L 105 115/);
+  await page.getByRole("button",{name:/Desfazer/}).click();
+  await expect(line).toHaveAttribute("d",before!);
+  await expect(page.getByText(/não utilizar para corte/i)).toBeVisible();
+});
