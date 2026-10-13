@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: "22"
       - name: Install experimental dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Run contract tests
         run: npm run test
       - name: Build TypeScript and Vite
@@ -35,9 +35,3 @@ jobs:
       - name: Verify build without shipping as product
         run: test -s dist/index.html
 
-      - name: Capture provisional npm lockfile for reproducible commit
-        run: |
-          echo LOCKFILE_B64_BEGIN
-          base64 -w0 package-lock.json
-          echo
-          echo LOCKFILE_B64_END
