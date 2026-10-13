@@ -18,6 +18,10 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 - Validação geométrica, de costura, escala e prova física
 - Dependências externas classificadas e auditadas
 
+## Documento mestre
+
+A fonte única de verdade do projeto é `docs/MASTER-DOCUMENT.md`. Em caso de divergência, ele prevalece sobre minutas e documentos anteriores.
+
 ## Documentação
 
 - `docs/00-product-vision.md`
