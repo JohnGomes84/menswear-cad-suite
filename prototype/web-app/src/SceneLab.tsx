@@ -33,7 +33,7 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
  const inspect=useMemo(()=>{
    if(chosen.kind==="LINE"){
      const a=chosen.pointsMm[0],b=chosen.pointsMm[1];
-     return {status:"PASS" as const,lengthMm:Math.hypot(b.x-a.x,b.y-a.y),notches:[]};
+     return {state:"PASS" as const,lengthMm:Math.hypot(b.x-a.x,b.y-a.y),notches:[]};
    }
    const controls=chosen.pointsMm as unknown as CubicControls;
    return evaluateSyntheticCurve(controls);
@@ -170,7 +170,7 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
            <hr/><h3>Selecionada: {chosen.id}</h3>
            <div className="inspector-item"><span>Grupo</span><strong>{chosen.pieceId}</strong></div>
            <div className="inspector-item"><span>Modo</span><strong>{chosen.mode}</strong></div>
-           <div className="inspector-item"><span>Comprimento sintético</span><strong>{inspect.status==="PASS"?position({x:inspect.lengthMm,y:0}).split(",")[0]+" mm":"FAIL"}</strong></div>
+           <div className="inspector-item"><span>Comprimento sintético</span><strong>{inspect.state==="PASS"?inspect.lengthMm.toFixed(2)+" mm":"FAIL"}</strong></div>
            {chosen.pointsMm.map((p,i)=><button key={i} className={`point-row ${selectedPoint===i?"chosen":""}`} onClick={()=>setSelectedPoint(i)}>
              <b>P{i}</b><span>{position(p)}</span>
            </button>)}
