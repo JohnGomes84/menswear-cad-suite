@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.21 DRAFT**
+- Documento Mestre: **baseline 1.22 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -87,3 +87,8 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 ## Motor de instruções do livro (experimento)
 
 Em `prototype/web-app/src/draftingInterpreter.ts`, medidas e expressões paramétricas são executadas conforme uma sequência de passos com rastreabilidade a capítulo e página. Os programas CH02 de frente de calça estão em `aldCh02FlatTrouserProgram.ts` — **não são moldes prontos**. [Contrato e limitações](docs/architecture/PATTERN-INSTRUCTION-001.md). A lógica aplica-se a outros métodos somente quando as suas instruções forem individualmente auditadas.
+
+
+## Back section e curvas — capítulo 2
+
+Os pontos de pesquisa das costas dos blocos flat de uma e duas peças seguem as instruções da obra em `aldCh02FlatTrouserBackProgram.ts`. As técnicas e condições para desenhar curvas de gancho/entreperna estão especificadas em [CURVES-RESEARCH-001](docs/domain/CURVES-RESEARCH-001.md) e [CH02-CURVE-REQUIREMENTS-001.json](docs/domain/CH02-CURVE-REQUIREMENTS-001.json). **Nenhuma curva de produção foi inventada ou aprovada.**
