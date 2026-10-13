@@ -1,6 +1,6 @@
 # QA-PILOT-001 — Plano de Validação
 
-Status: DRAFT 0.1
+Status: DRAFT 0.2
 
 ## Testes obrigatórios
 - construção determinística de pontos;
