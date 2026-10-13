@@ -75,3 +75,12 @@ Fonte de detalhe: `RESEARCH-ISSUE-3-Seam-Allowance-Map.md`. O texto da p. 35 do 
 Fonte e transcrição detalhada: `RESEARCH-ISSUE-4-Point-Matrix.md`. O texto do bloco está nas pp. 35–36 do PDF e o diagrama na p. 38. Para a fixture publicada, as relações aritméticas em milímetros incluem `0–1=30`, `1–2=284`, `1–3=442`, `2–5=315`, `1–9=74`, `9–10=30`, `1–11=142`, `11–12=150`, `1–15=27.5`, `16–17=15` e `1–18=60`. O comprimento da camisa varia por estilo e não está numericamente fixado.
 
 O diagrama ampliado da p. 38 sustenta a convenção de trabalho `P0=(0,0)`, `+x` à direita e `+y` para baixo. A transcrição condicional agora lê `P13=(150,314)`, `P14=(150,0)`, `P15=(0,57.5)`, `P16=(150,57.5)`, `P17=(165,57.5)` e `P18=(0,90)` mm para a fixture. QA-POINT-002/003 passaram apenas como consistência documental/diagramática; os valores não são regra aprovada nem golden case. Comprimento de estilo, curvas de decote/cava, separação frente/costas e aprovação de modelagem seguem pendentes. Não gerar nem congelar o bloco real com essas coordenadas condicionais.
+
+
+## `SeamPair` e `AssemblyEase` — proposta Issue #5 (DRAFT)
+
+Fonte detalhada: [`RESEARCH-ISSUE-5-SeamPair-AssemblyEase.md`](RESEARCH-ISSUE-5-SeamPair-AssemblyEase.md). Proposta-separar o pareamento de duas `SeamEdge`s da segmentação por piques e da ease de montagem. Orientações e limites de trechos referem-se a distância de arco na linha de costura paramétrica; comprimentos são derivados da curva canônica, não da tesselação nem da linha de corte.
+
+`AssemblyEase` é candidata a regra por `SeamSegmentPair`, com membro acomodado, excesso-alvo, distribuição e tolerância de montagem explícitos. Ease ausente permanece `NOT_YET_DEFINED`, não zero. O erro numérico do integrador, o excesso de montagem e a tolerância física são parâmetros distintos. Nenhuma quantidade, piques ou tolerância da cabeça da manga está aprovada.
+
+A regra do livro `0–3 = diagonal 5–17 + 3 cm` constrói um segmento reto da manga. Ela não especifica o comprimento da curva acabada da cabeça nem a diferença de costura a montar. A proposta e todos os casos QA continuam DRAFT/`NOT_RUN` até revisão de modelagem/produção. Issue #5 permanece aberta.

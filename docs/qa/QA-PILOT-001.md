@@ -80,3 +80,23 @@ Fonte de detalhe: `../domain/RESEARCH-ISSUE-4-Point-Matrix.md`. A fixture aritm�
 Nenhum ponto de coordenada condicional da pesquisa pode ser promovido para produção até aprovação do referencial, das projeções, da separação frente/costas e das curvas.
 
 QA-POINT-001 foi conferido por cálculo reproduzível com os valores publicados. A inspeção a 300 dpi da p. 38 resolveu documentalmente as projeções condicionais de 14–17; uma verificação Python de consistência passou (`PASS_DIAGRAM_CONSISTENCY`). Isso verifica a transcrição e seus alinhamentos, não o motor CAD nem a aprovação do padrão. QA-POINT-002/003 são `PASS_DOC`, com execução geométrica `NOT_RUN`; QA-POINT-004/005 continuam `NOT_RUN`/`NOT_YET_DEFINED`.
+
+
+## Casos propostos — `SeamPair`/`AssemblyEase`, Issue #5 (DRAFT; todos NOT_RUN)
+
+Fonte: `../domain/RESEARCH-ISSUE-5-SeamPair-AssemblyEase.md`. A POC atual não implementa essas entidades. Os casos especificam intenção e não são resultados de execução.
+
+| ID | Verificação | Resultado requerido | Estado |
+|---|---|---|---|
+| QA-SEAM-001 | Integridade do par | Exatamente duas `SeamEdge`s válidas, peças existentes e orientação resolvida | NOT_RUN |
+| QA-SEAM-002 | Orientação reversa | A inversão preserva o caminho físico e remapeia limites/piques do trecho | NOT_RUN |
+| QA-SEAM-003 | Comprimento paramétrico | Comprimentos independem da tesselação; cache depende das revisões de curva, intervalo e orientação | NOT_RUN |
+| QA-SEAM-004 | Segmentação por piques | Trechos em ordem e sem sobreposição; ausência/duplicação de marcador gera erro explícito | NOT_RUN |
+| QA-SEAM-005 | Mutação geométrica | Alterar curva ou pique invalida e recalcula comprimento e avaliação dependentes | NOT_RUN |
+| QA-SEAM-006 | Provenance | Fonte, versão da regra, revisão e aprovação rastreáveis no resultado | NOT_RUN |
+| QA-EASE-001 | Ease ausente | Estado `NOT_YET_DEFINED`, sem conversão implícita em zero ou PASS | NOT_RUN |
+| QA-EASE-002 | Diferença local, total igual | Exemplo sintético A=[100,100] mm e B=[95,105] mm não passa apenas porque ambos totalizam 200 mm | NOT_RUN |
+| QA-EASE-003 | Ease por segmento | Membro-alvo, excesso e distribuição explicitamente aprovados; comparação somente com política definida | NOT_RUN |
+| QA-EASE-004 | Tolerâncias distintas | Erro numérico de arco, excesso de ease e tolerância física de montagem não são confundidos | NOT_RUN |
+
+O caso QA-EASE-002 é sintético e demonstra apenas que total igual não prova compatibilidade local. Não representa medidas ou piques da manga Aldrich. Os testes de montagem permanecem bloqueados até aprovar o contrato e os dados do piloto.

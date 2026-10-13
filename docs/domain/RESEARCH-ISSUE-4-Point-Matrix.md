@@ -57,3 +57,10 @@ Foi feita uma verificação Python efêmera das relações aritméticas e das co
 5. Depois da revisão, congelar o golden case, implementar os testes geométricos correspondentes e executar regressão no motor.
 
 **Conclusão de estado:** houve progresso material na leitura ponto a ponto, principalmente nas projeções de 14–18. A Issue #4 permanece aberta. QA-POINT-001 tem resultado aritmético reproduzível; QA-POINT-002/003 têm apenas consistência documental/diagramática nesta rodada; QA-POINT-004/005 e qualquer validação do motor seguem pendentes.
+
+
+## Cross-check no restante do livro — frente/costas e fitting line
+
+A busca por regras adicionais localizou “Separate front and back body sections” nas instruções de `12 Classic raglan sleeve` (PDF p. 121). O contexto separa as peças para adaptar ombros e cavas ao recorte raglan e posiciona pontos específicos na fitting line; não é uma instrução da seção `flat shirt block`. Não deve ser aplicada por analogia para decidir se o bloco base da camisa plana é traçado em dobra, em par ou como duas peças desde o início.
+
+No trecho do `flat shirt` (PDF pp. 35–36), há dois decotes de referência, a chamada de centro “front and back” e marcos para a cava, mas não está descrito como extrair as peças independentes nem qual linha central é dobra/abertura. A fonte também não define handles/tangências para as curvas. O cross-check, portanto, não remove as pendências 3–4; ele evita usar uma adaptação raglan como regra não autorizada para o bloco base. Issue #4 segue aberta aguardando decisão de modelagem e golden case.
