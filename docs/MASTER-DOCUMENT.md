@@ -2,7 +2,7 @@
 
 **Versão da baseline:** 1.7 — pesquisa da Issue #4 ampliada; contrato candidato da Issue #5 documentado como DRAFT
 **Data:** 13/10/2026  
-**Status:** PR #13 está na `main`; a POC genérica segue em 14/14 testes. QA de pontos 14–18 permanece apenas documental/condicional. A Issue #4 continua aberta por escolhas de curvas, fitting line, comprimento da fixture, centros e revisão de modelagem. A Issue #5 tem agora um contrato técnico candidato, ainda sem aprovação, dados de manga, código ou execução de QA. O `PILOT-001` não foi validado e código de produção continua bloqueado.
+**Status:** PR #14 está na `main`; a POC genérica segue em 14/14 testes. QA de pontos 14–18 permanece apenas documental/condicional. A Issue #4 continua aberta por escolhas de curvas, fitting line, comprimento da fixture, centros e revisão de modelagem. A Issue #5 tem um contrato técnico candidato, ainda sem aprovação, dados de manga, código ou execução de QA. O `PILOT-001` não foi validado e código de produção continua bloqueado.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -428,7 +428,7 @@ Revisar com modelagem as propostas das Issues #1/#2 e as classificações da Iss
 
 ## 17. Histórico de consolidação
 
-Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. A versão 1.7 registra o cross-check da Issue #4 (a separação frente/costas em PDF p. 121 pertence à adaptação raglan) e uma proposta DRAFT de contrato `SeamPair`/`AssemblyEase`, com casos QA ainda `NOT_RUN`; não aprova molde nem fecha issues/gates. A versão 1.6 registra o PR #13 integrado, o refinamento documental da matriz da Issue #4 com leitura a 300 dpi da p. 38, a consistência condicional dos pontos 14–18 e a auditoria inicial da Issue #5. A versão 1.5 registra o merge do mapa preliminar da Issue #3 e os resultados limitados da auditoria QA documental. A versão 1.4 registrou o mapa preliminar da Issue #3; a versão 1.3 registrou a pesquisa das medidas das Issues #1/#2, mesclada pelo PR #10 e ainda pendente de revisão de modelagem. A versão 1.2 registrou a incorporação da POC inicial à `main`. Versões anteriores podem ser guardadas como histórico, mas decisões repetidas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
+Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. A versão 1.7, integrada pelo PR #14, registra o cross-check da Issue #4 (a separação frente/costas em PDF p. 121 pertence à adaptação raglan) e uma proposta DRAFT de contrato `SeamPair`/`AssemblyEase`, com casos QA ainda `NOT_RUN`; não aprova molde nem fecha issues/gates. A versão 1.6 registra o PR #13 integrado, o refinamento documental da matriz da Issue #4 com leitura a 300 dpi da p. 38, a consistência condicional dos pontos 14–18 e a auditoria inicial da Issue #5. A versão 1.5 registra o merge do mapa preliminar da Issue #3 e os resultados limitados da auditoria QA documental. A versão 1.4 registrou o mapa preliminar da Issue #3; a versão 1.3 registrou a pesquisa das medidas das Issues #1/#2, mesclada pelo PR #10 e ainda pendente de revisão de modelagem. A versão 1.2 registrou a incorporação da POC inicial à `main`. Versões anteriores podem ser guardadas como histórico, mas decisões repetidas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
 
 
 ---
@@ -500,3 +500,6 @@ O estudo [`RESEARCH-ISSUE-5-SeamPair-AssemblyEase.md`](domain/RESEARCH-ISSUE-5-S
 O contrato candidato requer orientação explícita, limites correspondentes, provenance e invalidação após mudança de curva ou pique. Ease ausente e tolerância física não definidas permanecem `NOT_YET_DEFINED`, nunca zero. Erro numérico do integrador, excesso-alvo de ease e tolerância de montagem são conceitos distintos. A comparação local por segmento não pode ser substituída pela igualdade dos comprimentos totais.
 
 A regra do livro `0–3 = diagonal corporal 5–17 + 3 cm` define um segmento reto de construção da cabeça da manga; não fornece o comprimento de arco da cabeça montada, piques, distribuição de ease ou tolerância. QA-SEAM-001…006 e QA-EASE-001…004 foram especificados, mas permanecem `NOT_RUN` porque o motor atual não implementa o contrato. A Issue #5 segue aberta até modelagem/produção aprovar os dados e haver evidência de montagem.
+
+
+A proposta documental da versão 1.7 foi integrada na `main` pelo [PR #14](https://github.com/JohnGomes84/menswear-cad-suite/pull/14); a Issue #5 permanece aberta para revisão e decisões de modelagem.
