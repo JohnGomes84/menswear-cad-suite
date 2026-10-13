@@ -34,7 +34,7 @@ const check=(res)=>{
    assert.ok(Number.isFinite(edge.lengthMm));
    assert.ok(edge.lengthMm>=0);
    assert.match(edge.pathD,/^M /);
-   assert.equal(edge.referenceKind,"CONSTRUCTION_GUIDE");
+   assert.equal(edge.referenceKind,"DEPENDENCY_CONNECTOR_NOT_BOOK_LINE");
  }
 };
 
