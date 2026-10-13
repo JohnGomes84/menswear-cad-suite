@@ -14,7 +14,7 @@
 5. **Estrutura:** os identificadores frente/costas são transportados por `new Part()` e `asRenderProps()` do FreeSewing como **contêineres de referências e dependências**, não como `PatternPiece`, `SeamEdge` ou `CutEdge` prontos.
 6. **Anotações diagnósticas:** `Point.addText` do FreeSewing rotula pontos. O plugin real `@freesewing/plugin-annotations` executa a macro `grainline` e o objeto `Snippet(notch)` **apenas numa fixture sintética independente da obra**. Nenhum fio/pique técnico é publicado nos contêineres CH02.
 7. **Verificações:** entradas válidas, cadeia de proveniência, referências, cotas textuais, sentidos do diagrama, comprimento dos segmentos via biblioteca externa; **trueing e caimento ainda NOT_RUN**.
-8. **Saída:** `out/ch02-guides.svg`, `out/ch02-diagnostics.json`, `out/ch02-construction-components.json` (FreeSewing Part) e `out/synthetic-annotation-api-proof.json` (somente sintético). O SVG usa dimensões de visualização em pixels, não é impressão em escala 1:1. O contrato proíbe explicitamente `CUT_CONTOUR`, `SEAM_ALLOWANCE`, `SEAM_PAIR`, `NOTCH_PLACEMENT`, `SIZE_GRADING`, `NESTING`, `PRINT_1_TO_1` e `PRODUCTION_RELEASE`.
+8. **Saída:** `out/ch02-guides.svg`, `out/ch02-diagnostics.json`, `out/ch02-construction-components.json` (FreeSewing Part), `out/synthetic-annotation-api-proof.json` (somente sintético) e `out/ch02-semantic-contract.json` (semântica independente + gates). O SVG usa dimensões de visualização em pixels, não é impressão em escala 1:1. O contrato proíbe explicitamente `CUT_CONTOUR`, `SEAM_ALLOWANCE`, `SEAM_PAIR`, `NOTCH_PLACEMENT`, `SIZE_GRADING`, `NESTING`, `PRINT_1_TO_1` e `PRODUCTION_RELEASE`.
 
 ## Executar com Node 22
 
@@ -32,7 +32,7 @@ npm test --prefix prototype/integration-spike
 npm run demo --prefix prototype/integration-spike
 ```
 
-A CI repete os comandos em Node 22 e executa **21 testes**: 9 da integração original, 2 do lockfile/licença e 10 da prova FreeSewing Part/plugin de anotações; publica **quatro arquivos** separados, todos de pesquisa.
+A CI repete os comandos em Node 22 e executa **26 testes**: 9 da integração original, 2 do lockfile/licença, 10 da prova FreeSewing Part/anotações e 5 de reconciliação com o contrato semântico; publica **cinco arquivos** separados, todos de pesquisa.
 
 ## Por que a POC é isolada
 
@@ -52,3 +52,8 @@ Ver `docs/architecture/REUSE-DECISION-001.md` e `docs/qa/QA-REUSE-001.md`.
 ## Regra de segurança da semântica de linhas
 
 Os conectores derivados do primeiro ponto de referência da instrução recebem `DEPENDENCY_CONNECTOR_NOT_BOOK_LINE`, pois **não se pode afirmar que estejam desenhados no livro**. O módulo [partBridge](src/partBridge.mjs) identifica-os como `CONSTRUCTION_TRACE`, nunca como costura, corte, fio, pique, dobra ou margem. Antes da adoção em produção, substituir a API interna `Part.__boundary()` por uma API estável e verificar o comportamento completo de renderização e exportação do plugin de anotações. [Especificação](../../docs/architecture/PIECE-ANNOTATION-SEMANTICS-001.md).
+
+
+## Contrato semântico próprio e margens CH02
+
+O quinto arquivo `ch02-semantic-contract.json` contém entidades `SemanticPiece/SemanticEdge` e evidências rastreadas ao livro, cada conector representando **somente uma dependência**. O algoritmo é próprio e agnóstico ao FreeSewing. Testes cruzados reconciliam posições e comprimentos com `Part` nativo. Não há `SEAM_LINE`, `CUT_LINE`, fio ou pique da obra nesta saída. A regra de 10 mm de margem **já incluída** no bloco de Aldrich PDF p.31 está em `aldCh02AllowancePolicy.ts`, mas com exceções ainda não mapeadas por aresta; qualquer offset é bloqueado. Ver [especificação](../../docs/architecture/GARMENT-SEMANTICS-001.md).
