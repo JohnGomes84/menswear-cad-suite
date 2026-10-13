@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.9 DRAFT
+**Baseline corrente:** 1.10 DRAFT (proposta nesta branch)
 
 ## Situação executiva
 
@@ -60,3 +60,17 @@ Frontend, autenticação, banco, editor final, gradação, DXF, nesting e 3D per
 - Evidência: [workflow #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254), sucesso com 27 testes; também passaram checks nominais dos artefatos e hashes iguais no mesmo runner.
 - Gate A: **IN_REVIEW**, aguardando revisão formal e análise dos limites de precisão/calibração física.
 - Gate B: **NO-GO**, sem golden case ou validação de cava/manga.
+
+
+## Gate experimental web — proposta de início de implementação isolada
+
+A base para um shell web com curvas sintéticas foi formalizada em `docs/gates/GATE-APP-001.md`, `docs/architecture/APP-FOUNDATION-001.md` e `docs/decisions/ADR-0003-experimental-app-foundation.md`. Esse escopo é **independente** do bloco Aldrich e não altera Gate B = NO-GO.
+
+- TypeScript strict + React + Vite + viewport SVG como escolhas iniciais de engenharia, revisáveis.
+- Contratos e requisitos de projeto sintético/undo/redo/validação em `docs/qa/QA-APP-001.md`.
+- Nenhum app funcional ou schema de produção criado por esta decisão; critérios QA-APP seguem `NOT_RUN`.
+- Integração com `PILOT-001`, dados pessoais, backend e exportação para corte permanecem bloqueadas.
+
+## Pesquisa numérica complementar
+
+Foi incluído na branch de pesquisa um benchmark Gauss-Legendre independente do integrador Simpson e um fixture matemático analítico de parábola. A primeira execução em CI da branch passou **30/30 testes**; merge e testes pós-merge ainda precisam ser confirmados.

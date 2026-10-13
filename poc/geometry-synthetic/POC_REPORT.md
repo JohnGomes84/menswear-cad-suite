@@ -39,3 +39,14 @@ A rodada inicial de 14 testes permanece documentada acima como histórico. [PR #
 Evidência: [workflow #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254), **27 testes PASS**, além de validação estrutural nominal dos artefatos e comparação de hashes no mesmo runner. Esses resultados não constituem medição física de impressão nem garantia universal de tolerância numérica.
 
 Permanecem por investigar: curvas com cuspidez/inflexão extrema, quadratura de alta precisão independente da referência do integrador, comparação curva–polilinha em casos difíceis, offsets multicomponentes/de largura variável, impressão física e medição de escala.
+
+
+## Quadratura independente — benchmark em branch de pesquisa (13/10/2026)
+
+Foi acrescentado `test_independent_quadrature.py`, contendo quadratura Gauss-Legendre com cálculo próprio de raízes/pesos, independente da integração Simpson do kernel experimental. Inclui três fixtures:
+
+1. Parábola exata `(x,y)=(t,t²)` construída como Bézier cúbica; referência analítica `sqrt(5)/2 + asinh(2)/4` mm.
+2. Cúbica sintética com inflexão; confronto Gauss-Legendre de ordens 64/128 com o algoritmo Simpson.
+3. Curva original da POC; comparação com a técnica independente e reversão.
+
+A execução da branch em [CI #38455165016](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38455165016) passou em **30 testes**, sem falhas. Essa evidência não é prova de erro global de todos os tipos de curva, nem aprovação de cálculo industrial ou impressão física. Issue #21 continua em aberto para casos extremos e revisão independente.
