@@ -1,0 +1,246 @@
+{
+  "poc": "Fase 1.5 — geometria sintética",
+  "scope_warning": "Experimento computacional; não valida bloco, caimento, montagem, impressão de produção nem PILOT-001.",
+  "units": "mm",
+  "environment": {
+    "python": "3.12.3",
+    "shapely": "2.2.0"
+  },
+  "curve": {
+    "type": "cubic_bezier",
+    "control_points_mm": [
+      [
+        25.0,
+        30.0
+      ],
+      [
+        35.0,
+        135.0
+      ],
+      [
+        170.0,
+        145.0
+      ],
+      [
+        205.0,
+        45.0
+      ]
+    ],
+    "reference_length_mm": 258.1271065334417
+  },
+  "orientation_reversal": {
+    "status": "LENGTH_PRESERVED",
+    "forward_length_mm": 258.1271065334417,
+    "reversed_length_mm": 258.1271065334417
+  },
+  "degenerate_curve": {
+    "status": "INVALID_DEGENERATE",
+    "length_mm": 0.0,
+    "min_length_mm": 1e-09
+  },
+  "segment_intersections": {
+    "crossing": {
+      "status": "POINT",
+      "geometry_type": "Point",
+      "coordinates_mm": [
+        [
+          5.0,
+          5.0
+        ]
+      ],
+      "shapely_version": "2.2.0"
+    },
+    "disjoint": {
+      "status": "NONE",
+      "geometry_type": "LineString",
+      "shapely_version": "2.2.0"
+    }
+  },
+  "integration_sweep": [
+    {
+      "integration_eps_mm": 0.01,
+      "length_mm": 258.12558965473033,
+      "absolute_delta_from_1e-11_mm": 0.0015168787113566395
+    },
+    {
+      "integration_eps_mm": 0.0001,
+      "length_mm": 258.1271066646482,
+      "absolute_delta_from_1e-11_mm": 1.312064910052868e-07
+    },
+    {
+      "integration_eps_mm": 1e-06,
+      "length_mm": 258.12710653349836,
+      "absolute_delta_from_1e-11_mm": 5.667288860422559e-11
+    },
+    {
+      "integration_eps_mm": 1e-08,
+      "length_mm": 258.1271065334414,
+      "absolute_delta_from_1e-11_mm": 2.8421709430404007e-13
+    },
+    {
+      "integration_eps_mm": 1e-10,
+      "length_mm": 258.1271065334417,
+      "absolute_delta_from_1e-11_mm": 0.0
+    }
+  ],
+  "flattening_sweep": [
+    {
+      "flatness_parameter_mm": 5.0,
+      "vertices": 9,
+      "polyline_length_mm": 256.89147773175716,
+      "length_shortfall_mm": 1.235628801684527
+    },
+    {
+      "flatness_parameter_mm": 2.0,
+      "vertices": 11,
+      "polyline_length_mm": 257.1445584697337,
+      "length_shortfall_mm": 0.9825480637080091
+    },
+    {
+      "flatness_parameter_mm": 1.0,
+      "vertices": 17,
+      "polyline_length_mm": 257.8184791399383,
+      "length_shortfall_mm": 0.30862739350340007
+    },
+    {
+      "flatness_parameter_mm": 0.5,
+      "vertices": 21,
+      "polyline_length_mm": 257.8833035025575,
+      "length_shortfall_mm": 0.24380303088418032
+    },
+    {
+      "flatness_parameter_mm": 0.25,
+      "vertices": 33,
+      "polyline_length_mm": 258.04996683964816,
+      "length_shortfall_mm": 0.07713969379352648
+    },
+    {
+      "flatness_parameter_mm": 0.1,
+      "vertices": 65,
+      "polyline_length_mm": 258.10782267718787,
+      "length_shortfall_mm": 0.01928385625382134
+    },
+    {
+      "flatness_parameter_mm": 0.05,
+      "vertices": 65,
+      "polyline_length_mm": 258.10782267718787,
+      "length_shortfall_mm": 0.01928385625382134
+    }
+  ],
+  "notches": [
+    {
+      "fraction": 0.25,
+      "arc_length_mm": 64.53177663336035,
+      "point_mm": [
+        49.95080887408501,
+        88.20876176807349
+      ],
+      "tangent": [
+        0.6887313695845596,
+        0.7250166208785678
+      ]
+    },
+    {
+      "fraction": 0.5,
+      "arc_length_mm": 129.0635532667207,
+      "point_mm": [
+        107.23388410390761,
+        114.48832083460628
+      ],
+      "tangent": [
+        0.9981128760967818,
+        0.06140591640721778
+      ]
+    },
+    {
+      "fraction": 0.75,
+      "arc_length_mm": 193.59532990008105,
+      "point_mm": [
+        167.90138652298737,
+        96.59164689635942
+      ],
+      "tangent": [
+        0.8076644250600171,
+        -0.5896424140888034
+      ]
+    }
+  ],
+  "offset_constant_width_concave": {
+    "status": "VALID",
+    "input_area_mm2": 3868.0,
+    "output_area_mm2": 5396.0,
+    "output_type": "Polygon",
+    "components": 1,
+    "is_valid": true,
+    "is_empty": false,
+    "distance_mm": 4.0,
+    "join_style": "mitre",
+    "shapely_version": "2.2.0",
+    "outlines_mm": [
+      [
+        [
+          31.0,
+          31.0
+        ],
+        [
+          31.0,
+          109.0
+        ],
+        [
+          62.0,
+          109.0
+        ],
+        [
+          62.0,
+          66.0
+        ],
+        [
+          78.0,
+          66.0
+        ],
+        [
+          78.0,
+          109.0
+        ],
+        [
+          109.0,
+          109.0
+        ],
+        [
+          109.0,
+          31.0
+        ],
+        [
+          31.0,
+          31.0
+        ]
+      ]
+    ]
+  },
+  "self_intersecting_input": {
+    "status": "INVALID_INPUT",
+    "is_valid": false,
+    "area_mm2": 0.0,
+    "shapely_version": "2.2.0"
+  },
+  "excessive_erosion": {
+    "status": "INVALID_RESULT",
+    "input_area_mm2": 1200.0,
+    "output_area_mm2": 0.0,
+    "output_type": "Polygon",
+    "components": 1,
+    "is_valid": true,
+    "is_empty": true,
+    "distance_mm": -100.0,
+    "join_style": "mitre",
+    "shapely_version": "2.2.0",
+    "outlines_mm": [
+      []
+    ]
+  },
+  "variable_width_offset": {
+    "status": "NOT_IMPLEMENTED",
+    "note": "Este protótipo usa buffer de largura constante; larguras variáveis exigem experimento separado."
+  },
+  "production_tolerances": "NOT_SET — os sweeps registram comportamento observado, não tolerâncias aprovadas."
+}

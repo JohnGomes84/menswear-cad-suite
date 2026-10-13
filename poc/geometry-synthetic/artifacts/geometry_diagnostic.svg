@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240mm" height="160mm" viewBox="0 0 240 160">
+<rect width="240" height="160" fill="white"/>
+<g transform="translate(0,160) scale(1,-1)">
+<path d="M 25 30 C 35 135 170 145 205 45" fill="none" stroke="#145da0" stroke-width="0.8"/>
+<polyline points="25.00000,30.00000 26.29684,39.56497 28.28491,48.57056 30.92300,57.01401 34.16992,64.89258 37.98447,72.20352 42.32544,78.94409 52.42188,90.70312 64.12964,100.14771 77.11914,107.25586 91.06079,112.00562 105.62500,114.37500 120.48218,114.34204 135.30273,111.88477 149.75708,106.98120 163.51562,99.60938 176.24878,89.74731 187.62695,77.37305 197.32056,62.46460 201.43265,54.05319 205.00000,45.00000" fill="none" stroke="#d1495b" stroke-width="0.35" stroke-dasharray="2 1"/>
+<line x1="51.40084" y1="86.83130" x2="48.50078" y2="89.58622" stroke="#202020" stroke-width="0.8"/>
+<line x1="107.35670" y1="112.49210" x2="107.11107" y2="116.48455" stroke="#202020" stroke-width="0.8"/>
+<line x1="166.72210" y1="94.97632" x2="169.08067" y2="98.20698" stroke="#202020" stroke-width="0.8"/>
+<polygon points="35,35 105,35 105,105 82,105 82,62 58,62 58,105 35,105" fill="none" stroke="#2a9d8f" stroke-width="0.6"/>
+<polyline points="31.00000,31.00000 31.00000,109.00000 62.00000,109.00000 62.00000,66.00000 78.00000,66.00000 78.00000,109.00000 109.00000,109.00000 109.00000,31.00000 31.00000,31.00000" fill="none" stroke="#e76f51" stroke-width="0.6"/>
+</g>
+<text x="8" y="12" font-size="4">Blue: Bezier; red dashed: flattening; black: arc-length notches</text>
+<text x="8" y="18" font-size="4">Green: input polygon; orange: Shapely buffer; units: mm</text>
+<text x="8" y="154" font-size="4">POC only — not a garment pattern; SVG viewBox is in mm</text>
+</svg>
