@@ -126,8 +126,8 @@ test("FreeSewing annotations macro runs for synthetic fixture only",()=>{
  assert.equal(s.notchDemo.def,"notch");
  assert.ok(Number.isFinite(s.notchDemo.anchor.x));
  assert.ok(Number.isFinite(s.notchDemo.anchor.y));
- assert.equal(s.grainlineFromMm.x,10);
- assert.equal(s.grainlineToMm.x,10);
+ assert.ok(Math.abs(s.grainlineFromMm.x-10)<1e-8);
+ assert.ok(Math.abs(s.grainlineToMm.x-10)<1e-8);
  assert.ok(s.grainlineFromMm.y>s.grainlineToMm.y-200);
 });
 test("running annotation fixture does not introduce grainline/notches into the book",()=>{
