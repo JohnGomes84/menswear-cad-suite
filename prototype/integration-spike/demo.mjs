@@ -33,7 +33,7 @@ await Promise.all([
  writeFile(new URL("./out/synthetic-annotation-api-proof.json",import.meta.url),
   JSON.stringify(annotations,null,2)+"\n","utf8"),
  writeFile(new URL("./out/ch02-semantic-contract.json",import.meta.url),
-  JSON.stringify({project:semantics,validation:semanticGate},null,2)+"\\n","utf8")
+  JSON.stringify({project:semantics,validation:semanticGate},null,2)+"\n","utf8")
 ]);
 console.log(JSON.stringify({
  state:result.diagnostics.state,
