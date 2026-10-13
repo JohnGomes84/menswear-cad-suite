@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.20 DRAFT (auditoria textual inicial de calça plana)
+**Baseline corrente:** 1.21 DRAFT — interpretador sequencial de construção
 
 ## Situação executiva
 
@@ -134,3 +134,12 @@ O diagrama da página 34 do livro foi inspecionado visualmente, permitindo orien
 ## Contrato 0.4 de constraints dirigidas persistentes
 
 O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões. A mudança de origem reavalia o destino. [CI #38468690640](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38468690640): **93/93 testes web e build PASS**. **UI e E2E do schema 0.4 ainda não implementados**; o atual SceneLab segue com 0.3 e alinhamentos pontuais. Solver simultâneo e regras da obra continuam bloqueados/pendentes.
+
+
+## Interpretador fundamentado no passo a passo do livro — 13/10/2026
+
+- `draftingInterpreter.ts`: operadores geométricos genéricos executados na ordem da fonte, medidas corporais em mm, fórmulas e `instructionTrace` com capítulo/página.
+- `aldCh02FlatTrouserProgram.ts`: passos parciais das frentes dos dois blocos de calça flat, BASIC/EASY, fonte PDF pp. 32–34; `flatTrouserResearch.ts` deixou de duplicar regras.
+- Corrigida divergência de leitura: ponto **12 à direita de 11**, ponto **13 à esquerda**, ponto 14 na guia 1→12 e ponto 15 simétrico pelo ponto 10; documentação CH02-DIAGRAM revisada.
+- [CI web #38473802868](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38473802868): **109/109 testes PASS + build**, incluindo fixtures fonte-dirigidas.
+- Ainda **RESEARCH_ONLY**: faltam costas, curvas, topologia, margens, revisão de modelista e prova física. Gate B NO-GO.

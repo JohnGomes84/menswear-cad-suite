@@ -59,3 +59,10 @@ A calça exige **blocos inferior, linhas de gancho, costura interna/externa, rel
 A auditoria textual não autoriza modelagem real, fórmulas completas, arquivo STEP/DXF para produção, prova de vestibilidade ou promoção do Gate B do `PILOT-001`.
 
 **Próxima ação vinculada:** [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44) — revisão de páginas/diagramas, protocolos, matriz de pontos e golden fixture do bloco de calça.
+
+
+## Retificação de direção e execução sequencial
+
+A leitura ampliada do **diagrama na página PDF 34**, confrontada com as instruções da p. 33, demonstrou que a implementação anterior invertera a orientação de `11→12` e `11→13`. Os pontos `12` e `13` de duas peças estão **respectivamente à direita e à esquerda de `11`**; `14` é a interseção da guia `1→12` com o joelho e `15` o ponto oposto pela vertical de `10`. Essa retificação não muda a interpretação da fixture **escalar** de comprimento, mas muda as coordenadas x e qualquer construção dependente.
+
+A [especificação de execução](../architecture/PATTERN-INSTRUCTION-001.md) vincula cada passo à origem. O programa `aldCh02FlatTrouserProgram.ts` é `RESEARCH_ONLY`: a frente é parcial, sem costas/curvas/linha de corte validada. A fonte permanece no máximo `TEXT_REVIEWED + DIAGRAM_PARTIAL`.

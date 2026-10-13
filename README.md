@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.20 DRAFT**
+- Documento Mestre: **baseline 1.21 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -82,3 +82,8 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 
 
 **Constraints 0.4:** contrato experimental de persistência/reavaliação de relações dirigidas em `prototype/web-app/src/constrainedSceneV4.ts`, independente de camisas/calças. Testado em 93 casos unitários; **a UI 0.4 ainda é pendente**. [Contrato](docs/architecture/CONSTRAINTS-V4-001.md).
+
+
+## Motor de instruções do livro (experimento)
+
+Em `prototype/web-app/src/draftingInterpreter.ts`, medidas e expressões paramétricas são executadas conforme uma sequência de passos com rastreabilidade a capítulo e página. Os programas CH02 de frente de calça estão em `aldCh02FlatTrouserProgram.ts` — **não são moldes prontos**. [Contrato e limitações](docs/architecture/PATTERN-INSTRUCTION-001.md). A lógica aplica-se a outros métodos somente quando as suas instruções forem individualmente auditadas.

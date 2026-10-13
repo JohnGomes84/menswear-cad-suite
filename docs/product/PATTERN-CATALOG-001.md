@@ -30,3 +30,8 @@ Este material é independente do domínio da camisa e ajuda a evitar uma arquite
 ## Evidência visual parcial (capítulo 2)
 
 O diagrama original da página **34 do PDF** foi inspecionado visualmente. `ALD-CH02-01` agora possui evidência de frente **`PARTIAL_FRONT_GRID`**, referenciada em [CH02-DIAGRAM-001](../domain/CH02-DIAGRAM-001.md), e cálculo de pontos em `prototype/web-app/src/flatTrouserResearch.ts`. O status de fonte **permanece `TEXT_REVIEWED`**, pois faltam revisão completa dos traçados de costas, curvas, exceções de costura e aprovação técnica. Nenhuma peça está implementada.
+
+
+## Execução controlada do método CH02
+
+A frente das calças planas de uma e duas peças foi reexpressa como **instruções sequenciais rastreáveis** em `prototype/web-app/src/aldCh02FlatTrouserProgram.ts`, executadas por um interpretador genérico. Correção da orientação de `12/13` e dependências `14/15` registrada em `CH02-DIAGRAM-001`. O registro continua `TEXT_REVIEWED + PARTIAL_FRONT_GRID`, **não implementado como molde real**. Os outros 53 assuntos do catálogo continuam `TOC_ONLY`.

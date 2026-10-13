@@ -26,7 +26,7 @@ A figura do livro foi observada diretamente, não apenas pelo texto extraído. O
 ### Frente — bloco de duas peças
 
 - `9` à esquerda de `1` na linha da altura do gancho; `10` e `11` são suas projeções nos níveis de joelho e barra.
-- `12` e `13` distribuem-se simetricamente à esquerda/direita de `11`.
+- **`12` fica à direita de `11` e `13` à esquerda**, conforme o diagrama original da página PDF 34. A implementação anterior estava invertida e os testes reproduziam esse erro.
 - `14` é obtido pela interseção da guia `1→12` com a linha do joelho, situada na metade do comprimento interno da perna.
 - `15` compensa simetricamente a posição `14` em relação ao eixo `10`, conforme instrução `10→15=10→14`.
 - Esses pontos são **guias da frente**, não polígonos que possam ser enviados ao plotter para corte.
@@ -51,6 +51,10 @@ Para tamanho MEDIUM da amostra textual (`seat=1020`, `rise=282`, `insideLeg=800`
 | `8.x` | -363,75 mm | -423,75 mm |
 | `9.x` uma peça | -216,667 mm aprox. | -248,333 mm aprox. |
 | `9.x` duas peças | -157,5 mm | -177,5 mm |
+
+**Conferência corrigida (calça duas peças):** na variante BASIC, os pontos `12` e `13` são respectivamente `x=-49,1667` e `x=-265,8333` mm; a interseção do ponto `14` na guia `1→12` fornece `x=-24,5833` mm e a reflexão `15` fornece `x=-290,4167` mm. A variante EASY fornece `x12=-55,8333`, `x13=-299,1667`, `x14=-27,9167` e `x15=-327,0833` mm. Esses números são derivados das **instruções textuais da página 33 e sentidos da figura da página 34**, não medidas retiradas de pixels.
+
+O núcleo `flatTrouserResearch.ts` deixou de codificar diretamente as fórmulas e executa `aldCh02FlatTrouserProgram.ts` por meio do interpretador genérico `draftingInterpreter.ts`, com `instructionTrace` por ponto. O código de pesquisa continua explicitamente incapaz de gerar linha de corte.
 
 **Observação:** a ordenação dos pontos não representa linha de corte, e valores negativos são apenas sinal de coordenadas de engenharia.
 

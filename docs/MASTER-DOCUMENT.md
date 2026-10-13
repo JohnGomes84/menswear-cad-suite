@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.20 DRAFT — persistência reativa de constraints no laboratório 0.4
+**Versão da baseline:** 1.21 DRAFT — interpretador sequencial rastreável das instruções do livro
 **Data:** 13/10/2026  
-**Status:** CH02 com esqueleto de pontos de pesquisa integrado à main, sem moldes reais. Overlay experimental 0.4 de constraints dirigidas reativas em revisão; 93/93 testes unitários e build PASS em CI de branch. Catálogo: 53 tópicos TOC_ONLY; um TEXT_REVIEWED com DIAGRAM_PARTIAL. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** núcleo de interpretação de instruções em análise por PR, fundamentado no capítulo 2 (PDF 32–34). Testes unitários 109/109 e build aprovados na CI de branch. Corrigida inversão dos pontos 12/13 e dependências 14/15 da calça de duas peças. Catálogo: 53 TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -754,3 +754,20 @@ Essa é a primeira verificação computacional de **outra família de roupa** co
 **Limitações inalteradas:** um destino recebe no máximo uma regra dirigida; não existe solver simultâneo, nem recomposição topológica de peça de roupa ou precisão industrial aprovada. O `0.4.0` usa base fixa de entidades e um limite experimental de 256 comandos de constraints. O uso de `SOLVED` significa solução matematicamente consistente no laboratório, não caimento ou costura validada. A continuação está na [Issue #43](https://github.com/JohnGomes84/menswear-cad-suite/issues/43).
 
 Gates permanecem: APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO.
+
+
+---
+
+## 39. Execução das instruções do método como fonte da geometria — baseline 1.21 DRAFT
+
+O núcleo universal foi ampliado por `prototype/web-app/src/draftingInterpreter.ts` para interpretar **passos de construção em sequência**, seguindo medidas do corpo e dependências já construídas, **sem inferir pontos a partir da figura ou copiar desenhos**. O contrato é [PATTERN-INSTRUCTION-001](architecture/PATTERN-INSTRUCTION-001.md). Cada passo declara operação, expressão aritmética em milímetros e proveniência `sourceId/chapter/pdfPage/instruction`, gerando `pointsMm` e `instructionTrace`.
+
+Operações inicialmente necessárias ao capítulo 2: origem, deslocamento cardinal, projeção perpendicular a eixos, interseção de segmento com linha horizontal e reflexão sobre eixo vertical. Fórmulas: medida, constante, distância, soma, subtração e multiplicação por fator. Entradas malformadas, referências futuras, direção não autorizada, distâncias negativas, interseções ambíguas e coordenadas não finitas **falham explicitamente**.
+
+**Método de referência com fonte auditada:** os programas `aldCh02FlatTrouserProgram.ts` representam a **construção parcial da frente** de calças flat de uma e duas peças, nos casos básico/folgado, acompanhando texto das páginas PDF 32 e 33 e **direções** do diagrama PDF 34. `flatTrouserResearch.ts` agora apenas os executa; a fórmula específica de calça **não está no kernel**.
+
+**Correção identificada em auditoria contra o livro:** antes, na calça de duas peças, `12` foi deslocado à esquerda e `13` à direita; o desenho indica o contrário. Para a amostra BASIC com `seat=1020, bodyRise=282, insideLeg=800 mm`, `12=(-49,1667;1102)`, `13=(-265,8333;1102)`, `14=(-24,5833;702)` e `15=(-290,4167;702)`, em mm, calculados por expressões e interseção/simetria. Os testes anteriores eram autorreferenciais e foram corrigidos com evidência independente do texto/diagrama.
+
+[CI #38473802868](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38473802868): **109/109 testes unitários + build TypeScript/Vite PASS**. O estado da frente é **RESEARCH_ONLY**, com `DIAGRAM_PARTIAL`: nenhuma curva, costas completas, contorno de corte, margens por aresta, prova física ou parecer profissional foram concluídos. O interpretador é um **subconjunto mínimo de operadores derivados da fonte**, não cobertura dos 14 capítulos nem sistema genérico completo.
+
+**Próxima prioridade baseada no livro:** auditar as instruções **Back section** do capítulo 2, pp. 32–33, confrontar com a figura p. 34, validar cada referência e só então ampliar o programa. Qualquer novo operador deve ser motivado por uma instrução concreta da obra e trazer fixture independente, sem inventar curvas.
