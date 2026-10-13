@@ -10,7 +10,7 @@ Requer Node 22 ou compatível com Vite 7.
 
 ```bash
 cd prototype/web-app
-npm install
+npm ci
 npm run test
 npm run build
 npm run dev
@@ -25,7 +25,7 @@ A aplicação abre no endereço informado por Vite.
 - Renderização SVG não calcula comprimento canônico, costuras ou piques. O campo de comprimento mostra `NOT_RUN` e o bloco real `NOT_YET_DEFINED`.
 - Não faz persistência automática, autenticação, backend, telemetria nem exportação para corte.
 - Os limites de importação são provisórios e não substituem revisão de segurança.
-- Dependências e lockfile deverão passar por verificação de proveniência/licenças antes de release; bibliotecas do protótipo não ficam automaticamente aprovadas para produção.
+- As dependências diretas estão fixadas e o `package-lock.json` registra a árvore usada na CI; licenças/avisos das dependências transitivas ainda exigem auditoria antes de qualquer release. Bibliotecas do protótipo não ficam automaticamente aprovadas para produção.
 - O portal GitHub já possui CI para geometria Python; este protótipo terá pipeline próprio.
 
 Documentos: `../../docs/gates/GATE-APP-001.md`, `../../docs/architecture/APP-FOUNDATION-001.md` e `../../docs/qa/QA-APP-001.md`.
