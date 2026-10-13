@@ -79,3 +79,10 @@ Execução bloqueada por identidade de passo/ponto repetida, medida inexistente 
 - **Gate APP:** experimento numérico; **Gate A:** IN_REVIEW; **Gate B PILOT-001:** NO-GO; comercial: NO-GO.
 
 **Próxima sequência de trabalho fundamentada:** revisar as instruções **BACK SECTION** do mesmo capítulo e decompor seus pontos e operações (incluindo curvas, sem inventar tangências) antes de estender outras peças. Continuar a auditoria metódica das famílias do livro na Issue #30, com problemas da calça na Issue #44.
+
+
+## Continuação vinculada ao livro: instruções de costas (CH02)
+
+Os programas `aldCh02FlatTrouserBackProgram.ts` executam **depois da frente** os pontos das costas de calças `ONE_PIECE` (12–18) e `TWO_PIECE` (16–25), preservando o texto das páginas PDF 32 e 33 e revisão de sentidos na figura p.34. O executor passou a incluir na trilha de dependências os pontos usados em `DISTANCE_MM` dentro de expressões escalares aninhadas, não só a referência direta de um `OFFSET`. O modo `RESEARCH_ONLY` permanece obrigatório.
+
+A pesquisa [CURVES-RESEARCH-001](../domain/CURVES-RESEARCH-001.md) define uma fronteira distinta: o interpretador já executa cotas/pontos e guias; **traçados de curva** requerem satisfazer requisitos documentados e uma escolha matemática aprovada, sem construir Béziers a partir de parâmetros arbitrários.
