@@ -39,3 +39,7 @@ Documentos: `../../docs/gates/GATE-APP-001.md`, `../../docs/architecture/APP-FOU
 ## Histórico persistido (experimento)
 
 `createEditor(importProject(file))` reconstitui a lista de edições passadas a partir dos eventos validáveis. Se o arquivo tiver histórico parcial, revisões incongruentes, coordenadas finais inconsistentes ou encadeamento inválido, sua leitura será bloqueada em vez de inventar snapshots. O histórico reconstruído é intencionalmente restrito aos comandos `MOVE_CONTROL_POINT` do modo `FREE`; histórico de constraints, regras, `PARAMETRIC_OVERRIDE` e estados pré-evento complexos exigirá schema novo.
+
+## Cena 0.3 e testes Chromium
+
+Menu **Editor multi-entidades**: criar/remover linhas e curvas, undo/redo com histórico persistido, salvar/abrir JSON 0.3.0 e converter 0.2 com confirmação. Arquivos 0.1 permanecem no laboratório legado. Com Node 22: `npm ci`, `npm test` para testes unitários, e `npx playwright install chromium` seguido de `npm run test:e2e` para testes reais de browser. Dependências de teste são apenas POC. Nenhum molde real é exportado.
