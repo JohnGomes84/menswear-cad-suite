@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.22 DRAFT — costas CH02 e requisitos de curvas pesquisados
+**Baseline corrente:** 1.23 DRAFT — interoperabilidade real FreeSewing + inventário de reaproveitamento CAD
 
 ## Situação executiva
 
@@ -152,3 +152,12 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - [CI web #38476422267](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38476422267): **123/123 testes e build PASS**.
 - `CURVES-RESEARCH-001.md` documenta técnicas de gancho, francês, tangência, walking seams e toile; `CH02-CURVE-REQUIREMENTS-001.json` relaciona oito restrições métricas da obra; **splines não definidas/geradas**.
 - Catálogo permanece TEXT_REVIEWED/DIAGRAM_PARTIAL para ALD-CH02-01; método real não implementado, Gate B NO-GO.
+
+
+## Integração funcional auditada com software existente — experimental
+
+- Matriz integral por subsistema: `docs/architecture/REUSE-DECISION-001.md` (medidas, execução, geometria, peças, anotações, costuras, grade, render, impressão, DXF, encaixe, 3D, PLM).
+- POC `prototype/integration-spike`: execução **real** do programa de pontos de Aldrich CH02 com `@freesewing/core@4.0.0` `Point/Path`, grupos frente/costas, SVG e JSON **diagnósticos**, sem contorno de corte. Nenhuma dependência instalada no shell web do produto.
+- [CI #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9/9 testes de integração PASS**, SVG/JSON gerados e disponibilizados como artefatos do GitHub Actions.
+- Incompatibilidade identificada: plugin FreeSewing 4.0.0 requer `@freesewing/config` em tempo de execução sem declará-lo; declarado explicitamente na POC, não tratado como solução pronta para produção.
+- **Bloqueios:** dependências transitivas sem lock, auditoria de licenças, anotações reais não integradas, costuras/margens/curvas ainda não aprovadas, escala 1:1 não executada, Gate B PILOT-001 NO-GO.
