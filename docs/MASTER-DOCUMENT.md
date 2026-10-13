@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.22 DRAFT — costas do CH02 e pesquisa fundamentada de técnicas de curvas
+**Versão da baseline:** 1.23 DRAFT — integração vertical com componentes CAD existentes e matriz de reaproveitamento integral
 **Data:** 13/10/2026  
-**Status:** instruções de pontos de frente e costas do CH02 em laboratório RESEARCH_ONLY, implementadas em branch; 123/123 testes web e build PASS, catálogo de técnicas de curva sob validação. Esboços ainda sem curvas de costura/corte aprovadas. 53 entradas TOC_ONLY e um método TEXT_REVIEWED com DIAGRAM_PARTIAL. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
+**Status:** método de construção CH02 (texto e diagrama parciais) em RESEARCH_ONLY, com prova isolada de execução mediante @freesewing/core 4.0.0: 9/9 testes de integração e SVG/JSON diagnóstico gerados na CI. O aplicativo principal permanece sem dependência FreeSewing, nenhum molde real liberado. Catálogo: 53 TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL; Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -786,3 +786,18 @@ Os critérios antes de gerar curvas são: (i) localizar no diagrama as referênc
 Evidência inicial: [web CI #38476422267](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38476422267), **123/123 testes + build PASS**. A verificação do registro de curvas roda separadamente na CI de catálogo; documentos adicionais não aprovam geometria. O método `ALD-CH02-01` continua `TEXT_REVIEWED`, com revisão parcial `PARTIAL_FRONT_BACK_GUIDES`; **nenhum bloco de produção é IMPLEMENTED**, ainda não há curvas validadas, escala física ou `SeamPair` conferido.
 
 Gate B e release: **NO-GO**.
+
+
+---
+
+## 41. Matriz de reaproveitamento dos sistemas CAD e primeira interoperabilidade real — 1.23 DRAFT
+
+A decisão de engenharia passa a avaliar **todo o ciclo do produto** (medidas corporais, métodos, geometria, peças, anotações, margens, gradação, validação de costuras, SVG, PDF, DXF, encaixe, 3D e gestão), em vez de concentrar pesquisa em curvas. O estudo auditável está em [REUSE-DECISION-001](architecture/REUSE-DECISION-001.md), com repositórios/fontes verificadas de FreeSewing, Seamly2D, Valentina, SVGnest, ezdxf, pdf-lib e Three.js. O conhecimento de sistemas GPL/proprietários permanece separado de reutilização de código.
+
+A **primeira prova vertical executada** está em `prototype/integration-spike` e usa de fato `@freesewing/core@4.0.0` (`Point`, `Path.move/line/length/asPathstring`). O interpretador original dos métodos do livro (CH02, PDF pp.32–34) é compilado a partir dos próprios fontes TypeScript existentes, **não reimplementado em paralelo**. A cadeia é `medidas em mm → DraftProgram Aldrich → sourceTrace → guias medidos pelo FreeSewing → grupos frente/costas → SVG de diagnóstico e JSON com checagens`. São quatro configurações de método/variante e medição personalizada, sem reconstituir manualmente os pontos. **Grupos não são peças de tecido e guias não são costuras nem corte.**
+
+Evidência [CI #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9 testes de fluxo + 2 verificações da árvore de dependências**; dois artefatos de pesquisa gerados e publicados pelo job (SVG de guias, JSON diagnóstico), não arquivos de corte. [QA-REUSE-001](qa/QA-REUSE-001.md) registra cobertura e limites. A primeira execução falhou por dependência de runtime `@freesewing/config` omitida no pacote de um plugin; a correção isolada adicionou `@freesewing/config@4.0.0` à POC e permitiu sucesso. **Não há aprovação de biblioteca FreeSewing v4 em produção:** transitivas agora estão fixadas por `package-lock.json` e `npm ci` na POC, mas **a auditoria de segurança/licenças permanece pendente**, incluindo `hooks@0.3.2`, sem metadado de licença no lockfile, assim como a integração de `Part`/anotações reais e métricas completas.
+
+**Diretrizes definitivas:** Aldrich segue como autoridade dos métodos e medidas, a biblioteca externa como implementação de operações verificadas, e o formato nativo mantém independência de fornecedor. Adaptadores serão promovidos módulo a módulo mediante QA; não copiar software completo sem avaliar licenças, não afirmar que `PatternSampler` equivale à gradação CH12 ou que bin packing retangular substitui nesting industrial. Este passo **não altera o estado de aprovação das curvas, margens, impressão 1:1 ou molde real**.
+
+Próximos testes necessários: auditoria de transitivas já travadas em lockfile, interoperabilidade geométrica analítica, estruturas de peça semânticas, anotações/fio/piques com API externa, protocolo CH1/13, exportadores SVG/PDF/DXF e validação de corte/encaixe. Gates: **APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO**.

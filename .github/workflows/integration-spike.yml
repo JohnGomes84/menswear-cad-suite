@@ -1,0 +1,61 @@
+name: FreeSewing Full-Flow Feasibility Spike
+
+on:
+  push:
+    paths:
+      - "prototype/integration-spike/**"
+      - "prototype/web-app/src/aldCh02FlatTrouser*.ts"
+      - "prototype/web-app/src/flatTrouserBackResearch.ts"
+      - "prototype/web-app/src/draftingInterpreter.ts"
+      - ".github/workflows/integration-spike.yml"
+  pull_request:
+    paths:
+      - "prototype/integration-spike/**"
+      - "prototype/web-app/src/aldCh02FlatTrouser*.ts"
+      - "prototype/web-app/src/flatTrouserBackResearch.ts"
+      - "prototype/web-app/src/draftingInterpreter.ts"
+      - ".github/workflows/integration-spike.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-first-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install existing CAD shell toolchain
+        run: npm ci --prefix prototype/web-app --no-audit --no-fund
+      - name: Install pinned experimental FreeSewing integration
+        run: npm ci --prefix prototype/integration-spike --ignore-scripts --no-audit --no-fund
+      - name: Bundle existing source-traced Aldrich interpreter (no copied rules)
+        run: |
+          mkdir -p prototype/integration-spike/generated
+          prototype/web-app/node_modules/.bin/esbuild \
+            prototype/web-app/src/flatTrouserBackResearch.ts \
+            --bundle --platform=node --format=esm \
+            --outfile=prototype/integration-spike/generated/aldch02.mjs
+      - name: Execute vertical integration contract tests
+        run: npm test --prefix prototype/integration-spike
+      - name: Generate annotated research-only SVG and diagnostics
+        run: npm run demo --prefix prototype/integration-spike
+      - name: Assert non-production labels and trace are present
+        run: |
+          test -s prototype/integration-spike/out/ch02-guides.svg
+          test -s prototype/integration-spike/out/ch02-diagnostics.json
+          grep -q 'NÃO CORTAR' prototype/integration-spike/out/ch02-guides.svg
+          grep -q 'PARTIAL_CONSTRUCTION_GUIDES_ONLY' prototype/integration-spike/out/ch02-diagnostics.json
+      - name: Publish research diagnostics as CI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ch02-research-guide-not-for-cutting
+          path: |
+            prototype/integration-spike/out/ch02-guides.svg
+            prototype/integration-spike/out/ch02-diagnostics.json
+          if-no-files-found: error
+          retention-days: 7
