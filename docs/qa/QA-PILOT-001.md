@@ -65,18 +65,18 @@ A suíte genérica da POC foi executada na `main` após o merge do PR #11: **14/
 A inspeção do código da POC não encontrou implementação de `SeamAllowance` por aresta nem caminhos separados `seam_geometry`/`cut_geometry`. QA-MARG-004/005 permanece `NOT_YET_DEFINED`; QA-MARG-006 permanece `NOT_RUN`. A validação de produção e o gate do piloto seguem bloqueados.
 
 
-## Casos iniciais de matriz geométrica — Issue #4 (NOT_RUN)
+## Casos da matriz geométrica — Issue #4
 
 Fonte de detalhe: `../domain/RESEARCH-ISSUE-4-Point-Matrix.md`. A fixture aritmética é rastreada às pp. 35–36 do PDF; o diagrama está na p. 38. Os valores são esperados, não golden case aprovado.
 
 | ID | Verificação | Resultado esperado | Estado |
 |---|---|---|---|
 | QA-POINT-001 | Conversão das dimensões dadas na fixture | `0–1=30 mm`; `1–2=284 mm`; `1–3=442 mm`; `2–5=315 mm`; `1–9=74 mm`; `9–10=30 mm`; `1–11=142 mm`; `11–12=150 mm`; `1–15=27.5 mm`; `16–17=15 mm`; `1–18=60 mm` | PASS_ARITHMETIC (2026-10-13); geometria NOT_RUN |
-| QA-POINT-002 | Projeções ortogonais nos pontos 6–8 e 13–14 | Cada ponto deriva da linha de topo, profundidade da cava, cintura ou barra declarada, sem eixo-alvo implícito | NOT_RUN; linha-alvo de 14 e sinal dos eixos pendentes |
-| QA-POINT-003 | Pontos 15–17 | Não atribuir coordenadas a 16/17 sem resolver o alvo do “square out” e o sentido de 16–17 | NOT_RUN; `NOT_YET_DEFINED` |
+| QA-POINT-002 | Projeções ortogonais nos pontos 6–8 e 13–14 | Cada ponto deriva da linha superior, profundidade da cava, cintura ou barra declarada, sem eixo-alvo implícito | PASS_DOC (diagrama p. 38, 300 dpi + consistência Python); motor NOT_RUN; comprimento de estilo continua variável |
+| QA-POINT-003 | Pontos 15–17 | P15 abaixo de 1; P16 na projeção horizontal até a vertical de 12/14; P17 15 mm à direita de 16 | PASS_DOC (diagrama p. 38, 300 dpi + consistência Python); aprovação de modelagem e motor NOT_RUN |
 | QA-POINT-004 | Decotes e cava | Curvas passam pelos marcos textuais e fitting line; handles/tangências só após regra aprovada | NOT_RUN; controles não definidos |
 | QA-POINT-005 | Comprimento de camisa e frente/costas | Golden case exige comprimento de estilo e regra aprovada para centro, dobra ou peças separadas | NOT_RUN; dados/construção pendentes |
 
 Nenhum ponto de coordenada condicional da pesquisa pode ser promovido para produção até aprovação do referencial, das projeções, da separação frente/costas e das curvas.
 
-QA-POINT-001 foi conferido por cálculo reproduzível com os valores publicados. O resultado não valida o sentido dos segmentos, o referencial, as coordenadas absolutas ou a curva; QA-POINT-002–005 permanecem `NOT_RUN`/`NOT_YET_DEFINED`.
+QA-POINT-001 foi conferido por cálculo reproduzível com os valores publicados. A inspeção a 300 dpi da p. 38 resolveu documentalmente as projeções condicionais de 14–17; uma verificação Python de consistência passou (`PASS_DIAGRAM_CONSISTENCY`). Isso verifica a transcrição e seus alinhamentos, não o motor CAD nem a aprovação do padrão. QA-POINT-002/003 são `PASS_DOC`, com execução geométrica `NOT_RUN`; QA-POINT-004/005 continuam `NOT_RUN`/`NOT_YET_DEFINED`.
