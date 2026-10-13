@@ -32,7 +32,10 @@ export default function App() {
   );
   const path = `M ${points[0].x} ${points[0].y} C ${points[1].x} ${points[1].y}, ${points[2].x} ${points[2].y}, ${points[3].x} ${points[3].y}`;
   // Geometria canônica em mm, calculada sem depender de viewport, zoom ou SVG.
-  const geometry = useMemo(() => evaluateSyntheticCurve(points as CubicControls), [curve.controlPointsMm, preview]);
+  const geometry = useMemo(() => {
+    const controls: CubicControls = [points[0], points[1], points[2], points[3]];
+    return evaluateSyntheticCurve(controls);
+  }, [curve.controlPointsMm, preview]);
 
   function world(e: PointerEvent<SVGSVGElement>): Vec2 {
     const svg = svgRef.current;
