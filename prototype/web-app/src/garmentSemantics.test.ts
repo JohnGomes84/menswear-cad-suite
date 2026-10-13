@@ -166,7 +166,7 @@ describe("Garment semantic contract — source first, independent of CAD provide
   rejects(p=>{p.pieces[0].edges[0].role="SEAM_LINE";},"RESEARCH_ONLY");
   rejects(p=>{p.pieces[0].edges[0].role="CUT_LINE";},"RESEARCH_ONLY");
   rejects(p=>{p.pieces[0].edges[0].role="FOLD_LINE";},"RESEARCH_ONLY");
-  rejects(p=>{p.pieces[0].evidenceId="wrong" as never;},"RESEARCH_ONLY");
+  rejects(p=>{p.pieces[0].edges[0].evidenceId="wrong";},"RESEARCH_ONLY");
   rejects(p=>p.pieces[0].allowances.push({
    id:"allow",seamEdgeId:p.pieces[0].edges[0].id,widthMm:10,
    treatment:"ALREADY_INCLUDED_IN_BLOCK",evidenceId:p.evidence[0].id
