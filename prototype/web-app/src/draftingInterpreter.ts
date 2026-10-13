@@ -98,13 +98,29 @@ function evalScalar(
   return v;
 }
 
+function scalarPointReferences(expr:ScalarExpr,stepId:string,depth=0):string[]{
+  if(depth>20)inputError("expressão excessivamente profunda",stepId);
+  switch(expr.op){
+    case "LITERAL_MM":
+    case "MEASURE_MM":return [];
+    case "DISTANCE_MM":return [expr.from,expr.to];
+    case "MULTIPLY":return scalarPointReferences(expr.value,stepId,depth+1);
+    case "ADD":
+    case "SUBTRACT":return [
+      ...scalarPointReferences(expr.a,stepId,depth+1),
+      ...scalarPointReferences(expr.b,stepId,depth+1)
+    ];
+    default:return inputError("expressão não suportada",stepId);
+  }
+}
 function dependencies(ins:DraftInstruction):string[]{
   switch(ins.op){
     case "ORIGIN":return [];
-    case "OFFSET":return [ins.from];
-    case "PROJECT_AXES":return [ins.xFrom,ins.yFrom];
-    case "INTERSECT_LINE_AT_Y":return [ins.lineStart,ins.lineEnd,ins.yFrom];
-    case "MIRROR_ABOUT_VERTICAL":return [ins.point,ins.axisPoint];
+    case "OFFSET":
+      return [...new Set([ins.from,...scalarPointReferences(ins.lengthMm,ins.stepId)])];
+    case "PROJECT_AXES":return [...new Set([ins.xFrom,ins.yFrom])];
+    case "INTERSECT_LINE_AT_Y":return [...new Set([ins.lineStart,ins.lineEnd,ins.yFrom])];
+    case "MIRROR_ABOUT_VERTICAL":return [...new Set([ins.point,ins.axisPoint])];
   }
 }
 
