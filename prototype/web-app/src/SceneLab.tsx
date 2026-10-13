@@ -9,6 +9,7 @@ import {
 import type { SceneEditorV3 } from "./sceneV3";
 import type { Vec2 } from "./domain";
 import { evaluateSyntheticCurve } from "./geometry";
+import { solveDirectedConstraints } from "./constraints";
 import type { CubicControls } from "./geometry";
 
 type View={x:number;y:number;width:number;height:number};
@@ -101,6 +102,26 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
    const url=URL.createObjectURL(blob);
    const a=document.createElement("a");a.href=url;a.download="cena-sintetica-0.3.cadlab.json";a.click();
    URL.revokeObjectURL(url);
+ };
+ const alignSelectedLine=(axis:"HORIZONTAL"|"VERTICAL")=>{
+   if(!chosen||chosen.kind!=="LINE"||chosen.mode!=="FREE")return;
+   const projected=solveDirectedConstraints(editor.project.entities,[{
+     id:"lab-align",kind:axis,
+     source:{entityId:chosen.id,pointIndex:0},
+     target:{entityId:chosen.id,pointIndex:1}
+   }]);
+   if(projected.status==="BLOCKED"){
+     setMessage(`Constraint bloqueada: ${projected.finding.message}`);
+     return;
+   }
+   try{
+     // A regra é uma projeção pontual: o histórico registra MOVE_POINT.
+     // NÃO persiste constraint nem a reaplica automaticamente.
+     let next=editor;
+     for(const move of projected.moves)
+       next=moveScenePointV3(next,move.ref.entityId,move.ref.pointIndex,move.after);
+     setEditor(next);setMessage("");
+   }catch(err){setMessage(err instanceof Error?err.message:String(err));}
  };
  const add=(pieceId:string,kind:SketchKind)=>{
    try {
@@ -216,6 +237,11 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
              <button aria-label="Excluir entidade selecionada" onClick={remove}>Excluir entidade</button>
              <div className="inspector-item"><span>Grupo</span><strong>{chosen.pieceId}</strong></div>
              <div className="inspector-item"><span>Modo</span><strong>{chosen.mode}</strong></div>
+             {chosen.kind==="LINE"&&chosen.mode==="FREE"&&
+               <div className="tool-left" aria-label="Alinhamento dirigido experimental">
+                 <button aria-label="Horizontalizar extremos" onClick={()=>alignSelectedLine("HORIZONTAL")}>Alinhar H</button>
+                 <button aria-label="Verticalizar extremos" onClick={()=>alignSelectedLine("VERTICAL")}>Alinhar V</button>
+               </div>}
              <div className="inspector-item"><span>Comprimento sintético</span><strong>{inspect.state==="PASS"?inspect.lengthMm.toFixed(2)+" mm":"FAIL"}</strong></div>
              {chosen.pointsMm.map((p,i)=><button key={i} className={`point-row ${selectedPoint===i?"chosen":""}`} onClick={()=>setSelectedPoint(i)}>
                <b>P{i}</b><span>{position(p)}</span>
