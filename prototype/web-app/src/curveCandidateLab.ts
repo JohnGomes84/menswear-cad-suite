@@ -12,7 +12,7 @@ import type {CubicControls} from "./geometry";
 export type CandidateSpline={
   purpose:"RESEARCH_ONLY";
   status:"CANDIDATE_UNVERIFIED";
-  construction:"THROUGH_THREE_POINTS_G1" | "MID_CHORD_SAGITTA_HYPOTHESIS";
+  construction:"THROUGH_THREE_POINTS_G1" | "THROUGH_WAYPOINTS_G1" | "MID_CHORD_SAGITTA_HYPOTHESIS";
   pieces:readonly CubicControls[];
   lengthMm:number;
   diagnostics:{
@@ -100,36 +100,47 @@ function metrics(
 }
 
 /**
- * Two cubic Hermite-like segments through exactly A, B, C.
- * Tangent at B is chord-direction bisector: G1 by construction.
- * Control lengths are an explicitly chosen fraction of local chord lengths.
+ * Consecutive G1 cubic segments interpolating 3..8 mandatory waypoints.
+ * Explicit extra waypoints can encode book-required contact locations,
+ * but their placement/bearings must come from separately reviewed evidence.
  */
+export function waypointG1Candidate(
+ anchors:readonly Vec2[],handleFraction:number
+):CandidateSpline{
+ if(anchors.length<3||anchors.length>8||
+    !anchors.every(valid)||!finite(handleFraction)||
+    handleFraction<0.1||handleFraction>0.45)
+  throw new RangeError("Âncoras ou fração de alça inválidas");
+ const chords=anchors.slice(1).map((b,i)=>sub(b,anchors[i]));
+ const lengths=chords.map(length);
+ if(lengths.some(l=>!finite(l)||l<1e-10))
+  throw new RangeError("Pontos coincidentes ou distantes demais");
+ const directions=chords.map(unit);
+ const tangents=anchors.map((_,i)=>
+  i===0?directions[0]:
+  i===anchors.length-1?directions[directions.length-1]:
+   unit(add(directions[i-1],directions[i])));
+ const pieces:CubicControls[]=chords.map((_,i)=>[
+  {...anchors[i]},
+  add(anchors[i],scale(tangents[i],handleFraction*lengths[i])),
+  sub(anchors[i+1],scale(tangents[i+1],handleFraction*lengths[i])),
+  {...anchors[i+1]}
+ ]);
+ return metrics(
+  pieces,
+  ["Curva passa exatamente pelos pontos de passagem indicados",
+   "Bissetrizes das cordas definem tangentes por escolha de engenharia, NÃO pelo livro",
+   "Fração das alças indicada explicitamente; não é cota de Aldrich",
+   "Posições adicionais de contato dependem de hipóteses visuais separadas"],
+  anchors.length===3?"THROUGH_THREE_POINTS_G1":"THROUGH_WAYPOINTS_G1",null
+ );
+}
+
+/** Convenience wrapper used by the generic synthetic three-point fixture. */
 export function threePointG1Candidate(
  a:Vec2,b:Vec2,c:Vec2,handleFraction:number
 ):CandidateSpline{
- if(!valid(a)||!valid(b)||!valid(c)||
-    !finite(handleFraction)||handleFraction<0.1||handleFraction>0.45)
-  throw new RangeError("Pontos ou fração de alça inválidos");
- const ab=sub(b,a),bc=sub(c,b);
- const abSize=length(ab),bcSize=length(bc);
- const u=unit(ab),v=unit(bc);
- const tangent=unit(add(u,v)); // reversals are ambiguous: fail closed.
- const p0:CubicControls=[
-  {...a},add(a,scale(u,handleFraction*abSize)),
-  sub(b,scale(tangent,handleFraction*abSize)),{...b}
- ];
- const p1:CubicControls=[
-  {...b},add(b,scale(tangent,handleFraction*bcSize)),
-  sub(c,scale(v,handleFraction*bcSize)),{...c}
- ];
- return metrics(
-  [p0,p1],
-  ["B é atravessado exatamente por dois segmentos de Bézier cúbica",
-   "A bissetriz de cordas define a tangente intermediária por escolha CAD, NÃO pelo livro",
-   "Fração de alças indicada explicitamente; não é uma cota de Aldrich",
-   "Referências de passagem a partir do ponto 4 NÃO estão resolvidas"],
-  "THROUGH_THREE_POINTS_G1",null
- );
+ return waypointG1Candidate([a,b,c],handleFraction);
 }
 
 /**
