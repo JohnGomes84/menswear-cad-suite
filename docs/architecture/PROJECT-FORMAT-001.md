@@ -68,3 +68,36 @@ Estado: exemplo de modelagem de dados para revisão; o formato geral continua DR
 ```
 
 `close_wrist` não é persistido como uma segunda medição numérica independente enquanto o alias não for aprovado. Fórmulas e constantes têm escopo do bloco `flat_shirt_woven`; margem de costura, adição de construção e ease permanecem conceitos separados. A especificação matemática e os exemplos estão em `../domain/RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md`.
+
+
+## Extensão proposta — `SeamPair`/`AssemblyEase` (Issue #5; não congelada)
+
+O exemplo é somente um rascunho de forma. Não determina as arestas, orientação, piques, facilidade ou tolerância reais do piloto. Campos nulos significam `NOT_YET_DEFINED`, nunca zero.
+
+```json
+{
+  "seamPairs": [
+    {
+      "id": "body-armhole-to-sleeve-cap",
+      "status": "NOT_YET_DEFINED",
+      "members": [
+        {"memberId": "A", "pieceRef": "body-piece-pending", "seamEdgeRef": "armhole-edge-pending", "orientation": "FORWARD"},
+        {"memberId": "B", "pieceRef": "sleeve-piece-pending", "seamEdgeRef": "sleeve-cap-edge-pending", "orientation": "REVERSED"}
+      ],
+      "segmentPairs": [
+        {
+          "id": "segment-pending-review",
+          "memberAInterval": {"startArcMm": null, "endArcMm": null, "startMarkerRef": null, "endMarkerRef": null},
+          "memberBInterval": {"startArcMm": null, "endArcMm": null, "startMarkerRef": null, "endMarkerRef": null},
+          "assemblyEase": {"status": "NOT_YET_DEFINED", "easedMemberRef": null, "targetExcessMm": null, "distributionPolicy": "NOT_YET_DEFINED"},
+          "assemblyToleranceMm": null,
+          "provenanceRef": null
+        }
+      ],
+      "sourceRuleRef": "Aldrich-5e-flat-shirt-woven-p36-pending-review"
+    }
+  ]
+}
+```
+
+Comprimentos dos trechos devem ser derivados da curva paramétrica e dos limites orientados em arco; se armazenados como cache, precisam estar vinculados às revisões/hash da curva, intervalo e orientação. Dados de validação não substituem a fonte geométrica. `assemblyToleranceMm` é tolerância física, distinta do erro numérico do integrador e da quantidade-alvo de ease. A proposta está detalhada em `../domain/RESEARCH-ISSUE-5-SeamPair-AssemblyEase.md`; o schema geral segue DRAFT.
