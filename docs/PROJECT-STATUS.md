@@ -90,3 +90,12 @@ O adaptador ainda exige CI final, tratamento de curvas adversariais, política f
 ## Histórico do editor: restauração de sessões sintéticas
 
 Na branch `fix/web-persisted-undo-history`, `createEditor` passa a validar a cadeia linear de eventos do projeto sintético e reconstruir snapshots de undo ao importar JSON. A suíte web passou em [CI #38459723728](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38459723728) com **23/23 testes** e compilação aprovada. O formato 0.1.0 **não** guarda estados anteriores de QA nem eventos paramétricos complexos; eles continuam fora do contrato aprovado.
+
+## Iteração seguinte — catálogo verificável + editor multi-entidades (13/10/2026)
+
+- [PR #34](https://github.com/JohnGomes84/menswear-cad-suite/pull/34) **MERGED**: `PATTERN-CATALOG-001.json`, 54 assuntos candidatos dos 14 capítulos do livro, validador/testes; conteúdo ainda `TOC_ONLY`.
+- [PR #35](https://github.com/JohnGomes84/menswear-cad-suite/pull/35) **MERGED**: `SceneProject 0.2.0` com 2 grupos de esboço e 3 entidades geométricas, seleção/edição, movimentos reversíveis e arquivo sintético versionado. A cena não representa moldes reais.
+- [CI #38461298308](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461298308): **35 testes web PASS + build Vite/TypeScript**.
+- [CI do catálogo](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461068500): validou capítulos/IDs/status.
+- Estado dos gates: APP experimental, A IN_REVIEW, B NO-GO.
+- Pendências mais próximas: edição `ADD_ENTITY`/`REMOVE_ENTITY` com undo/redo, testes E2E reais de interação, auditoria método a método do livro e bloqueios de modelagem #1–#5.

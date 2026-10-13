@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.14 DRAFT — catálogo técnico estruturado de toda a obra
+**Versão da baseline:** 1.15 DRAFT — catálogo completo por capítulo e laboratório CAD multi-entidades
 **Data:** 13/10/2026  
-**Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
+**Status:** PRs #34 e #35 incorporados à `main`. Catálogo inicial por sumário: 54 assuntos candidatos, todos TOC_ONLY/NOT_STARTED. POC geométrica Python: 30/30 testes; protótipo web: 35/35 testes, ambos aprovados em CI. O editor experimental admite dois grupos e três entidades sintéticas (linhas e Béziers), sem geração de moldes reais. Gate A permanece IN_REVIEW; Gate B PILOT-001 NO-GO e produção bloqueada.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -669,3 +669,16 @@ O protótipo web suporta recarregar e reconstruir undo/redo de movimentos linear
 O sumário da obra completa foi convertido em [PATTERN-CATALOG-001.json](product/PATTERN-CATALOG-001.json) com **54 registros temáticos candidatos**, distribuídos pelos **14 capítulos** e **23 agrupamentos funcionais**. Um registro pode representar um processo, família, bloco ou assunto de CAD, não necessariamente um molde único. **Nenhuma das 54 entradas é contabilizada como bloco especificado, implementado ou validado**; todos os estados permanecem `TOC_ONLY` / `NOT_STARTED`. A investigação do `PILOT-001` continua em documentação especializada, com bloqueios próprios.
 
 O registro possui IDs estáveis, capítulo, família, tipo, estados separados de fonte, implementação, QA e prova física, e campo próprio de versão de `DraftRuleSet`. Um validador e CI verificam cobertura dos 14 capítulos, unicidade e que uma alegação futura de implementação exija especificação aprovada e `ruleSetId`. Próximo passo de pesquisa: substituir inventário por auditoria real do conteúdo dos capítulos, uma regra por vez; não presumir que os títulos do sumário representem métodos implementáveis.
+
+
+---
+
+## 33. Primeiro laboratório multi-entidades — baseline 1.15 DRAFT
+
+O [PR #35](https://github.com/JohnGomes84/menswear-cad-suite/pull/35) incorporou `prototype/web-app/src/scene.ts` e `SceneLab.tsx`: entidades `LINE` e `CUBIC_BEZIER`, associadas a **grupos de esboço** por ID, com edição, seleção, zoom/pan, JSON sintético `0.2.0` e histórico `MOVE_POINT` reversível inclusive após reabrir o projeto. **Não são peças reais de vestuário.** A interface antiga com JSON `0.1.0` permanece separada; migração automática não foi implementada.
+
+A [CI do PR #35](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461298308) aprovou **35/35 testes e compilação Vite/TypeScript**. Não houve teste E2E manual no navegador, validação de constraints, inserção/remoção transacional, transformação de peças, costura ou impressão. O material formal de fronteira está em [APP-SCENE-002](architecture/APP-SCENE-002.md). A arquitetura está avançando horizontalmente para múltiplas famílias, sem converter o PILOT-001 em limite do produto.
+
+O [PR #34](https://github.com/JohnGomes84/menswear-cad-suite/pull/34) incorporou [PATTERN-CATALOG-001.json](product/PATTERN-CATALOG-001.json) e testes de integridade: 54 registros temáticos em 14 capítulos, nenhum marcado como regra implementada ou validada. **São assuntos a auditar**, não 54 moldes disponíveis.
+
+**Gates:** APP = experimentação técnica; A = IN_REVIEW; B = NO-GO; release comercial = NO-GO.

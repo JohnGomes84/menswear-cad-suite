@@ -41,3 +41,8 @@ O projeto de demonstração deverá conter curvas **inteiramente sintéticas** e
 ## Execução do histórico persistido (escopo limitado)
 
 `domain.test.ts` passou em GitHub Actions com cenários de reabertura após 3 movimentos, undo/redo reconstruídos, rejeição de revisões inválidas, encadeamento adulterado e invalidação de redo. A prova cobre **somente** `MOVE_CONTROL_POINT` num projeto sintético; snapshots anteriores de `validation` não são preservados no schema 0.1.0 e devem ser marcados `NOT_YET_DEFINED`. Não confundir a lista unitária com validação de UI manual ou editor paramétrico geral.
+
+
+## Evidência da cena multi-entidades (PR #35)
+
+Os testes `scene.test.ts` exercitam identidade de grupo/entidade, edição de linhas e Bézier, persistência JSON 0.2.0, undo/redo por entidade, invalidação de `redo` em divergência, rejeição de IDs duplicados, pontos não finitos, formatos desconhecidos e histórico adulterado. [CI #38461298308](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38461298308): **35 testes web PASS e build aprovado** (soma dos testes dos laboratórios 0.1.0/0.2.0 e geometria TypeScript). Essa evidência **não** executou automação E2E do navegador, teste físico de escala ou QA do PILOT-001.
