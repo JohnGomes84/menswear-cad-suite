@@ -11,7 +11,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
-- Fundação experimental do web app (somente geometria sintética): **protótipo isolado em `prototype/web-app`**, com testes; Gate APP limitado
+- Fundação experimental do web app: **editor com múltiplos grupos, linhas e curvas sintéticas** em `prototype/web-app`; Gate APP limitado
 - Código de produção / implementação web funcional de molde real: **bloqueados**
 - Saídas iniciais previstas: SVG e PDF
 - DXF, gradação, nesting e 3D: fora do primeiro gate
@@ -36,6 +36,8 @@ O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experi
 ## Documentação
 
 - `prototype/web-app/README.md` — protótipo web isolado, sem molde real
+- `prototype/web-app/SCENE-LAB.md` — laboratório multi-entidades 0.2.0
+- `docs/architecture/APP-SCENE-002.md` — contrato da cena multi-entidades
 - `docs/MASTER-DOCUMENT.md`
 - `docs/product/BOOK-COVERAGE-001.md` — inventário dos 14 capítulos, não implementação
 - `docs/product/PATTERN-CATALOG-001.json` — 54 assuntos candidatos; todos TOC_ONLY/NOT_STARTED
