@@ -6,7 +6,7 @@
 ## Evidências disponíveis
 
 - Implementação e relatório em `poc/geometry-synthetic/`.
-- 14 testes originais reportados como PASS em execuções anteriores.
+- 14 testes originais reportados como PASS em execuções anteriores e novamente verificados em CI.
 - Casos adicionais independentes propostos em `test_geometry_regression.py`: 3-4-5 analítico, parametrização não uniforme, invariância por translação/escala, derivada nula na origem, interseções de extremidade/sobreposição e join style inválido.
 - Workflow proposto para executar a suíte, gerar artefatos e comparar hashes dentro do mesmo runner.
 - Referência da curva geral atual é numérica calculada pelo próprio integrador; **não** é benchmark matemático independente.
@@ -15,16 +15,24 @@
 
 | Critério | Evidência requerida | Estado antes da CI |
 |---|---|---|
-| Testes legados | 14 testes, sem regressões | PASS_REPORT (não reexecutado nesta revisão) |
-| Novas fixtures analíticas | linha de comprimento conhecido independente do integrador | NOT_RUN |
-| Invariância geométrica | translação, escala, sentido, parâmetros | NOT_RUN |
-| Entrada degenerada | erro/diagnóstico explícito | NOT_RUN |
-| Interseções tangenciais/colineares | classificação e contorno | NOT_RUN |
+| Testes legados | 14 testes, sem regressões | PASS_CI — 2026-10-13 |
+| Novas fixtures analíticas | linha de comprimento conhecido independente do integrador | PASS_CI — 2026-10-13 |
+| Invariância geométrica | translação, escala, sentido, parâmetros | PASS_CI — 2026-10-13 |
+| Entrada degenerada | erro/diagnóstico explícito | PASS_CI nos casos cobertos |
+| Interseções tangenciais/colineares | classificação e contorno | PASS_CI para toque terminal/sobreposição |
 | Offsets difíceis | split, colapso e auto-interseção em casos adicionais | NOT_YET_DEFINED |
 | Limite de recursão do integrador | sinalização de não convergência em vez de precisão presumida | NOT_YET_DEFINED |
 | Limite de subdivisão da tesselação | sinalização de erro/tolerância não atendida | NOT_YET_DEFINED |
 | PDF em escala física | imprimir régua, medir e registrar leitor/impressora | NOT_RUN |
 | Revisão de geometria e QA | aprovação explícita baseada em evidências | NOT_RUN |
+
+## Execução verificada no GitHub Actions
+
+- [Run push #38453619464](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38453619464): **SUCCESS**, 23 testes executados, `OK`.
+- [Run PR #38453659870](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38453659870): **SUCCESS**.
+- Estrutura do JSON, largura/altura nominal SVG e cabeçalho PDF: **PASS_CI**.
+- Duas gerações consecutivas no mesmo runner produziram hashes idênticos: **PASS_CI** para reprodutibilidade restrita ao mesmo ambiente.
+- Nenhuma impressão física foi medida; testes com geometria analítica não abrangem a garantia geral de erro do integrador.
 
 ## Riscos identificados no código
 
