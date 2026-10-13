@@ -59,7 +59,7 @@ Os grupos **NÃO** são peças de roupa, e as linhas **NÃO** são arestas de co
 
 [Workflow Actions](https://github.com/JohnGomes84/menswear-cad-suite/actions/workflows/integration-spike.yml) — primeira execução de sucesso [#38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9/9 testes de integração aprovados**, com SVG e JSON publicados como artefatos temporários do job.
 
-**Obstáculo técnico comprovado:** o pacote FreeSewing 4.0.0 carrega `plugin-annotations/src/logo.mjs`, que importa `@freesewing/config`; o manifesto deste plugin não declara a dependência como runtime. A primeira instalação falhou e a segunda, com `@freesewing/config@4.0.0` explícito, funcionou. A dependência externa NÃO está aprovada para release, e a POC ainda carece de lockfile de transitivas/auditoria de segurança.
+**Obstáculo técnico comprovado:** o pacote FreeSewing 4.0.0 carrega `plugin-annotations/src/logo.mjs`, que importa `@freesewing/config`; o manifesto deste plugin não declara a dependência como runtime. A primeira instalação falhou e a segunda, com `@freesewing/config@4.0.0` explícito, funcionou. A POC possui **package-lock.json** gerado da instalação verificada no Actions e sua CI exige **npm ci**; as licenças transitivas, vulnerabilidades e compatibilidade com builds de produção ainda precisam de auditoria. A dependência externa NÃO está aprovada para release.
 
 ## 4. Licenças e autoria
 
@@ -73,7 +73,7 @@ Os grupos **NÃO** são peças de roupa, e as linhas **NÃO** são arestas de co
 
 | Prioridade | Experimento de aceite antes de integração permanente | Bloqueio |
 |---|---|---|
-| P0 | Gerar **lockfile determinístico** para pacotes externos; auditar licenças transitivas e resolver risco da dependência FreeSewing | Necessário antes de dependency rollout no web-app |
+| P0 | **Lockfile determinístico gerado e confirmado com npm ci**; auditar licenças transitivas, possíveis CVEs e upstream da dependência FreeSewing | Auditoria e compatibilidade ainda necessárias antes de dependency rollout no web-app |
 | P1 | Comparar `Point`, `Path`, operações de offsets e curvas em fixtures analíticas e degeneradas contra nosso kernel em mm | Geometria não aprovada até aferir precisão e falhas |
 | P1 | Integrar representação de `Part`/anotações reais e preservar semântica de linha de costura versus linha de corte | Nenhum `SeamEdge` real aprovado |
 | P1 | Perfis antropométricos com unidades, protocolo CH1/13 e reexecução dos métodos | Métodos além do CH02 ainda `TOC_ONLY` |
