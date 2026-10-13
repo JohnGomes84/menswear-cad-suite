@@ -29,9 +29,14 @@ Este material é independente do domínio da camisa e ajuda a evitar uma arquite
 
 ## Evidência visual parcial (capítulo 2)
 
-O diagrama original da página **34 do PDF** foi inspecionado visualmente. `ALD-CH02-01` agora possui evidência de frente **`PARTIAL_FRONT_GRID`**, referenciada em [CH02-DIAGRAM-001](../domain/CH02-DIAGRAM-001.md), e cálculo de pontos em `prototype/web-app/src/flatTrouserResearch.ts`. O status de fonte **permanece `TEXT_REVIEWED`**, pois faltam revisão completa dos traçados de costas, curvas, exceções de costura e aprovação técnica. Nenhuma peça está implementada.
+O diagrama original da página **34 do PDF** foi inspecionado visualmente. `ALD-CH02-01` agora possui evidência de frente **`PARTIAL_FRONT_BACK_GUIDES`**, referenciada em [CH02-DIAGRAM-001](../domain/CH02-DIAGRAM-001.md), e cálculo de pontos em `prototype/web-app/src/flatTrouserResearch.ts`. O status de fonte **permanece `TEXT_REVIEWED`**, pois faltam revisão completa dos traçados de costas, curvas, exceções de costura e aprovação técnica. Nenhuma peça está implementada.
 
 
 ## Execução controlada do método CH02
 
-A frente das calças planas de uma e duas peças foi reexpressa como **instruções sequenciais rastreáveis** em `prototype/web-app/src/aldCh02FlatTrouserProgram.ts`, executadas por um interpretador genérico. Correção da orientação de `12/13` e dependências `14/15` registrada em `CH02-DIAGRAM-001`. O registro continua `TEXT_REVIEWED + PARTIAL_FRONT_GRID`, **não implementado como molde real**. Os outros 53 assuntos do catálogo continuam `TOC_ONLY`.
+A frente das calças planas de uma e duas peças foi reexpressa como **instruções sequenciais rastreáveis** em `prototype/web-app/src/aldCh02FlatTrouserProgram.ts`, executadas por um interpretador genérico. Correção da orientação de `12/13` e dependências `14/15` registrada em `CH02-DIAGRAM-001`. O registro continua `TEXT_REVIEWED + PARTIAL_FRONT_BACK_GUIDES`, **não implementado como molde real**. Os outros 53 assuntos do catálogo continuam `TOC_ONLY`.
+
+
+## Continuação do CH02 — costas e curvas
+
+As sequências textuais das costas do capítulo 2 (PDF 32–33) estão implementadas **somente como pontos e guias de pesquisa**: `aldCh02FlatTrouserBackProgram.ts` e `flatTrouserBackResearch.ts`. A inspeção visual parcial de frente/costas permanece `PARTIAL_FRONT_BACK_GUIDES`. Oito requisitos de curvatura (ganchos e entrepernas dos dois blocos) estão estruturados em [CH02-CURVE-REQUIREMENTS-001.json](../domain/CH02-CURVE-REQUIREMENTS-001.json), com origens textuais e geometria bloqueada. Nenhum desses progressos implica um molde completo, uma spline resolvida ou validação física.
