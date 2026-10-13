@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.21 DRAFT — interpretador sequencial de construção
+**Baseline corrente:** 1.22 DRAFT — costas CH02 e requisitos de curvas pesquisados
 
 ## Situação executiva
 
@@ -143,3 +143,12 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - Corrigida divergência de leitura: ponto **12 à direita de 11**, ponto **13 à esquerda**, ponto 14 na guia 1→12 e ponto 15 simétrico pelo ponto 10; documentação CH02-DIAGRAM revisada.
 - [CI web #38473802868](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38473802868): **109/109 testes PASS + build**, incluindo fixtures fonte-dirigidas.
 - Ainda **RESEARCH_ONLY**: faltam costas, curvas, topologia, margens, revisão de modelista e prova física. Gate B NO-GO.
+
+
+## Costas de calça e técnicas de curvas — CH02
+
+- `aldCh02FlatTrouserBackProgram.ts`: pontos 12–18 (uma peça) e 16–25 (duas peças), seguindo as instruções da fonte PDF pp.32–33; `flatTrouserBackResearch.ts` expõe guias e trace em mm, não contorno de corte.
+- O interpretador genérico passou a rastrear pontos usados **também nas fórmulas escalares**; exemplo: ponto 25 depende de 15, 14 e 23.
+- [CI web #38476422267](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38476422267): **123/123 testes e build PASS**.
+- `CURVES-RESEARCH-001.md` documenta técnicas de gancho, francês, tangência, walking seams e toile; `CH02-CURVE-REQUIREMENTS-001.json` relaciona oito restrições métricas da obra; **splines não definidas/geradas**.
+- Catálogo permanece TEXT_REVIEWED/DIAGRAM_PARTIAL para ALD-CH02-01; método real não implementado, Gate B NO-GO.

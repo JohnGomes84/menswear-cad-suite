@@ -1,7 +1,7 @@
 # CH02-DIAGRAM-001 — Leitura visual do diagrama de calça flat
 
 **Fonte:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição, PDF disponibilizado no projeto, páginas 31–34, especialmente o **diagrama da página 34**.  
-**Estado:** `DIAGRAM_PARTIAL` — leitura visual das referências da **frente** concluída; geometria integral, costas e montagem não aprovadas.  
+**Estado:** `DIAGRAM_PARTIAL` — revisão **parcial** de pontos e direções das seções da frente **e das costas**; curvas completas, topologia e montagem não aprovadas.  
 **Escopo:** `ALD-CH02-01`, construção `ONE_PIECE` / `TWO_PIECE`, variantes básica e folgada.
 
 ## Elementos de orientação confirmados
@@ -39,7 +39,7 @@ A linha lateral `0→2` é uma **referência de construção** no bloco inicial 
 
 ## Implementação técnica e fixture
 
-`prototype/web-app/src/flatTrouserResearch.ts` calcula dois **esqueletos de frente**, sem curvas ou contornos: `ONE_PIECE` (pontos `0–11` disponíveis no subconjunto) e `TWO_PIECE` (pontos `0–15` do subconjunto de construção da frente). Entradas `seat`, `bodyRise` e `insideLeg` em mm com variantes `BASIC`/`EASY`.
+`prototype/web-app/src/flatTrouserResearch.ts` calcula os **esqueletos de frente**, sem curvas ou contornos: `ONE_PIECE` (pontos `0–11` disponíveis no subconjunto) e `TWO_PIECE` (pontos `0–15` do subconjunto de construção da frente). Entradas `seat`, `bodyRise` e `insideLeg` em mm com variantes `BASIC`/`EASY`.
 
 Para tamanho MEDIUM da amostra textual (`seat=1020`, `rise=282`, `insideLeg=800` mm):
 
@@ -60,7 +60,7 @@ O núcleo `flatTrouserResearch.ts` deixou de codificar diretamente as fórmulas 
 
 ## Impedimentos que permanecem
 
-1. Construir a matriz completa de **costas** dos dois blocos, com guias adicionais e revisão das direções ambíguas.
+1. Conferir o **esqueleto de costas** (pontos 12–18 e 16–25) contra cada passo e legenda de traço do diagrama, e desenvolver as linhas/curvas faltantes; os pontos estão codificados em `aldCh02FlatTrouserBackProgram.ts`, mas **não são costas completas para corte**.
 2. Especificar as **curvas** do gancho e entreperna, seus pontos intermediários, tangências e continuidade. O diagrama não fixa uma spline/Bézier única.
 3. Estabelecer contorno fechado e proveniência de cada aresta `SeamEdge`, `FoldLine` e `CutEdge`, incluindo margens incluídas e exceções.
 4. Verificar equivalência e montagem de costuras entre as peças, comprimentos e folga de fabricação.
@@ -69,3 +69,12 @@ O núcleo `flatTrouserResearch.ts` deixou de codificar diretamente as fórmulas 
 **Gate:** `TEXT_REVIEWED + DIAGRAM_PARTIAL`; **NÃO** `DIAGRAM_REVIEWED` integral, **NÃO** `DraftRuleSet APPROVED`, **NÃO** produto de corte.
 
 A continuidade está rastreada na [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44).
+
+
+## Complemento de costas e curvas (revisão textual + diagrama)
+
+O procedimento das costas foi conferido nas páginas PDF **32 (uma peça)** e **33 (duas peças)**, com checagem de direções na figura da página **34**. O código `prototype/web-app/src/aldCh02FlatTrouserBackProgram.ts` acrescenta pontos de costas **12–18** e **16–25** sobre os pontos anteriores da frente, usando o mesmo executor sequencial genérico. `flatTrouserBackResearch.ts` expõe somente pontos e guias retos (pesquisa); não produz formas prontas nem curvas.
+
+As condições **documentadas no livro** para as curvas de gancho e entreperna foram levantadas em [CURVES-RESEARCH-001](CURVES-RESEARCH-001.md) e registradas como oito requisitos declarativos em [CH02-CURVE-REQUIREMENTS-001.json](CH02-CURVE-REQUIREMENTS-001.json). As referências de contato dos ganchos e entradas internas da entreperna estão expressas em mm, porém **sem supor tangentes, parâmetros Bézier ou localização não explicitada de deformação**.
+
+Essa análise **não transforma `TEXT_REVIEWED` em `DIAGRAM_REVIEWED` completo**. Mantemos `PARTIAL_FRONT_BACK_GUIDES`, `geometrySpecification=NOT_YET_DEFINED` e `implementation=NOT_STARTED` para molde real; a ferramenta de desenho deverá preservar essas restrições até que curva, costura e prova física sejam validadas.

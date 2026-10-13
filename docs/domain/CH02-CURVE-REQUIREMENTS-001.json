@@ -1,0 +1,229 @@
+{
+  "schema": "ald-rich-curve-requirements/0.1.0",
+  "purpose": "RESEARCH_ONLY",
+  "units": "mm",
+  "sourcePriority": "Aldrich 5th edition user-provided PDF pp. 32–34",
+  "note": "Conditions explicitly derived from printed instructions. A reference distance is NOT a Bézier control length; no cutting curve defined.",
+  "rules": [
+    {
+      "ruleId": "ALD-CH02-CURVE-01",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 32
+      },
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "kind": "CROTCH",
+      "pointPath": [
+        "6",
+        "7",
+        "8"
+      ],
+      "referencePoint": "4",
+      "distanceBasicMm": 30,
+      "distanceEasyMm": 32.5,
+      "sourcePdfPage": 32,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-02",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 32
+      },
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "kind": "CROTCH",
+      "pointPath": [
+        "13",
+        "14",
+        "16"
+      ],
+      "referencePoint": "4",
+      "distanceBasicMm": 55,
+      "distanceEasyMm": 60,
+      "sourcePdfPage": 32,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-03",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 33
+      },
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "kind": "CROTCH",
+      "pointPath": [
+        "6",
+        "7",
+        "8"
+      ],
+      "referencePoint": "4",
+      "distanceBasicMm": 30,
+      "distanceEasyMm": 32.5,
+      "sourcePdfPage": 33,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-04",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 33
+      },
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "kind": "CROTCH",
+      "pointPath": [
+        "17",
+        "19",
+        "21"
+      ],
+      "referencePoint": "4",
+      "distanceBasicMm": 55,
+      "distanceEasyMm": 60,
+      "sourcePdfPage": 33,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-05",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 32
+      },
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "kind": "INSEAM",
+      "pointPath": [
+        "8",
+        "11"
+      ],
+      "straightCompanion": [
+        "9",
+        "11"
+      ],
+      "inwardDepthMm": 10,
+      "sourcePdfPage": 32,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-06",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 32
+      },
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "kind": "INSEAM",
+      "pointPath": [
+        "16",
+        "18"
+      ],
+      "straightCompanion": [
+        "17",
+        "18"
+      ],
+      "inwardDepthMm": 20,
+      "sourcePdfPage": 32,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-07",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 33
+      },
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "kind": "INSEAM",
+      "pointPath": [
+        "8",
+        "15"
+      ],
+      "straightCompanion": [
+        "13",
+        "15"
+      ],
+      "inwardDepthMm": 10,
+      "sourcePdfPage": 33,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    },
+    {
+      "ruleId": "ALD-CH02-CURVE-08",
+      "source": "Metric Pattern Cutting for Menswear, fifth edition",
+      "sourceReview": "TEXT_REVIEWED_DIAGRAM_PARTIAL",
+      "geometryStatus": "AMBIGUOUS_GEOMETRY_DO_NOT_RENDER",
+      "sourceRef": {
+        "chapter": 2,
+        "pdfPage": 33
+      },
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "kind": "INSEAM",
+      "pointPath": [
+        "21",
+        "25"
+      ],
+      "straightCompanion": [
+        "24",
+        "25"
+      ],
+      "inwardDepthMm": 20,
+      "sourcePdfPage": 33,
+      "pending": [
+        "Exact spatial reference/direction for inward or touching distance",
+        "Endpoint tangents and interpolation choice",
+        "Physical seam trueing and toile"
+      ]
+    }
+  ]
+}
