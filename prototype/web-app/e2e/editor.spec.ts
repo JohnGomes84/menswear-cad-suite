@@ -85,3 +85,31 @@ test("invalid JSON does not replace the current scene",async({page})=>{
   expect(await curve.getAttribute("d")).toBe(start);
   await expect(page.getByText(/não utilizar para corte/i)).toBeVisible();
 });
+
+test("synthetic-only safety notice has readable foreground/background contrast", async({page})=>{
+  await openScene(page);
+  const notice=page.locator(".warning");
+  await expect(notice).toBeVisible();
+  await expect(notice).toContainText("não utilizar para corte");
+  const ratio=await notice.evaluate(node=>{
+    const style=getComputedStyle(node);
+    const rgb=(value:string):number[]=>{
+      const values=value.match(/[0-9.]+/g)?.map(Number)??[];
+      if(values.length<3)throw new Error("Cor RGB desconhecida");
+      return values.slice(0,3);
+    };
+    const luminance=(rgbValues:number[]):number=>{
+      const linear=rgbValues.map(c=>{
+        const v=c/255;
+        return v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4;
+      });
+      return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
+    };
+    const foreground=luminance(rgb(style.color));
+    const background=luminance(rgb(style.backgroundColor));
+    const brighter=Math.max(foreground,background);
+    const darker=Math.min(foreground,background);
+    return (brighter+0.05)/(darker+0.05);
+  });
+  expect(ratio).toBeGreaterThanOrEqual(4.5);
+});
