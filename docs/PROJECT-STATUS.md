@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.24 DRAFT — FreeSewing Part semântico e anotações sintéticas
+**Baseline corrente:** 1.25 DRAFT — semântica própria de vestuário e política de margens fundamentadas no livro
 
 ## Situação executiva
 
@@ -174,3 +174,12 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - Correção: primeiras referências de fórmula são **conectores de dependência**, não necessariamente linhas de construção do desenho original (`DEPENDENCY_CONNECTOR_NOT_BOOK_LINE`).
 - [CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes PASS**, quatro artefatos segregados; `npm ci` reprodutível.
 - Riscos: `Part.__boundary` é API interna, `grainline` interage com cutlist, licença transitiva `hooks@0.3.2` ainda pendente de auditoria. Gate B NO-GO.
+
+
+## Contrato canônico de vestuário e regra das margens — 13/10/2026
+
+- `garmentSemantics.ts`: esquema validado para pontos, peças, arestas (construção/costura/corte/dobra/barra), declarações por costura, fio e pique; saída sempre `cutReady=false`. Só dados **SYNTHETIC_ONLY** podem exercitar papéis de produção, sem liberação.
+- `createCh02SemanticResearch`: para a calça do livro, somente conectores de dependência `RESEARCH_ONLY`, sem anotações ou margens aplicadas; evidência capítulo/página/passo.
+- `aldCh02AllowancePolicy.ts`: fonte PDF p.31 — **10 mm de costura já incluídos no bloco**, exceções `no seam allowance`; edge mapping ainda `NOT_YET_DEFINED`, nenhum segundo offset automático.
+- [Web #38484936503](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38484936503): **143/143 unitários + build PASS**; [integração #38485166474](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38485166474): **26/26 PASS**, FreeSewing e semântica independentes reconciliados.
+- Quinto artefato `ch02-semantic-contract.json` publicado pelo pipeline; modelo de peça **não aprovado** e nenhum método além do CH02 promovido. Gate B e comercial **NO-GO**.
