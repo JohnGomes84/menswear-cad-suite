@@ -86,3 +86,7 @@ A suíte inicial registra **8 testes de contrato PASS_CI** e build Vite/TypeScri
 Na branch de engenharia `feat/ts-generic-geometry-adapter` foi implementada uma função Bézier em TypeScript independente da renderização SVG, com comprimento de arco e piques sintéticos por distância acumulada. A cobertura inclui 11 testes de fixture analítica, comparação estática com o benchmark Python, invariâncias e falhas explícitas. A UI mostra resultado em mm como *POC* e mantém `PILOT-001` como `NOT_YET_DEFINED`.
 
 O adaptador ainda exige CI final, tratamento de curvas adversariais, política formal de erro e teste de interação no navegador. Não inclui `SeamEdge` real ou qualquer `SeamPair` do bloco da camisa, calça ou alfaiataria.
+
+## Histórico do editor: restauração de sessões sintéticas
+
+Na branch `fix/web-persisted-undo-history`, `createEditor` passa a validar a cadeia linear de eventos do projeto sintético e reconstruir snapshots de undo ao importar JSON. A suíte web passou em [CI #38459723728](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38459723728) com **23/23 testes** e compilação aprovada. O formato 0.1.0 **não** guarda estados anteriores de QA nem eventos paramétricos complexos; eles continuam fora do contrato aprovado.
