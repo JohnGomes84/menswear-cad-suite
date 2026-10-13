@@ -67,9 +67,9 @@ describe("synthetic project contract", () => {
   });
 
   it("rejects tampering with the final coordinate or event before values", () => {
-    const edited = moveControl(moveControl(createEditor(), 1, { x: 55, y: 18 }), 2, { x: 183, y: 27 });
+    const edited = moveControl(moveControl(createEditor(), 1, { x: 55, y: 18 }), 1, { x: 73, y: 27 });
     const inconsistent = JSON.parse(exportProject(edited.project));
-    inconsistent.curve.controlPointsMm[2].y = 60;
+    inconsistent.curve.controlPointsMm[1].y = 60;
     expect(() => importProject(JSON.stringify(inconsistent))).toThrow("Cadeia");
 
     const tamperedBefore = JSON.parse(exportProject(edited.project));
