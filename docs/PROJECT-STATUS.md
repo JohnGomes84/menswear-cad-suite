@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.19 DRAFT (auditoria textual inicial de calça plana)
+**Baseline corrente:** 1.20 DRAFT (auditoria textual inicial de calça plana)
 
 ## Situação executiva
 
@@ -129,3 +129,8 @@ O registro `ALD-CH02-01` recebeu estado **TEXT_REVIEWED** com fonte em pp. 31–
 ## Primeiro esqueleto coordenado de calça CH02
 
 O diagrama da página 34 do livro foi inspecionado visualmente, permitindo orientar frente de calças flat de uma e duas peças. `src/flatTrouserResearch.ts` calcula apenas pontos/linhas auxiliares em mm, sem contorno ou curva aprovada. Documento `docs/domain/CH02-DIAGRAM-001.md`, catálogo marcado `PARTIAL_FRONT_GRID`. [CI #38467502627](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38467502627): **73/73 testes + build PASS**. Fonte e geometria parcial, prova de modelista/física pendente. Gate B NO-GO.
+
+
+## Contrato 0.4 de constraints dirigidas persistentes
+
+O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões. A mudança de origem reavalia o destino. [CI #38468690640](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38468690640): **93/93 testes web e build PASS**. **UI e E2E do schema 0.4 ainda não implementados**; o atual SceneLab segue com 0.3 e alinhamentos pontuais. Solver simultâneo e regras da obra continuam bloqueados/pendentes.
