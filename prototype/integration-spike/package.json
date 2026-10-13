@@ -1,0 +1,14 @@
+{
+  "name": "menswear-cad-freesewing-vertical-spike",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated source-first vertical integration proof, diagnostic only",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node demo.mjs"
+  },
+  "dependencies": {
+    "@freesewing/core": "4.0.0"
+  }
+}
