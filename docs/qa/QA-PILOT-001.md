@@ -39,3 +39,19 @@ Fonte/semântica em revisão: `../domain/RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md
 | QA-MEAS-006 | conversão cm→mm | `65.0 cm → 650 mm`; `17.8 cm → 178 mm`, sem arredondamento adicional | NOT_RUN |
 
 O protocolo operacional proposto para `L-M` (braço ao lado, cotovelo sem flexão forçada, punho neutro) e o alias de punho precisam de aprovação de modelagem antes de qualquer caso ser marcado como `PASS` para o produto. O valor numérico esperado pode ser aprovado separadamente da semântica e da interpretação de espelhamento do desenho.
+
+
+## Casos preliminares de margens — Issue #3 (NOT_RUN)
+
+Mapa de referência: `../domain/RESEARCH-ISSUE-3-Seam-Allowance-Map.md`. Os casos esperam revisão da classificação antes da implementação.
+
+| ID | Verificação | Resultado esperado | Estado |
+|---|---|---|---|
+| QA-MARG-001 | Cobertura do contorno do corpo e da manga | Cada aresta recebe origem e uma classe explícita: default 10 mm incluído, sem margem, sem bainha, centro/dobra ou `NOT_YET_DEFINED` | NOT_RUN |
+| QA-MARG-002 | Conversão da margem incluída no bloco | A regra geral de 1 cm não gera um segundo offset sobre uma linha que já a incorpore | NOT_RUN |
+| QA-MARG-003 | Bordos explicitamente sem margem/bainha | Decote/trecho 0–1 e barras/2–4 permanecem sem offset apenas nas partes confirmadas na revisão | NOT_RUN; escopo pendente |
+| QA-MARG-004 | Centro frente/costas e centro da manga | Não gerar costura/corte duplicado; operação dobra/par exige especificação explícita | NOT_RUN; `NOT_YET_DEFINED` |
+| QA-MARG-005 | Encontros de ombro/decote, cava/lateral, lateral/barra e cabeça/underarm | Junções não se auto-reparam silenciosamente; regra de canto ou erro explícito | NOT_RUN; junções `NOT_YET_DEFINED` |
+| QA-MARG-006 | Separação de caminhos | `seam_geometry` mantém-se independente de `cut_geometry`; margens por aresta têm largura/origem próprias | NOT_RUN |
+
+Nenhum desses casos conta como aprovação até modelagem confirmar a leitura dos traços do diagrama, os centros/dobras e a convenção de linha de costura versus corte.

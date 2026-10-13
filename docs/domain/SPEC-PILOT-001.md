@@ -47,3 +47,24 @@ Fonte de detalhe: `RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md`; Aldrich, 5ª ed., P
 - A geometria do desenho marca uma linha central e o bordo 2–4 sem bainha. A regra determina o segmento desenhado; a conversão em largura total refletida/abertura acabada requer revisão do diagrama.
 
 Os valores e o mapeamento acima são fixtures propostas, não medidas aprovadas nem validação do `PILOT-001`. Não fechar o gate até revisão por modelagem.
+
+
+## Auditoria preliminar de margens — Issue #3 (v0.1)
+
+Fonte de detalhe: `RESEARCH-ISSUE-3-Seam-Allowance-Map.md`. O texto da p. 35 do PDF informa 1 cm incluído no bloco, salvo exceções. O diagrama do flat shirt é PDF p. 38; a página 36 é continuação das instruções textuais. **Toda classificação abaixo aguarda revisão de modelagem**, em especial a distinção entre linha líquida e linha de corte.
+
+| Peça/aresta | Regra preliminar | Evidência/status |
+|---|---|---|
+| Corpo — decote frente/costas | 0 mm onde coberto pela chamada “no seam allowance” | Explícita no diagrama; confirmar abrangência sobre as duas curvas |
+| Corpo — centro frente/costas | centro/dobra, sem offset provisório | Rótulo “centre front and back” e chamada de ausência de margem no trecho inferior; dobra versus corte em par pendente |
+| Corpo — ombro 10–17 | 10 mm incluídos no bloco | Default da p. 35, sem exceção indicada |
+| Corpo — cava 17–12–5 | 10 mm incluídos no bloco | Default da p. 35, sem exceção indicada |
+| Corpo — lateral 5–7–8 | 10 mm incluídos no bloco | Default da p. 35, sem exceção indicada |
+| Corpo — barra 4–8 | 0 mm de margem de bainha | Chamada “no hem allowance” |
+| Manga — cabeça 3–0 | 10 mm incluídos no bloco | Default da p. 35, sem exceção indicada |
+| Manga — costura inferior 3–4 | 10 mm incluídos no bloco | Default da p. 35, sem exceção indicada |
+| Manga — trecho 0–1 | 0 mm | Chamada “no seam allowance” |
+| Manga — centro 1–2 | linha central, sem offset provisório | Tratamento de dobra/borda ainda não definido |
+| Manga — bordo inferior 2–4 | 0 mm de margem de bainha | Chamada “no hem allowance” |
+
+`DEFAULT_10_MM_INCLUDED` descreve o que a fonte diz sobre o bloco; **não** é uma instrução para aplicar outro offset de 10 mm sobre a geometria recebida. `seam_geometry` e `cut_geometry` continuam distintas. O papel de cada traço, o encontro das margens nos cantos e o tratamento de centros ainda não são especificação aprovada.

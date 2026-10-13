@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.3 — pesquisa das medidas de manga/punho registrada; revisão em andamento
+**Versão da baseline:** 1.4 — pesquisa preliminar das margens por aresta registrada; revisão em andamento
 **Data:** 13/10/2026  
-**Status:** descoberta de produto fechada; POC geométrica sintética incorporada à `main` pelo PR #8 e testada após o merge; propostas para as Issues #1/#2 documentadas, mas aguardam revisão de modelagem; validação do `PILOT-001` e código de produção continuam não autorizados.
+**Status:** descoberta de produto fechada; PR #10 mesclado com propostas de medidas para as Issues #1/#2; mapa preliminar da Issue #3 em revisão; reteste da POC sintética passou em 14 testes; validação do `PILOT-001` e código de produção continuam não autorizados.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -400,7 +400,7 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 
 1. Revisar a proposta de usar `L-M` (ombro até abaixo do punho) para `one_piece_sleeve_length`: a fixture de 65 cm do flat shirt (PDF p. 35) produz `0–2 = 63 cm` pela regra da p. 36. Aprovar a postura operacional proposta e manter `A-L-N`/`shirt_sleeve_length` separado.
 2. Revisar a proposta de mapear `close_wrist` como alias de `wrist_circumference` (medida `V`, logo acima do osso do punho). A regra woven flat shirt `2–4 = 1/2 × 17.8 + 5` produz `13.9 cm`; confirmar também a interpretação do segmento/centro antes de validar abertura acabada.
-3. Auditar no diagrama as margens incorporadas por aresta, exceções `no seam allowance`, bainha e linhas centrais.
+3. Revisar o mapa preliminar de margens por aresta, baseado na regra geral da PDF p. 35 e no diagrama da PDF p. 38. Confirmar linha líquida versus corte, abrangência das chamadas sem margem, centros/dobras e terminações antes de produzir offsets.
 4. Fechar matriz de pontos/direções, curva de cava/decote e correspondência frente/costas.
 5. Especificar `SeamPair` e `AssemblyEase` para manga/cava segundo execução “machined on the flat”.
 6. Aprovar representação inicial de curvas, método de arco, tolerâncias a testar, formatos e subset de constraints.
@@ -422,13 +422,13 @@ Mudança em medida necessária, fórmula, ease padrão, tecido, construção, to
 
 ## 16. Próxima ação recomendada
 
-Submeter as propostas registradas para as Issues #1/#2 à revisão de modelagem e fechar as decisões de medidas e fixture; em paralelo, continuar as pendências #3–#5 e revisar a POC sintética com geometria/QA. A POC ainda não recebeu aprovação final; nenhum resultado pode ser apresentado como validação do molde. Código de produção permanece bloqueado.
+Submeter as propostas das Issues #1/#2 e o mapa preliminar da Issue #3 à revisão de modelagem. Fechar as classificações de margens e os contratos linha de costura/linha de corte; em paralelo, continuar as pendências #4/#5 e revisar a POC sintética com geometria/QA. A POC ainda não recebeu aprovação final; nenhum resultado pode ser apresentado como validação do molde. Código de produção permanece bloqueado.
 
 ---
 
 ## 17. Histórico de consolidação
 
-Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. A versão 1.3 registra a pesquisa dirigida das medidas de manga e punho das Issues #1/#2, sem aprovar o mapeamento nem fechar o gate. A versão 1.2 registrou a incorporação da POC inicial à `main`, os testes pós-merge e o estado das issues. Versões anteriores podem ser guardadas como histórico de trabalho, mas decisões repetidas, pendências superadas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
+Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. A versão 1.4 registra o mapa preliminar da Issue #3 sem fechar a issue nem aprovar offsets. A versão 1.3 registra a pesquisa dirigida das medidas de manga e punho das Issues #1/#2, posteriormente mesclada pelo PR #10, ainda pendente de revisão de modelagem. A versão 1.2 registrou a incorporação da POC inicial à `main`, os testes pós-merge e o estado das issues. Versões anteriores podem ser guardadas como histórico de trabalho, mas decisões repetidas, pendências superadas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
 
 
 ---
@@ -451,7 +451,7 @@ As issues formais do projeto estão no repositório [JohnGomes84/menswear-cad-su
 
 O primeiro protótipo foi incorporado à `main` por squash no [PR #8 (mesclado)](https://github.com/JohnGomes84/menswear-cad-suite/pull/8). Ele cobre uma Bézier cúbica sintética, comprimento e posição por arco, piques, reversão, discretização, interseções, detecção de degeneração, offsets constantes auxiliares e exportação diagnóstica.
 
-A rodada inicial e a execução após o merge passaram em **14 testes** cada, usando ambiente virtual limpo. A fixture de curva teve comprimento computacional de referência de aproximadamente **258,1271 mm**. Dois runs consecutivos produziram hashes SHA-256 idênticos para os artefatos JSON, SVG e PDF no ambiente/fixture atual. O resultado e os sweeps estão em [`poc/geometry-synthetic/`](../poc/geometry-synthetic/), com análise detalhada em [`POC_REPORT.md`](../poc/geometry-synthetic/POC_REPORT.md). Esse comprimento é referência numérica da fixture, não solução analítica independente; as medições não definem tolerância de produção.
+A rodada inicial e a execução após o merge passaram em **14 testes** cada, usando ambiente virtual limpo. A suíte foi reexecutada em `main` durante a revisão do PR #10 e passou novamente em **14/14 testes**. A fixture de curva teve comprimento computacional de referência de aproximadamente **258,1271 mm**. Dois runs consecutivos produziram hashes SHA-256 idênticos para os artefatos JSON, SVG e PDF no ambiente/fixture atual. O resultado e os sweeps estão em [`poc/geometry-synthetic/`](../poc/geometry-synthetic/), com análise detalhada em [`POC_REPORT.md`](../poc/geometry-synthetic/POC_REPORT.md). Esse comprimento é referência numérica da fixture, não solução analítica independente; as medições não definem tolerância de produção.
 
 **Estado dos gates:** o protótipo da POC sintética está incorporado à `main`, mas sua conclusão e aceitação por geometria/QA ainda estão **pendentes** (issue #7). A validação do `PILOT-001` permanece **NO-GO** até resolver as pendências aplicáveis da seção 14.1. Código de produção e implementação web continuam bloqueados. PDF/SVG são apenas saídas diagnósticas; não houve impressão física nem aprovação industrial.
 
@@ -463,3 +463,11 @@ A pesquisa localizou no livro a correspondência do protocolo `L-M` com a entrad
 Para punho, foi proposta a medida corporal canônica `wrist_circumference` (medida `V`, logo acima do osso do punho) e um alias de regra `close_wrist`. Com o exemplo `17.8 cm`, a regra específica da camisa plana `2–4 = 1/2 × close_wrist + 5 cm` produz `13.9 cm` (`139 mm`). O livro não declara literalmente a equivalência dos rótulos; por isso o alias e a postura operacional de `L-M` aguardam aprovação de modelagem. `13.9 cm` é o segmento 2–4 do desenho, não o valor da medida corporal nem automaticamente uma circunferência de cuff acabado. Não importar a regra diferente `+3/+3.5 cm` do bloco de jersey.
 
 Registro detalhado, fixture e fontes estão em [`RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md`](domain/RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md). A SPEC, o formato proposto e a QA recebem os mesmos resultados esperados, identificados como pendentes/`NOT_RUN`. As Issues #1/#2 permanecem abertas; esta pesquisa não altera o estado NO-GO do Gate específico do `PILOT-001`.
+
+## 21. Pesquisa preliminar — Issue #3, margens por aresta
+
+A p. 35 do PDF estabelece 1 cm de margem de costura incluído no bloco, salvo indicação contrária. O diagrama específico do `Flat shirt block` está na p. 38 do PDF (não na p. 36, como constava na Issue #3); ele marca ausência de margem de costura em parte do decote e no trecho 0–1 da manga, identifica linhas centrais e indica ausência de margem de bainha no corpo e na manga. A aplicação da regra geral às arestas sem exceção é preliminar.
+
+O mapa não decide ainda qual traço do desenho é a linha líquida de costura e qual é o contorno de corte, nem se as linhas centrais implicam dobra, corte em par ou outra construção. Também permanecem sem regra os encontros e cantos do offset. Esses pontos devem ser revisados antes de o CAD materializar qualquer margem; a regra geral de 1 cm não deve gerar um segundo offset sobre uma margem já incorporada.
+
+O mapa rastreado está em [`RESEARCH-ISSUE-3-Seam-Allowance-Map.md`](domain/RESEARCH-ISSUE-3-Seam-Allowance-Map.md). A Issue #3 permanece aberta, os casos de margem estão `NOT_RUN` e a saída para corte segue bloqueada.
