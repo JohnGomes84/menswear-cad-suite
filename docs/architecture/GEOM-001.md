@@ -17,7 +17,6 @@ Status: DRAFT 0.2 — proposta da Issue #5 pendente de revisão de modelagem/geo
 - SeamPair
 - SeamSegmentPair (proposta Issue #5)
 - AssemblyEase (proposta Issue #5)
-- AssemblyTolerance (proposta Issue #5)
 - Dart
 - Notch
 - Grainline
@@ -41,7 +40,7 @@ Status: DRAFT 0.2 — proposta da Issue #5 pendente de revisão de modelagem/geo
 
 ## `AssemblyEase` e tolerâncias — proposta
 
-`AssemblyEase` pertence ao `SeamSegmentPair` e registra, quando aprovado, membro que será acomodado, excesso-alvo em mm e distribuição ao longo do segmento. `AssemblyTolerance` registra o limite físico de resíduo após aplicar a ease. O erro numérico do cálculo de arco é um limite do kernel separado; não usar nenhum desses valores como substituto dos outros.
+`AssemblyEase` pertence ao `SeamSegmentPair` e registra, quando aprovado, membro que será acomodado, excesso-alvo em mm e distribuição ao longo do segmento. `AssemblyTolerance` é uma política/valor por trecho nesta proposta; o rascunho de formato usa `assemblyToleranceMm` e não exige entidade independente. O erro numérico do cálculo de arco é um limite do kernel separado; não usar nenhum desses valores como substituto dos outros.
 
 Os dados do bloco `flat shirt` não fornecem ainda piques de montagem, ease por trecho, distribuição, limite físico ou correspondência curva-a-curva. O `+3 cm` da linha reta `0–3` da manga é regra de construção, não valor de `AssemblyEase`. Todos os campos e interpretações permanecem DRAFT até aprovação.
 
