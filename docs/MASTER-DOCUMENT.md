@@ -2,7 +2,7 @@
 
 **Versão da baseline:** 1.16 DRAFT — operações transacionais e testes de navegador em laboratório sintético
 **Data:** 13/10/2026  
-**Status:** PRs #34–#36 e #39 incorporados à `main`. Editor sintético: 50/50 testes unitários, build aprovado; suíte Playwright Chromium: 4/4 casos PASS na branch de QA, PR pendente. Catálogo por sumário: 54 assuntos candidatos, sem implementação de moldes reais. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
+**Status:** PRs #34–#36 e #39–#41 incorporados à `main`. Laboratório sintético: 50/50 testes unitários e 5/5 E2E Chromium PASS; código web compila. Catálogo: 54 assuntos candidatos TOC_ONLY, sem moldes reais implementados. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -690,6 +690,11 @@ O [PR #34](https://github.com/JohnGomes84/menswear-cad-suite/pull/34) incorporou
 
 O [PR #39](https://github.com/JohnGomes84/menswear-cad-suite/pull/39) incorporou o laboratório sintético `0.3.0` com `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT`, histórico reversível por entidade e `initialEntities` para verificação de cadeia. A migração de arquivos sintéticos `0.2.0` exige confirmação do usuário. Sem liberação de moldes reais.
 
-O teste de navegador é realizado no Chromium por Playwright **1.56.1** com dependências fixadas no `package-lock.json`. [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286): 50/50 testes e build PASS. [CI Chromium #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072): **4/4 testes E2E PASS**, abrangendo criação/remoção com undo/redo, zoom/pan preservando a geometria, arraste/salvamento/reabertura/undo e rejeição de schema inválido sem substituir a cena. Esses resultados são de **interface experimental**; não validam fórmula do livro, caimento ou escala de PDF impresso.
+O teste de navegador é realizado no Chromium por Playwright **1.56.1** com dependências fixadas no `package-lock.json`. [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286): 50/50 testes e build PASS. [CI Chromium #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072): **5/5 testes E2E PASS**, abrangendo criação/remoção com undo/redo, zoom/pan preservando a geometria, arraste/salvamento/reabertura/undo e rejeição de schema inválido sem substituir a cena. Esses resultados são de **interface experimental**; não validam fórmula do livro, caimento ou escala de PDF impresso.
 
 A detecção de alterações parciais no histórico `0.3.0` não constitui assinatura de autenticidade; quem modifica o arquivo inteiro pode gerar uma nova cadeia consistente. Transações de grupos, constraints e `PARAMETRIC_OVERRIDE` real permanecem fora do escopo. Gate B do `PILOT-001` e release comercial: **NO-GO**.
+
+
+### Adendo de QA no navegador — PR #41
+
+[PR #41](https://github.com/JohnGomes84/menswear-cad-suite/pull/41) adicionou ensaio básico de contraste do aviso de segurança. [CI Chromium #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662): **5/5 E2E PASS**, incluindo contraste do texto do aviso “não utilizar para corte” de no mínimo 4,5:1. Não é auditoria WCAG completa, nem valida moldes reais.
