@@ -33,7 +33,10 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
  const inspect=useMemo(()=>{
    if(chosen.kind==="LINE"){
      const a=chosen.pointsMm[0],b=chosen.pointsMm[1];
-     return {state:"PASS" as const,lengthMm:Math.hypot(b.x-a.x,b.y-a.y),notches:[]};
+     const lengthMm=Math.hypot(b.x-a.x,b.y-a.y);
+     return lengthMm<=1e-9
+       ? {state:"FAIL" as const,message:"Linha degenerada"}
+       : {state:"PASS" as const,lengthMm,notches:[]};
    }
    const controls=chosen.pointsMm as unknown as CubicControls;
    return evaluateSyntheticCurve(controls);
