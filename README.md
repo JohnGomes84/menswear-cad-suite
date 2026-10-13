@@ -38,6 +38,7 @@ O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experi
 - `prototype/web-app/README.md` — protótipo web isolado, sem molde real
 - `docs/MASTER-DOCUMENT.md`
 - `docs/product/BOOK-COVERAGE-001.md` — inventário dos 14 capítulos, não implementação
+- `docs/product/PATTERN-CATALOG-001.json` — 54 assuntos candidatos; todos TOC_ONLY/NOT_STARTED
 - `docs/decisions/ADR-0004-full-book-product-coverage.md`
 - `docs/gates/GATE-APP-001.md`
 - `docs/architecture/APP-FOUNDATION-001.md`
