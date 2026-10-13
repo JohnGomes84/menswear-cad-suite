@@ -4,9 +4,9 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.8 DRAFT**
+- Documento Mestre: **baseline 1.9 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
-- POC geométrica sintética: **incorporada à `main`; 14/14 testes documentados**
+- POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
 - Código de produção / implementação web funcional: **bloqueados**
