@@ -23,6 +23,7 @@ export function flatTrouserFrontProgram(
  if(variant!=="BASIC"&&variant!=="EASY")
    throw new RangeError("Variante de modelagem inválida");
  const easy=variant==="EASY";
+ const basePage=method==="ONE_PIECE"?32:33;
  const programId=`ALD-CH02-FLAT-${method}-FRONT-${variant}-DRAFT-0.1`;
  const source=(pdfPage:number,instruction:string)=>({
    sourceId:programId,chapter:2,pdfPage,instruction,
@@ -30,7 +31,7 @@ export function flatTrouserFrontProgram(
  });
  const origin=(id:string,instruction:string):DraftInstruction=>({
    op:"ORIGIN",stepId:id,pointId:id,xMm:0,yMm:0,
-   source:source(32,instruction)
+   source:source(basePage,instruction)
  });
  const offset=(id:string,from:string,direction:"LEFT"|"RIGHT"|"UP"|"DOWN",
    lengthMm:ScalarExpr,page:number,instruction:string):DraftInstruction=>({
@@ -44,24 +45,24 @@ export function flatTrouserFrontProgram(
  });
  const common:DraftInstruction[]=[
    origin("0","Origem com eixos perpendiculares, confirmados na figura"),
-   offset("1","0","DOWN",plus(measure("bodyRiseMm"),mm(easy?40:20)),32,
+   offset("1","0","DOWN",plus(measure("bodyRiseMm"),mm(easy?40:20)),basePage,
      "Altura do gancho mais acréscimo da variante"),
-   offset("2","1","DOWN",measure("insideLegMm"),32,"Comprimento interno"),
-   offset("3","1","DOWN",times(span("1","2"),1/2),32,
+   offset("2","1","DOWN",measure("insideLegMm"),basePage,"Comprimento interno"),
+   offset("3","1","DOWN",times(span("1","2"),1/2),basePage,
      "Metade do comprimento interno e guia horizontal do joelho"),
-   offset("4","1","LEFT",width(easy),32,
+   offset("4","1","LEFT",width(easy),basePage,
      "Um quarto do assento mais folga; sentido definido no diagrama"),
-   project("5","4","0",32,
+   project("5","4","0",basePage,
      "Esquadrar de 4 até a horizontal superior"),
    offset("6","5","RIGHT",mm(10),32,"Deslocamento superior 5→6 de 1 cm"),
-   offset("7","4","UP",times(span("4","5"),1/4),32,
+   offset("7","4","UP",times(span("4","5"),1/4),basePage,
      "Quarto do comprimento vertical 4→5"),
-   offset("8","4","LEFT",gap(easy),32,
+   offset("8","4","LEFT",gap(easy),basePage,
      "Quarto de 1→4 com ajuste; sentido verificado no diagrama")
  ];
  const onePiece:DraftInstruction[]=[
    offset("9","2","LEFT",
-     plus(times(span("1","4"),2/3),mm(easy?25:20)),32,
+     plus(times(span("1","4"),2/3),mm(easy?25:20)),basePage,
      "Referência da barra 2→9"),
    project("10","9","3",32,"Projetar a referência 9 na linha do joelho"),
    offset("11","10","LEFT",mm(20),32,"Deslocar 2 cm à esquerda do joelho")
