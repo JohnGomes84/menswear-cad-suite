@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.24 DRAFT**
+- Documento Mestre: **baseline 1.25 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -102,3 +102,8 @@ A análise de reaproveitamento **de todo o CAD** está documentada em [REUSE-DEC
 ## Contêineres Part e anotações técnicas — somente POC
 
 A segunda etapa da integração FreeSewing usa os contêineres `Part` para referências calculadas a partir do CH02, com isolamento rigoroso entre conectores de dependência, costura e corte. A macro real `grainline` e o marcador `Snippet(notch)` foram testados **somente em desenho sintético**, sem atribuí-los ao método da obra. [Contrato e limites](docs/architecture/PIECE-ANNOTATION-SEMANTICS-001.md) · [QA](docs/qa/QA-PART-ANNOTATIONS-001.md). `CUT_READY=false` permanece obrigatório.
+
+
+## Semântica independente de fornecedor — com bloqueios de produção
+
+A [especificação de entidades](docs/architecture/GARMENT-SEMANTICS-001.md) distingue construção, costura, corte, barra, dobra, margem, fio e pique, com proveniência por instrução e esquema próprio `garment-semantic/0.1.0`. Os testes [QA-GARMENT-SEMANTICS-001](docs/qa/QA-GARMENT-SEMANTICS-001.md) impedem rótulos industriais em dados ainda `RESEARCH_ONLY`. O [lab FreeSewing](prototype/integration-spike/) compara coordenadas, arestas e passos e gera o relatório adicional `ch02-semantic-contract.json`. **Aldrich CH02 informa 10 mm de costura já incluídos, com exceções**; nenhuma margem é adicionada automaticamente sem identificar linha real e exceção no diagrama. Não há molde de produção validado.
