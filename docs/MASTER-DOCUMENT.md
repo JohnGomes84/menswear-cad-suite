@@ -1,6 +1,6 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.11 DRAFT — cobertura integral da obra e separação entre catálogo de métodos e pilotos
+**Versão da baseline:** 1.12 DRAFT — núcleo geométrico TypeScript experimental e cobertura multi-família
 **Data:** 13/10/2026  
 **Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
 **Idioma inicial:** português brasileiro  
@@ -642,3 +642,14 @@ O sumário do PDF de referência, páginas 2–6/309, foi conferido e deu origem
 **Evidência e status:** cobertura editorial por sumário confirmada; nenhum percentual de fórmulas/métodos implementados ou validados decorre disso. Cada bloco futuro exige ficha de origem, entradas, relações e geometria auditadas, testes, estado de QA e aprovação de modelagem. Capítulo 14 contém também temas de CAD/PLM/3D e não implica que todas essas tecnologias sejam componentes do primeiro release.
 
 Depois do `PILOT-001`, a generalidade do sistema será validada em pilotos de famílias **não equivalentes**, incluindo ao menos um bloco de calça e um bloco `form`, antes da alegação de cobertura multipadrão. Gate APP experimental pode continuar; Gate B e código de produção ainda obedecem aos gates específicos.
+
+
+---
+
+## 30. Núcleo geométrico no navegador — experimento TypeScript (baseline 1.12 DRAFT)
+
+A arquitetura para todas as famílias continua única; funções geométricas **não contêm regras de camisas ou de qualquer outra roupa**. Um adaptador TypeScript da Bézier cúbica foi desenvolvido em `prototype/web-app/src/geometry.ts` para calcular comprimento, ponto e tangente por distância acumulada e marcas sintéticas. O SVG usa os resultados para visualização, sem se tornar geometria canônica.
+
+Casos de teste incluem reta analítica 3-4-5, arco de parábola com fórmula independente e curva Bézier sintética originalmente executada na POC Python, além de reversão, translação/escala, domínio e falhas de convergência. A referência Python é comparada como *fixture estática*, não como pipeline cruzado completo. Não há cota global industrial de erro nem equivalência física demonstrada; os testes são limitados ao ambiente experimental.
+
+O `PILOT-001` continua NO-GO; a presença de Bézier no navegador não valida nenhum bloco da obra, margens ou montagem.

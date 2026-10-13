@@ -1,10 +1,12 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { ChangeEvent, PointerEvent } from "react";
 import {
   createEditor, demoProject, exportProject, importProject,
   moveControl, redo, undo
 } from "./domain";
 import type { EditorState, PointIndex, Vec2 } from "./domain";
+import { evaluateSyntheticCurve } from "./geometry";
+import type { CubicControls } from "./geometry";
 
 type ViewBox = { x: number; y: number; width: number; height: number };
 type DragState =
@@ -29,6 +31,11 @@ export default function App() {
     preview?.index === index ? preview.point : point
   );
   const path = `M ${points[0].x} ${points[0].y} C ${points[1].x} ${points[1].y}, ${points[2].x} ${points[2].y}, ${points[3].x} ${points[3].y}`;
+  // Geometria canônica em mm, calculada sem depender de viewport, zoom ou SVG.
+  const geometry = useMemo(() => {
+    const controls: CubicControls = [points[0], points[1], points[2], points[3]];
+    return evaluateSyntheticCurve(controls);
+  }, [curve.controlPointsMm, preview]);
 
   function world(e: PointerEvent<SVGSVGElement>): Vec2 {
     const svg = svgRef.current;
@@ -178,6 +185,14 @@ export default function App() {
                 <g>
                   <path d={`M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y} M ${points[2].x} ${points[2].y} L ${points[3].x} ${points[3].y}`} fill="none" stroke="#87a7ce" strokeWidth=".5" strokeDasharray="2 2" />
                   <path d={path} fill="none" stroke="#225bd3" strokeWidth="1.4" strokeLinecap="round" />
+                  {geometry.state === "PASS" && geometry.notches.map((notch) => {
+                    const p = notch.pointMm;
+                    const n = { x: -notch.tangent.y, y: notch.tangent.x };
+                    return <line key={notch.fraction}
+                      x1={p.x - 2*n.x} y1={p.y - 2*n.y}
+                      x2={p.x + 2*n.x} y2={p.y + 2*n.y}
+                      stroke="#121f43" strokeWidth=".8" pointerEvents="none" />;
+                  })}
                   {points.map((p, i) => (
                     <g key={i}>
                       <circle cx={p.x} cy={p.y} r="3.6" fill="transparent" style={{ cursor: "grab" }} onPointerDown={e => pointDown(e, i as PointIndex)} />
@@ -206,9 +221,11 @@ export default function App() {
               ))}
               <hr />
               <h3>Diagnóstico</h3>
-              <div className="diagnostic"><span>Comprimento de arco</span><strong>NOT_RUN</strong></div>
+              <div className="diagnostic"><span>Comprimento sintético</span><strong>{geometry.state === "PASS" ? formatMm(geometry.lengthMm) : "FAIL"}</strong></div>
+              <div className="diagnostic"><span>Piques sintéticos (arco)</span><strong>{geometry.state === "PASS" ? geometry.notches.length + " (POC)" : "FAIL"}</strong></div>
+              {geometry.state === "FAIL" && <div className="error">{geometry.message}</div>}
               <div className="diagnostic"><span>Molde masculino</span><strong>NOT_YET_DEFINED</strong></div>
-              <div className="inspector-note">Medição geométrica TypeScript e vínculo ao PILOT-001 dependem de contratos e testes próprios.</div>
+              <div className="inspector-note">Comprimento e piques são calculados sobre a curva paramétrica sintética, sem referência ao zoom. Não representam cava, manga ou marcações de costura.</div>
               {active && <div className="selection">Selecionado: P{selected} — X {formatMm(active.x)} · Y {formatMm(active.y)}</div>}
             </aside>
           </div>
