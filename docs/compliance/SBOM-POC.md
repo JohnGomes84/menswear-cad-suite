@@ -28,3 +28,12 @@
 | @types/react-dom | 19.1.6 | Tipos | POC |
 
 A árvore direta/transitiva está fixada no `prototype/web-app/package-lock.json` (lockfile v3). **Não** se trata ainda de SBOM SPDX/CycloneDX verificado. É obrigatório auditar licenças dos artefatos instalados, pacotes transitivos e avisos antes de produção/redistribuição.
+
+
+## E2E experimental
+
+| Componente | Versão | Uso | Estado |
+|---|---:|---|---|
+| @playwright/test | 1.56.1 | Teste Chromium no GitHub Actions | POC/TEST_ONLY |
+
+A dependência e suas transitivas constam no package-lock.json. O navegador Chromium/ambiente do runner exige revisão adicional antes de qualquer redistribuição; esta tabela não constitui SBOM de release.
