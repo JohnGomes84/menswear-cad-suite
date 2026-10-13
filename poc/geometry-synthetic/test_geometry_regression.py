@@ -2,7 +2,7 @@
 import math
 import unittest
 
-from geometry_poc import CubicBezier, offset_polygon, segment_intersection
+from geometry_poc import CubicBezier, _adaptive_simpson, offset_polygon, segment_intersection
 
 
 class IndependentCurveFixtures(unittest.TestCase):
@@ -58,6 +58,28 @@ class IndependentCurveFixtures(unittest.TestCase):
     def test_degenerate_near_zero_length_status_is_explicit(self):
         curve = CubicBezier((0, 0), (0, 0), (1e-10, 0), (1e-10, 0))
         self.assertEqual(curve.validity_status(min_length_mm=1e-9)["status"], "INVALID_DEGENERATE")
+
+
+class ExplicitNumericalFailureTests(unittest.TestCase):
+    def test_integration_raises_when_recursion_budget_is_exhausted(self):
+        with self.assertRaisesRegex(ArithmeticError, "não convergiu"):
+            _adaptive_simpson(lambda t: t**4, 0.0, 1.0, 1e-16, depth=0)
+
+    def test_flatten_raises_when_subdivision_budget_is_exhausted(self):
+        curve = CubicBezier((0, 0), (0, 100), (100, 100), (100, 0))
+        with self.assertRaisesRegex(ArithmeticError, "não atingiu a tolerância"):
+            curve.flatten(tolerance_mm=1e-7, max_depth=1)
+
+    def test_nonfinite_integrand_is_rejected(self):
+        curve = CubicBezier((1e308, 0), (-1e308, 0), (1e308, 0), (-1e308, 0))
+        with self.assertRaisesRegex(ArithmeticError, "não finito"):
+            curve.length()
+
+    def test_invalid_integration_budget_is_rejected(self):
+        with self.assertRaises(ValueError):
+            _adaptive_simpson(lambda t: t, 0.0, 1.0, 0.0)
+        with self.assertRaises(ValueError):
+            _adaptive_simpson(lambda t: t, 0.0, 1.0, 1e-6, depth=-1)
 
 
 class TopologyFixtures(unittest.TestCase):

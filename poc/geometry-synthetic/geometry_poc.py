@@ -35,11 +35,21 @@ def _distance_point_segment(p: Point, a: Point, b: Point) -> float:
 
 def _simpson(f: Callable[[float], float], a: float, b: float) -> float:
     c = (a + b) / 2
-    return (b - a) * (f(a) + 4 * f(c) + f(b)) / 6
+    fa, fc, fb = f(a), f(c), f(b)
+    if not all(isfinite(x) for x in (fa, fc, fb)):
+        raise ArithmeticError("Integrando não finito; comprimento não confiável")
+    estimate = (b - a) * (fa + 4 * fc + fb) / 6
+    if not isfinite(estimate):
+        raise ArithmeticError("Overflow na quadratura; comprimento não confiável")
+    return estimate
 
 
 def _adaptive_simpson(f: Callable[[float], float], a: float, b: float,
                       eps: float, depth: int = 24) -> float:
+    if not isfinite(eps) or eps <= 0:
+        raise ValueError("eps deve ser positivo e finito")
+    if depth < 0:
+        raise ValueError("depth deve ser não negativo")
     if a == b:
         return 0.0
     whole = _simpson(f, a, b)
@@ -49,8 +59,12 @@ def _adaptive_simpson(f: Callable[[float], float], a: float, b: float,
         left = _simpson(f, lo, mid)
         right = _simpson(f, mid, hi)
         delta = left + right - estimate
-        if remaining <= 0 or abs(delta) <= 15 * tol:
+        if not isfinite(delta):
+            raise ArithmeticError("Erro de integração não finito")
+        if abs(delta) <= 15 * tol:
             return left + right + delta / 15
+        if remaining <= 0:
+            raise ArithmeticError("Integração não convergiu no limite de recursão configurado")
         return recurse(lo, mid, left, tol / 2, remaining - 1) + recurse(mid, hi, right, tol / 2, remaining - 1)
 
     return recurse(a, b, whole, eps, depth)
@@ -152,9 +166,11 @@ class CubicBezier:
         def split(p0: Point, p1: Point, p2: Point, p3: Point,
                   t0: float, t1: float, depth: int) -> None:
             flatness = max(_distance_point_segment(p1, p0, p3), _distance_point_segment(p2, p0, p3))
-            if flatness <= tolerance_mm or depth >= max_depth:
+            if flatness <= tolerance_mm:
                 out.append((t1, p3))
                 return
+            if depth >= max_depth:
+                raise ArithmeticError("Discretização não atingiu a tolerância antes do limite de subdivisão")
             p01 = _mul(_add(p0, p1), 0.5)
             p12 = _mul(_add(p1, p2), 0.5)
             p23 = _mul(_add(p2, p3), 0.5)
