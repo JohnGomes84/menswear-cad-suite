@@ -9,6 +9,7 @@
     "demo": "node demo.mjs"
   },
   "dependencies": {
-    "@freesewing/core": "4.0.0"
+    "@freesewing/core": "4.0.0",
+    "@freesewing/config": "4.0.0"
   }
 }
