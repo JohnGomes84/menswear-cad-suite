@@ -15,8 +15,8 @@
     ]
   },
   "governance": {
-    "evidenceLevel": "TOC_ONLY",
-    "caveat": "Catalog contains topical candidate records grounded in TOC, not audited method counts or implementation. Some records group multiple methods.",
+    "evidenceLevel": "MIXED_TOC_AND_TEXT",
+    "caveat": "53 assuntos em TOC_ONLY; 1 assunto do CH02 foi TEXT_REVIEWED exclusivamente no texto (PDF 31-34), com diagramas ainda pendentes. Nenhum método implementado.",
     "copyright": "Only original concise descriptions; no diagrams, scans, formulas or copied pages.",
     "coverage": "All 14 chapters present; no claim of technical implementation."
   },
@@ -153,7 +153,7 @@
       "slug": "flat-trouser-blocks",
       "family": "lower-trousers",
       "category": "BLOCK",
-      "sourceVerification": "TOC_ONLY",
+      "sourceVerification": "TEXT_REVIEWED",
       "geometrySpecification": "NOT_YET_DEFINED",
       "implementation": "NOT_STARTED",
       "modelValidation": "NOT_RUN",
@@ -166,10 +166,24 @@
           5,
           6
         ],
-        "methodPdfPageRange": null
+        "methodPdfPageRange": [
+          31,
+          34
+        ]
       },
       "ruleSetId": null,
-      "notes": null
+      "notes": "Texto revisado: blocos flat de calça de uma e duas peças, básico/folgado. Diagramas, coordenadas, curvas, margens por aresta e prova física pendentes.",
+      "reviewEvidence": "docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md",
+      "submethods": [
+        {
+          "id": "FLAT-TROUSER-ONE-PIECE",
+          "status": "TEXT_REVIEWED"
+        },
+        {
+          "id": "FLAT-TROUSER-TWO-PIECE",
+          "status": "TEXT_REVIEWED"
+        }
+      ]
     },
     {
       "methodId": "ALD-CH02-02",
