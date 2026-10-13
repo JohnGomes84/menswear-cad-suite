@@ -1,6 +1,6 @@
 # SPEC-PILOT-001 — Flat Shirt Core
 
-Status: DRAFT 0.1
+Status: DRAFT 0.2
 
 ## Entradas confirmadas do bloco
 - chest
