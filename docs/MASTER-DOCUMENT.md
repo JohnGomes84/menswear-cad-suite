@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.18 DRAFT — primeira auditoria textual da família de calças flat
+**Versão da baseline:** 1.19 DRAFT — diagrama parcial e coordenadas verificadas da frente flat trouser
 **Data:** 13/10/2026  
-**Status:** PR #45 integrado à main: constraints experimentais, 65 testes unitários e 6 E2E Chromium aprovados; documentação de governança implementada. No catálogo de 54 assuntos do livro, 53 seguem TOC_ONLY e um registro de calça plana CH02 foi TEXT_REVIEWED; geometria e moldes reais ainda não aprovados. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** núcleo CAD de constraints genéricas na main; auditoria visual parcial da calça CH02 e scaffold numérico da frente em revisão por PR. 73/73 testes web + build aprovados em CI da branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL, sem moldes reais. Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -726,3 +726,16 @@ A fonte fornecida foi consultada nas páginas **31–34 do PDF** da 5ª edição
 A fixture textual utiliza o exemplo `seat=1020 mm`, `body_rise=282 mm`, `inside_leg=800 mm` e testa **sete relações escalares** por variante básica/folgada. [Fixture](domain/FLAT-TROUSER-SCALAR-FIXTURE-001.json). As relações são verificações de aritmética derivadas da leitura; **não** definem a orientação x/y, curvas, encaixe, margens por aresta ou dimensões de peças completas. Imagens/diagramas do PDF ainda não foram auditados e a validação de modelagem/QA física permanece `NOT_RUN`. Os outros **53 registros** permanecem apenas `TOC_ONLY`.
 
 Essa frente é independente das regras do `PILOT-001`: não altera o seu Gate B, ainda NO-GO, e não anuncia gerador de calças funcional. Sua continuação está na [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44).
+
+
+---
+
+## 37. Diagrama original de calça flat e esqueleto geométrico de pesquisa — baseline 1.19 DRAFT
+
+O diagrama da **página 34 do PDF fornecido** foi examinado visualmente, junto ao texto do capítulo 2, pp. 31–33. Evidência metodológica própria: [CH02-DIAGRAM-001](domain/CH02-DIAGRAM-001.md). O enquadramento de coordenadas adotado é `0=(0,0)`, `+X` para a direita e `+Y` para baixo, com pontos básicos superiores, de gancho, joelho e barra identificados **somente onde o texto e o diagrama permitem correspondência inequívoca**.
+
+O módulo `prototype/web-app/src/flatTrouserResearch.ts` calcula esqueletos da **frente** dos blocos `ONE_PIECE` e `TWO_PIECE`, nas versões básica e folgada. Entradas: `seat`, `bodyRise` e `insideLeg` em mm; fixture da obra: 1020/282/800 mm. O código **não contém curvas do gancho/entreperna, costas, contorno fechado, linha de corte, margens ou regras para impressão**. O tipo de retorno é explicitamente `RESEARCH_ONLY`.
+
+A auditoria dos diagramas está em estado **`PARTIAL_FRONT_GRID`** no catálogo, não `DIAGRAM_REVIEWED` integral. O método `ALD-CH02-01` continua `TEXT_REVIEWED` e `NOT_STARTED` como implementação de bloco real. [CI web #38467502627](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38467502627): **73/73 testes PASS + build**. A revisão integral de costas e curvas continua na Issue #44.
+
+Essa é a primeira verificação computacional de **outra família de roupa** com motor e unidades comuns. Não altera o Gate B nem libera produto industrial.
