@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.21 DRAFT — interpretador sequencial rastreável das instruções do livro
+**Versão da baseline:** 1.22 DRAFT — costas do CH02 e pesquisa fundamentada de técnicas de curvas
 **Data:** 13/10/2026  
-**Status:** núcleo de interpretação de instruções em análise por PR, fundamentado no capítulo 2 (PDF 32–34). Testes unitários 109/109 e build aprovados na CI de branch. Corrigida inversão dos pontos 12/13 e dependências 14/15 da calça de duas peças. Catálogo: 53 TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** instruções de pontos de frente e costas do CH02 em laboratório RESEARCH_ONLY, implementadas em branch; 123/123 testes web e build PASS, catálogo de técnicas de curva sob validação. Esboços ainda sem curvas de costura/corte aprovadas. 53 entradas TOC_ONLY e um método TEXT_REVIEWED com DIAGRAM_PARTIAL. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -771,3 +771,18 @@ Operações inicialmente necessárias ao capítulo 2: origem, deslocamento cardi
 [CI #38473802868](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38473802868): **109/109 testes unitários + build TypeScript/Vite PASS**. O estado da frente é **RESEARCH_ONLY**, com `DIAGRAM_PARTIAL`: nenhuma curva, costas completas, contorno de corte, margens por aresta, prova física ou parecer profissional foram concluídos. O interpretador é um **subconjunto mínimo de operadores derivados da fonte**, não cobertura dos 14 capítulos nem sistema genérico completo.
 
 **Próxima prioridade baseada no livro:** auditar as instruções **Back section** do capítulo 2, pp. 32–33, confrontar com a figura p. 34, validar cada referência e só então ampliar o programa. Qualquer novo operador deve ser motivado por uma instrução concreta da obra e trazer fixture independente, sem inventar curvas.
+
+
+---
+
+## 40. Construção de costas e requisitos de curva fundamentados em técnica de modelagem — 1.22 DRAFT
+
+A sequência de instruções de Aldrich, *Metric Pattern Cutting for Menswear*, 5ª ed., foi conferida nas páginas PDF **32–33**, cruzada com o diagrama da página **34**. O novo `aldCh02FlatTrouserBackProgram.ts` acrescenta os pontos de pesquisa das **costas do bloco de uma peça (12–18)** e do **bloco de duas peças (16–25)** ao programa anterior da frente, sem duplicar o kernel: `draftingInterpreter.ts` executa a sequência e registra dependências, incluindo referências usadas dentro das expressões aritméticas. A saída `flatTrouserBackResearch.ts` não é contorno de costura/corte, é `RESEARCH_ONLY`.
+
+A pesquisa [CURVES-RESEARCH-001](domain/CURVES-RESEARCH-001.md) confronta **o próprio Aldrich (incluindo réguas curvas/French curves e cotas dos ganchos/entrepernas)** com técnicas documentadas de curvas paramétricas, tangência, *walking/trueing seams* e prova de encaixe. Os **oito requisitos de curvas** do CH02 estão em [CH02-CURVE-REQUIREMENTS-001.json](domain/CH02-CURVE-REQUIREMENTS-001.json): trajetos de ponto, distâncias de referência de gancho (30/32,5 e 55/60 mm conforme variante) e profundidades de entrada da entreperna (10 mm frente, 20 mm costas). Essas cotas **não determinam automaticamente uma única spline**. O registro é `AMBIGUOUS_GEOMETRY_DO_NOT_RENDER`, não autoriza Bézier inventada ou envio ao corte.
+
+Os critérios antes de gerar curvas são: (i) localizar no diagrama as referências e sentidos sem ambiguidade; (ii) explicitar escolha numérica de interpolação e tangentes como **decisão de CAD**, não afirmação de Aldrich; (iii) avaliar passagem, sinal de curvatura, continuidade, ausência de laços e comprimento real da linha de costura; (iv) conferir as costuras parceiras com as tolerâncias e requisitos do método; (v) fazer prova física/toile com o tecido adequado e validação competente.
+
+Evidência inicial: [web CI #38476422267](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38476422267), **123/123 testes + build PASS**. A verificação do registro de curvas roda separadamente na CI de catálogo; documentos adicionais não aprovam geometria. O método `ALD-CH02-01` continua `TEXT_REVIEWED`, com revisão parcial `PARTIAL_FRONT_BACK_GUIDES`; **nenhum bloco de produção é IMPLEMENTED**, ainda não há curvas validadas, escala física ou `SeamPair` conferido.
+
+Gate B e release: **NO-GO**.
