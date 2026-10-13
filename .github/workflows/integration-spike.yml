@@ -7,6 +7,8 @@ on:
       - "prototype/web-app/src/aldCh02FlatTrouser*.ts"
       - "prototype/web-app/src/flatTrouserBackResearch.ts"
       - "prototype/web-app/src/draftingInterpreter.ts"
+      - "prototype/web-app/src/garmentSemantics.ts"
+      - "prototype/web-app/src/aldCh02AllowancePolicy.ts"
       - ".github/workflows/integration-spike.yml"
   pull_request:
     paths:
@@ -40,6 +42,10 @@ jobs:
             prototype/web-app/src/flatTrouserBackResearch.ts \
             --bundle --platform=node --format=esm \
             --outfile=prototype/integration-spike/generated/aldch02.mjs
+          prototype/web-app/node_modules/.bin/esbuild \
+            prototype/web-app/src/garmentSemantics.ts \
+            --bundle --platform=node --format=esm \
+            --outfile=prototype/integration-spike/generated/garmentSemantics.mjs
       - name: Execute vertical integration contract tests
         run: npm test --prefix prototype/integration-spike
       - name: Generate annotated research-only SVG and diagnostics
