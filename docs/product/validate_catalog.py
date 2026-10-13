@@ -38,6 +38,10 @@ def validate(path=REGISTRY):
             assert all(isinstance(p, int) and p > 0 for p in pages)
             assert pages[0] <= pages[1]
             assert isinstance(row.get("reviewEvidence"), str) and row["reviewEvidence"].endswith(".md")
+        if row.get("diagramReview") == "PARTIAL_FRONT_GRID":
+            assert row["sourceVerification"] == "TEXT_REVIEWED"
+            assert isinstance(row.get("diagramEvidence"), str) and row["diagramEvidence"].endswith(".md")
+            assert row["geometrySpecification"] == "NOT_YET_DEFINED"
         if row["implementation"] == "IMPLEMENTED":
             assert row["geometrySpecification"] == "APPROVED"
             assert row["ruleSetId"]
