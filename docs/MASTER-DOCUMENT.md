@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.24 DRAFT — semântica de peças e API FreeSewing de anotações sintéticas
+**Versão da baseline:** 1.25 DRAFT — contrato próprio de entidades de vestuário e margens guiadas por fonte
 **Data:** 13/10/2026  
-**Status:** CH02 de Aldrich ainda RESEARCH_ONLY e DIAGRAM_PARTIAL, com grupos de pontos transportados via Part do FreeSewing sem costuras/corte. API de linha do fio e pique testada somente com figura sintética. CI da integração: 21/21 testes PASS (incluindo dependências travadas); nenhuma peça real aprovada. 53 métodos TOC_ONLY e um TEXT_REVIEWED parcial. Gate APP experimental; A IN_REVIEW; B PILOT-001 NO-GO.
+**Status:** esquema próprio de entidades de vestuário em laboratório: construção CH02 RESEARCH_ONLY separada de peças/arestas/anotações sintéticas, margens de 10 mm já incluídas como REGRA DO LIVRO no nível do bloco, sem offsets autorizados. Prova cruzada com FreeSewing; 143/143 testes web e 26/26 integração PASS na CI de branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -816,3 +816,20 @@ Em uma fixture **exclusivamente SINTÉTICA**, `Design` + `@freesewing/plugin-ann
 [CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes de integração PASS** depois da precisão de nomenclatura. A CI publica **quatro arquivos de pesquisa**: SVG de referências, JSON de proveniência, JSON de contêineres Part e JSON de fixture sintética de anotações. [QA-PART-ANNOTATIONS-001](qa/QA-PART-ANNOTATIONS-001.md) rastreia os limites.
 
 **Próxima prova autorizada:** tipar semântica de `PatternPiece/SeamLine/CutLine` de forma independente do fornecedor e auditar, pela fonte, quais arestas reais existem. Não gerar costura/margem/pique/fio simplesmente porque o FreeSewing suporta essas entidades. Gates mantidos: APP EXPERIMENTAL_ONLY; A IN_REVIEW; B NO-GO; release NO-GO.
+
+
+---
+
+## 43. Contrato de entidades de vestuário, margens já incluídas e gates de fonte — 1.25 DRAFT
+
+A implementação `prototype/web-app/src/garmentSemantics.ts` introduziu um **modelo canônico independente do FreeSewing, SVG ou editor** para organizar pontos, peças, arestas tipadas (`DEPENDENCY_CONNECTOR`, `CONSTRUCTION_LINE`, `SEAM_LINE`, `CUT_LINE`, `FOLD_LINE`, `HEM_LINE`), margens por costura e anotações (fio/piques), cada uma com identidade, referência cruzada e evidência. O contrato [GARMENT-SEMANTICS-001](architecture/GARMENT-SEMANTICS-001.md) diferencia capacidade de representação e autorização real do método. `validateGarmentSemanticProject` aceita entradas desconhecidas com validação estrita, recusa campos extras, NaN, identidades/referências inválidas, dupla margem, pique desconectado e promoção de `cutReady`.
+
+**Interpretação fiel do CH02:** o texto inicial da página PDF **31** afirma **1 cm de margem já incluída nos blocos de calça flat, exceto chamadas explícitas de ausência de margem**. A norma `aldCh02AllowancePolicy.ts` preserva o fato, mas retorna `BLOCKED_UNTIL_SOURCE_EDGE_TOPOLOGY_REVIEW` para qualquer aresta não mapeada; **não soma outra margem de 10 mm** nem declara qual traço é linha de costura/corte. Em `RESEARCH_ONLY`, a única geometria representável ainda são `DEPENDENCY_CONNECTOR` com `TRACE_DERIVED_NOT_BOOK_LINE`; outros papéis/offsets/fio/piques são terminantemente bloqueados. Na fixture `SYNTHETIC_ONLY`, os papéis podem ser representados e testados sem jamais ativar corte/produção. Os dois modos conservam `release.cutReady=false` e `physicalFit=NOT_RUN`.
+
+**Reutilização:** `createCh02SemanticResearch` executa os mesmos passos TS de Aldrich já existentes, agrupando frente/costas como `CONSTRUCTION_CONTAINER` e sem inventar contorno. O módulo de testes `prototype/integration-spike/tests/semanticBridge.test.mjs` compara por fonte cada ponto, identificador, aresta e distância ao contêiner `FreeSewing.Part` realmente executado, cruzando fornecedor externo e semântica própria. O workflow produz o quinto relatório `ch02-semantic-contract.json` com os gates e a razão dos bloqueios.
+
+Evidência antes do PR: [CI Web #38484936503](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38484936503), **143/143 Vitest PASS + TypeScript/Vite build**; [CI integração #38485166474](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38485166474), **26/26 Node tests PASS**, npm ci, cinco artefatos de pesquisa. [QA-GARMENT-SEMANTICS-001](qa/QA-GARMENT-SEMANTICS-001.md) guarda casos de entrada malformada, semântica/fonte, bloqueio de costuras e duplicação de margem.
+
+**Pendências materiais (sem confundir com contratos):** traçados completos livro/diagramas, direção precisa e topologia de costuras/corte, exceções de margem por aresta, validação geométrica dos ganchos e entrepernas, gradação dos capítulos, piques/fio reais, trueing de pares de costura, export 1:1, prova física/toile, revisão legal e modelista. Gate B **NO-GO**. O aplicativo não foi convertido em ferramenta de corte e a obra não foi digitalizada/copied como scan pública.
+
+**Próxima prioridade orientada pelo livro:** auditoria dos **traços efetivamente instruídos** nas frentes/costas CH02 e seu mapa de arestas com evidência, antes de transformar `CONSTRUCTION_LINE` em `SEAM_LINE` ou `CUT_LINE`. Expandir o contrato para outras famílias somente quando seus métodos específicos forem revisados.
