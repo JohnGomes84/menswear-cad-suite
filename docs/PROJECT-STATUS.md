@@ -2,11 +2,11 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.8 DRAFT
+**Baseline corrente:** 1.9 DRAFT
 
 ## Situação executiva
 
-O projeto possui base suficiente para continuar a engenharia controlada. A POC geométrica sintética foi incorporada à `main` e registra 14/14 testes aprovados para mecanismos genéricos. Isso não valida o molde real.
+O projeto possui base suficiente para continuar a engenharia controlada. A POC geométrica sintética foi incorporada à `main` e registra 27/27 testes aprovados em CI para mecanismos genéricos. Isso não valida o molde real.
 
 ### Gate A — POC geométrica sintética
 **Estado:** evidência técnica existente; revisão formal de geometria/QA ainda pendente.
@@ -51,3 +51,12 @@ Frontend, autenticação, banco, editor final, gradação, DXF, nesting e 3D per
 - Resultados documentais (`PASS_DOC`) não equivalem a execução do motor.
 - POC sintética não equivale a validação do `PILOT-001`.
 - Nenhuma tolerância física/comercial deve ser inventada antes de evidência de POC/impressão/toile.
+
+## Avanço verificado nesta rodada — 13/10/2026
+
+- PR #17: sincronização documental e de compliance; **MERGED**.
+- PR #18: 9 testes adicionais e workflow de GitHub Actions; **MERGED**. 23/23 testes PASS_CI.
+- PR #19: falha explícita em não convergência/overflow e limite de tesselação; **MERGED**. 27/27 testes PASS_CI.
+- Evidência: [workflow #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254), sucesso com 27 testes; também passaram checks nominais dos artefatos e hashes iguais no mesmo runner.
+- Gate A: **IN_REVIEW**, aguardando revisão formal e análise dos limites de precisão/calibração física.
+- Gate B: **NO-GO**, sem golden case ou validação de cava/manga.
