@@ -13,7 +13,11 @@ class CatalogContractTest(unittest.TestCase):
     def test_no_implementation_claim_in_discovery(self):
         doc = validate()
         self.assertTrue(all(m["implementation"] == "NOT_STARTED" for m in doc["methods"]))
-        self.assertTrue(all(m["sourceVerification"] == "TOC_ONLY" for m in doc["methods"]))
+        reviewed = [m for m in doc["methods"] if m["sourceVerification"] == "TEXT_REVIEWED"]
+        self.assertEqual([m["methodId"] for m in reviewed], ["ALD-CH02-01"])
+        self.assertEqual(reviewed[0]["sourceLocation"]["methodPdfPageRange"], [31, 34])
+        self.assertTrue(all(m["geometrySpecification"] == "NOT_YET_DEFINED" for m in doc["methods"]))
+        self.assertTrue(all(m["modelValidation"] == "NOT_RUN" for m in doc["methods"]))
 
     def test_rejects_duplicate_id(self):
         doc = json.loads(REGISTRY.read_text(encoding="utf-8"))
