@@ -160,4 +160,6 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - POC `prototype/integration-spike`: execução **real** do programa de pontos de Aldrich CH02 com `@freesewing/core@4.0.0` `Point/Path`, grupos frente/costas, SVG e JSON **diagnósticos**, sem contorno de corte. Nenhuma dependência instalada no shell web do produto.
 - [CI #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9/9 testes de integração PASS**, SVG/JSON gerados e disponibilizados como artefatos do GitHub Actions.
 - Incompatibilidade identificada: plugin FreeSewing 4.0.0 requer `@freesewing/config` em tempo de execução sem declará-lo; declarado explicitamente na POC, não tratado como solução pronta para produção.
-- **Bloqueios:** dependências transitivas sem lock, auditoria de licenças, anotações reais não integradas, costuras/margens/curvas ainda não aprovadas, escala 1:1 não executada, Gate B PILOT-001 NO-GO.
+- **Bloqueios:** dependências transitivas travadas em lockfile mas sem auditoria de licenças/segurança, anotações reais não integradas, costuras/margens/curvas ainda não aprovadas, escala 1:1 não executada, Gate B PILOT-001 NO-GO.
+
+- **Reprodutibilidade adicional:** arquivo `prototype/integration-spike/package-lock.json` foi gerado a partir de CI bem-sucedida (16 entradas de pacote) e o workflow foi alterado para **npm ci**. Revisão final do novo workflow ainda sujeita a CI do PR.
