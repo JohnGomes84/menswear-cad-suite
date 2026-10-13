@@ -51,3 +51,6 @@ Os testes `scene.test.ts` exercitam identidade de grupo/entidade, edição de li
 ## Evidência Chromium E2E — cena sintética 0.3
 
 [Execução #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072): **4/4 casos Chromium PASS** (criar/excluir/undo/redo, zoom/pan não alterando geometria, arrastar ponto/salvar/reabrir/desfazer, importar JSON inválido sem substituir projeto). [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286): **50/50 testes PASS** e build TypeScript/Vite aprovado. QA de moldes reais, impressão física, solver e constraints continuam NOT_RUN/NOT_YET_DEFINED.
+
+
+**Adendo Playwright:** [CI #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662) aprovou **5/5 testes E2E**; o quinto calcula o contraste do aviso de segurança no Chromium e exige razão ≥4,5:1. A cobertura limita-se ao aviso e não equivale à auditoria WCAG completa.
