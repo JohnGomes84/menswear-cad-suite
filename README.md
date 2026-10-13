@@ -1,10 +1,12 @@
 # Menswear CAD Suite
 
+**Produto-alvo:** suíte CAD paramétrica de **modelagem masculina em múltiplas famílias** (calças, camisas, jeans, alfaiataria, sobrepeças, mangas, golas, adaptações e gradação), fundamentada em toda a obra de referência. O piloto de camisa plana é somente um caso de engenharia.
+
 Suíte CAD paramétrica web para modelagem masculina, com editor avançado e suporte a uso sob medida, ateliê, modelistas e confecções.
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.10 DRAFT**
+- Documento Mestre: **baseline 1.11 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -35,6 +37,8 @@ O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experi
 
 - `prototype/web-app/README.md` — protótipo web isolado, sem molde real
 - `docs/MASTER-DOCUMENT.md`
+- `docs/product/BOOK-COVERAGE-001.md` — inventário dos 14 capítulos, não implementação
+- `docs/decisions/ADR-0004-full-book-product-coverage.md`
 - `docs/gates/GATE-APP-001.md`
 - `docs/architecture/APP-FOUNDATION-001.md`
 - `docs/qa/QA-APP-001.md`
