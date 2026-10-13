@@ -53,6 +53,51 @@ describe("synthetic project contract", () => {
     expect(() => validateProject(raw)).toThrow("Evento do histórico inválido");
   });
 
+  it("restores multiple undo steps after reopening a saved project", () => {
+    const first = createEditor();
+    const second = moveControl(first, 1, { x: 48, y: 18 });
+    const third = moveControl(second, 2, { x: 185, y: 20 });
+    const fourth = moveControl(third, 0, { x: 12, y: 126 });
+    const loaded = createEditor(importProject(exportProject(fourth.project)));
+    expect(loaded.past).toHaveLength(3);
+    const undo3 = undo(undo(undo(loaded)));
+    expect(undo3.project.curve).toEqual(first.project.curve);
+    expect(undo3.project.history).toHaveLength(0);
+    expect(redo(redo(redo(undo3))).project).toEqual(fourth.project);
+  });
+
+  it("rejects tampering with the final coordinate or event before values", () => {
+    const edited = moveControl(moveControl(createEditor(), 1, { x: 55, y: 18 }), 2, { x: 183, y: 27 });
+    const inconsistent = JSON.parse(exportProject(edited.project));
+    inconsistent.curve.controlPointsMm[2].y = 60;
+    expect(() => importProject(JSON.stringify(inconsistent))).toThrow("Cadeia");
+
+    const tamperedBefore = JSON.parse(exportProject(edited.project));
+    tamperedBefore.history[1].before.x = -500;
+    expect(() => importProject(JSON.stringify(tamperedBefore))).toThrow("Cadeia");
+  });
+
+  it("rejects noncontiguous or missing revisions in persisted history", () => {
+    const edited = moveControl(createEditor(), 1, { x: 80, y: 40 });
+    const gap = JSON.parse(exportProject(edited.project));
+    gap.history[0].revision = 5;
+    expect(() => importProject(JSON.stringify(gap))).toThrow(/histórico/i);
+    const omitted = JSON.parse(exportProject(edited.project));
+    omitted.history = [];
+    expect(() => importProject(JSON.stringify(omitted))).toThrow(/histórico/i);
+  });
+
+  it("invalidates a previously restored redo branch after a new edit", () => {
+    const a = moveControl(createEditor(), 1, { x: 44, y: 21 });
+    const b = moveControl(a, 2, { x: 175, y: 11 });
+    const reopened = createEditor(importProject(exportProject(b.project)));
+    const reverted = undo(reopened);
+    const alternate = moveControl(reverted, 3, { x: 198, y: 111 });
+    expect(alternate.future).toHaveLength(0);
+    expect(alternate.project.history).toHaveLength(2);
+    expect(redo(alternate)).toEqual(alternate);
+  });
+
   it("disallows oversized project files", () => {
     expect(() => importProject(" ".repeat(1024 * 1024 + 1))).toThrow("1 MB");
   });
