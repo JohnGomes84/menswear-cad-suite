@@ -147,6 +147,24 @@ describe("Garment semantic contract — source first, independent of CAD provide
   rejects(p=>p.pieces[0].allowances[0].widthMm=Infinity);
   rejects(p=>p.pieces[0].allowances[0].treatment="ADDED_ALREADY" as "ALREADY_INCLUDED_IN_BLOCK");
  });
+ it("does not permit duplicate allowance identifiers on separate synthetic seams",()=>{
+  rejects(p=>{
+   p.pieces[0].edges.push({
+    id:"other-seam",fromId:"B",toId:"C",role:"SEAM_LINE",evidenceId:"e1"
+   });
+   p.pieces[0].allowances.push({
+    id:"included",seamEdgeId:"other-seam",widthMm:5,
+    treatment:"ALREADY_INCLUDED_IN_BLOCK",evidenceId:"e1"
+   });
+  });
+ });
+ it("does not permit a visually zero-length grainline with two different point IDs",()=>{
+  rejects(p=>{
+   p.pieces[0].points.push({id:"E",positionMm:{x:0,y:0}});
+   const grain=p.pieces[0].annotations.find(a=>a.kind==="GRAINLINE");
+   if(grain&&grain.kind==="GRAINLINE")grain.toId="E";
+  });
+ });
  it("rejects unreferenced or misplaced synthetic notch and grainline",()=>{
   rejects(p=>{
    const x=p.pieces[0].annotations[0];
