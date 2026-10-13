@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.22 DRAFT**
+- Documento Mestre: **baseline 1.23 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -92,3 +92,8 @@ Em `prototype/web-app/src/draftingInterpreter.ts`, medidas e expressões paramé
 ## Back section e curvas — capítulo 2
 
 Os pontos de pesquisa das costas dos blocos flat de uma e duas peças seguem as instruções da obra em `aldCh02FlatTrouserBackProgram.ts`. As técnicas e condições para desenhar curvas de gancho/entreperna estão especificadas em [CURVES-RESEARCH-001](docs/domain/CURVES-RESEARCH-001.md) e [CH02-CURVE-REQUIREMENTS-001.json](docs/domain/CH02-CURVE-REQUIREMENTS-001.json). **Nenhuma curva de produção foi inventada ou aprovada.**
+
+
+## Prova vertical com tecnologia reutilizada
+
+A análise de reaproveitamento **de todo o CAD** está documentada em [REUSE-DECISION-001](docs/architecture/REUSE-DECISION-001.md), não apenas de curvas. A [POC independente](prototype/integration-spike/) usa a biblioteca real `@freesewing/core@4.0.0` para converter **coordenadas calculadas pelo interpretador de Aldrich** em guias vetoriais medidos, anotados e entregues como SVG diagnóstico + JSON de rastreabilidade. [CI de integração](https://github.com/JohnGomes84/menswear-cad-suite/actions/workflows/integration-spike.yml): 9 testes, artefatos de pesquisa. Nenhum molde real, anotação de produção, grade ou PDF de corte é liberado.
