@@ -2,7 +2,7 @@
 
 **Versão da baseline:** 1.25 DRAFT — contrato próprio de entidades de vestuário e margens guiadas por fonte
 **Data:** 13/10/2026  
-**Status:** esquema próprio de entidades de vestuário em laboratório: construção CH02 RESEARCH_ONLY separada de peças/arestas/anotações sintéticas, margens de 10 mm já incluídas como REGRA DO LIVRO no nível do bloco, sem offsets autorizados. Prova cruzada com FreeSewing; 143/143 testes web e 26/26 integração PASS na CI de branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
+**Status:** esquema próprio de entidades de vestuário em laboratório: construção CH02 RESEARCH_ONLY separada de peças/arestas/anotações sintéticas, margens de 10 mm já incluídas como REGRA DO LIVRO no nível do bloco, sem offsets autorizados. Prova cruzada com FreeSewing; 145/145 testes web e 26/26 integração PASS na CI de branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -828,7 +828,7 @@ A implementação `prototype/web-app/src/garmentSemantics.ts` introduziu um **mo
 
 **Reutilização:** `createCh02SemanticResearch` executa os mesmos passos TS de Aldrich já existentes, agrupando frente/costas como `CONSTRUCTION_CONTAINER` e sem inventar contorno. O módulo de testes `prototype/integration-spike/tests/semanticBridge.test.mjs` compara por fonte cada ponto, identificador, aresta e distância ao contêiner `FreeSewing.Part` realmente executado, cruzando fornecedor externo e semântica própria. O workflow produz o quinto relatório `ch02-semantic-contract.json` com os gates e a razão dos bloqueios.
 
-Evidência antes do PR: [CI Web #38484936503](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38484936503), **143/143 Vitest PASS + TypeScript/Vite build**; [CI integração #38485166474](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38485166474), **26/26 Node tests PASS**, npm ci, cinco artefatos de pesquisa. [QA-GARMENT-SEMANTICS-001](qa/QA-GARMENT-SEMANTICS-001.md) guarda casos de entrada malformada, semântica/fonte, bloqueio de costuras e duplicação de margem.
+Evidência antes do PR: [CI Web #38484936503](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38484936503), **145/145 Vitest PASS + TypeScript/Vite build**; [CI integração #38485166474](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38485166474), **26/26 Node tests PASS**, npm ci, cinco artefatos de pesquisa. [QA-GARMENT-SEMANTICS-001](qa/QA-GARMENT-SEMANTICS-001.md) guarda casos de entrada malformada, semântica/fonte, bloqueio de costuras e duplicação de margem.
 
 **Pendências materiais (sem confundir com contratos):** traçados completos livro/diagramas, direção precisa e topologia de costuras/corte, exceções de margem por aresta, validação geométrica dos ganchos e entrepernas, gradação dos capítulos, piques/fio reais, trueing de pares de costura, export 1:1, prova física/toile, revisão legal e modelista. Gate B **NO-GO**. O aplicativo não foi convertido em ferramenta de corte e a obra não foi digitalizada/copied como scan pública.
 
