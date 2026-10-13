@@ -1,7 +1,7 @@
 # QA-REUSE-001 — Prova de interoperabilidade de ponta a ponta
 
 **Cenário:** fonte do livro → medidas → motor de instruções → FreeSewing → grupos de referência → diagnóstico SVG/JSON.  
-**Status:** **9/9 TESTES INTEGRAÇÃO PASS** em [Actions #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883).  
+**Status:** **11/11 TESTES INTEGRAÇÃO + SUPPLY CHAIN PASS** em [Actions #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883).  
 **Classificação:** `PROVEN_RESEARCH_INTEGRATION` — não apto à produção ou corte.
 
 | ID | Verificação | Evidência automatizada | Resultado |
@@ -18,13 +18,15 @@
 | RI-10 | Entradas inválidas e resultado determinístico | Negativos/NaN/missing/extra, repetição de método | PASS |
 | RI-11 | CI artifacts | `out/ch02-guides.svg` + `ch02-diagnostics.json` publicados temporariamente | PASS |
 
-Os nomes de verificação cobrem 9 casos programáticos `node:test` (alguns verificam múltiplos contratos). O status desta QA comprova **somente o caminho de construção parcial**.
+Os nomes de verificação cobrem **9 casos de fluxo mais 2 de supply chain** em `node:test` (alguns verificam múltiplos contratos). O status desta QA comprova **somente o caminho de construção parcial**.
 
 ## Divergências observadas
 
 **D-01 — EMPACOTAMENTO FreeSewing v4:** a primeira execução CI falhou em `ERR_MODULE_NOT_FOUND: @freesewing/config` importado pelo `plugin-annotations/src/logo.mjs`, embora o manifesto desse plugin não o declare. A segunda execução adicionou `@freesewing/config@4.0.0` explicitamente no isolamento e passou. Antes de usar o core no aplicativo principal, inspecionar fixes da upstream, incompatibilidades transitivas e trilha de licença.
 
 **D-02 — Determinismo de dependências:** a POC fixa versões diretas `4.0.0` e transições em **`package-lock.json`**, gerado em CI e revalidado com `npm ci`. O risco remanescente é a falta de **SBOM, auditoria de licenças/CVEs, política de atualização e resolução upstream** do empacotamento. Ainda não promover a release/web-app.
+
+**D-02b — LICENÇA TRANSITIVA:** a árvore de lock mostra **15 pacotes de dependência**, mas `hooks@0.3.2` está sem metadado de licença no `package-lock.json`. Os pacotes FreeSewing consultados informam MIT, o que **não** resolve automaticamente a licença de `hooks`; revisar o arquivo LICENSE do pacote original antes de qualquer distribuição. CI testa que a lacuna permaneça explicitamente registrada.
 
 **D-03 — Integração limitada:** somente `Point`/`Path` do FreeSewing estão testados. `Part`, plugin de anotações, `PatternDrafter`, geração de PDF e bin packing não foram integrados nem aprovados, ainda que as APIs tenham sido lidas no código. SVG final usa renderização diagnóstica própria **a partir do Path externo**, não o renderer FreeSewing de projeto completo.
 
