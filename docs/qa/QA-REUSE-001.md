@@ -24,7 +24,7 @@ Os nomes de verificação cobrem 9 casos programáticos `node:test` (alguns veri
 
 **D-01 — EMPACOTAMENTO FreeSewing v4:** a primeira execução CI falhou em `ERR_MODULE_NOT_FOUND: @freesewing/config` importado pelo `plugin-annotations/src/logo.mjs`, embora o manifesto desse plugin não o declare. A segunda execução adicionou `@freesewing/config@4.0.0` explicitamente no isolamento e passou. Antes de usar o core no aplicativo principal, inspecionar fixes da upstream, incompatibilidades transitivas e trilha de licença.
 
-**D-02 — Determinismo de dependências:** a POC usa versões diretas `4.0.0` e instalação `--no-package-lock` apenas experimental; **a cadeia transitiva não está travada**. Não promover a release ou instalar no web-app até gerar lockfile, SBOM/check de licenças e política de atualização.
+**D-02 — Determinismo de dependências:** a POC fixa versões diretas `4.0.0` e transições em **`package-lock.json`**, gerado em CI e revalidado com `npm ci`. O risco remanescente é a falta de **SBOM, auditoria de licenças/CVEs, política de atualização e resolução upstream** do empacotamento. Ainda não promover a release/web-app.
 
 **D-03 — Integração limitada:** somente `Point`/`Path` do FreeSewing estão testados. `Part`, plugin de anotações, `PatternDrafter`, geração de PDF e bin packing não foram integrados nem aprovados, ainda que as APIs tenham sido lidas no código. SVG final usa renderização diagnóstica própria **a partir do Path externo**, não o renderer FreeSewing de projeto completo.
 
@@ -34,7 +34,7 @@ Os nomes de verificação cobrem 9 casos programáticos `node:test` (alguns veri
 
 ## Próximos critérios de aceitação
 
-- **Dependências:** instalação fixa por lock + auditoria licenças/segurança; mapeamento de APIs estáveis e regressão.
+- **Dependências:** instalação fixa por lock **concluída**; auditoria licenças/segurança e APIs estáveis **pendentes**.
 - **Medições:** protocolos CH1/13 completos por entrada corporal, validação antropométrica e multiplicidade de perfis; atualmente são três medidas textuais de exemplo.
 - **Semântica de vestuário:** construir uma estrutura `Piece/SewingEdge/CutEdge/Fold/Grainline` tipada e testada; não tratar guias como costuras.
 - **Validação:** grade de casos positivos/negativos/extremos; testes de curvas paramétricas com procedimentos de Aldrich, costuras amigas e tolerâncias documentadas.
