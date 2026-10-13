@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.15 DRAFT — catálogo completo por capítulo e laboratório CAD multi-entidades
+**Versão da baseline:** 1.16 DRAFT — operações transacionais e testes de navegador em laboratório sintético
 **Data:** 13/10/2026  
-**Status:** PRs #34 e #35 incorporados à `main`. Catálogo inicial por sumário: 54 assuntos candidatos, todos TOC_ONLY/NOT_STARTED. POC geométrica Python: 30/30 testes; protótipo web: 35/35 testes, ambos aprovados em CI. O editor experimental admite dois grupos e três entidades sintéticas (linhas e Béziers), sem geração de moldes reais. Gate A permanece IN_REVIEW; Gate B PILOT-001 NO-GO e produção bloqueada.
+**Status:** PRs #34–#36 e #39 incorporados à `main`. Editor sintético: 50/50 testes unitários, build aprovado; suíte Playwright Chromium: 4/4 casos PASS na branch de QA, PR pendente. Catálogo por sumário: 54 assuntos candidatos, sem implementação de moldes reais. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -682,3 +682,14 @@ A [CI do PR #35](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/
 O [PR #34](https://github.com/JohnGomes84/menswear-cad-suite/pull/34) incorporou [PATTERN-CATALOG-001.json](product/PATTERN-CATALOG-001.json) e testes de integridade: 54 registros temáticos em 14 capítulos, nenhum marcado como regra implementada ou validada. **São assuntos a auditar**, não 54 moldes disponíveis.
 
 **Gates:** APP = experimentação técnica; A = IN_REVIEW; B = NO-GO; release comercial = NO-GO.
+
+
+---
+
+## 34. Transações de entidades e E2E real — baseline 1.16 DRAFT
+
+O [PR #39](https://github.com/JohnGomes84/menswear-cad-suite/pull/39) incorporou o laboratório sintético `0.3.0` com `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT`, histórico reversível por entidade e `initialEntities` para verificação de cadeia. A migração de arquivos sintéticos `0.2.0` exige confirmação do usuário. Sem liberação de moldes reais.
+
+O teste de navegador é realizado no Chromium por Playwright **1.56.1** com dependências fixadas no `package-lock.json`. [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286): 50/50 testes e build PASS. [CI Chromium #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072): **4/4 testes E2E PASS**, abrangendo criação/remoção com undo/redo, zoom/pan preservando a geometria, arraste/salvamento/reabertura/undo e rejeição de schema inválido sem substituir a cena. Esses resultados são de **interface experimental**; não validam fórmula do livro, caimento ou escala de PDF impresso.
+
+A detecção de alterações parciais no histórico `0.3.0` não constitui assinatura de autenticidade; quem modifica o arquivo inteiro pode gerar uma nova cadeia consistente. Transações de grupos, constraints e `PARAMETRIC_OVERRIDE` real permanecem fora do escopo. Gate B do `PILOT-001` e release comercial: **NO-GO**.
