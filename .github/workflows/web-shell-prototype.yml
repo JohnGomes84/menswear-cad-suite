@@ -34,3 +34,10 @@ jobs:
         run: npm run build
       - name: Verify build without shipping as product
         run: test -s dist/index.html
+
+      - name: Capture provisional npm lockfile for reproducible commit
+        run: |
+          echo LOCKFILE_B64_BEGIN
+          base64 -w0 package-lock.json
+          echo
+          echo LOCKFILE_B64_END
