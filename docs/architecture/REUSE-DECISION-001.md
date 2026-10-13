@@ -87,3 +87,8 @@ Os grupos **NÃO** são peças de roupa, e as linhas **NÃO** são arestas de co
 ## 6. Segunda prova: FreeSewing Part + anotações reais sem produzir roupa (13/10/2026)
 
 `prototype/integration-spike/src/partBridge.mjs` transporta os pontos da receita CH02 para objetos reais `FreeSewing.Part` e rótulos nativos `Point.addText`. O contrato **fail-closed** diferencia conectores de dependência e costura/corte, com `CUT_READY=false`. A execução da macro `grainline` e do `Snippet('notch')` ocorre só em `Design` sintético; é **teste de API de anotações**, não inferência de fio/pique no método Aldrich. [Especificação](PIECE-ANNOTATION-SEMANTICS-001.md) e [QA](../qa/QA-PART-ANNOTATIONS-001.md). `Part.__boundary()` é API interna (risco técnico documentado). [CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes PASS**, ainda em laboratório. Nenhuma implementação de `SeamPair`, cortes ou molde aprovado nesta etapa.
+
+
+## 7. Contrato de vestuário próprio separado do fornecedor — 1.25 DRAFT
+
+A integração passa a oferecer `garment-semantic/0.1.0` como formato **próprio**, com IDs, pontos mm, papéis de aresta, declarações de margem e marcas tipadas e evidências. `FreeSewing.Part` é um adaptador externo, não o formato persistente autorizado de peças reais. Um quinto artefato integra as duas representações e comprova igualdade de pontos e conectores, sem promover costuras/corte; [GARMENT-SEMANTICS-001](GARMENT-SEMANTICS-001.md) e [QA](../qa/QA-GARMENT-SEMANTICS-001.md). Para CH02, a regra textual de 10 mm **já incluídos** permanece em nível de bloco e está explicitamente bloqueada para offset de arestas não identificadas. Status: **RESEARCH_ONLY**, release **NO-GO**.
