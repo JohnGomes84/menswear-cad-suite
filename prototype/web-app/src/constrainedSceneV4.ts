@@ -133,7 +133,7 @@ function build(baseScene:SceneProjectV3,events:readonly ConstraintEventV4[]):{
       if(!existing||!eqConstraint(existing,event.constraint))
         throw new Error("REMOVE_CONSTRAINT não corresponde à regra ativa");
       constraints=constraints.filter(c=>c.id!==event.constraint.id);
-    }else{
+    }else if(event.kind==="MOVE_DRIVER"){
       if(constraints.some(c=>targetKey(c.target)===targetKey(event.ref)))
         throw new Error("Ponto de destino condicionado: edite a origem da relação");
       const found=findPoint(drivers,event.ref);
