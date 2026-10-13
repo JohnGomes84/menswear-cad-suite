@@ -15,3 +15,6 @@ Registro de recursos externos consultados, independentemente de entrarem no soft
 | BodyM | dados corporais | BLOCKED para produto comercial | licença não comercial na baseline de pesquisa |
 | GarmentCodeData | benchmark sintético | POC/RESEARCH | verificar termos do pacote/DOI antes de uso |
 | GarmentCode | framework de pesquisa | BLOCKED | confirmar licença e ativos antes de incorporar |
+
+| React/react-dom | renderização de interface web experimental | POC | versões 19.1.1; licença e avisos por release devem ser auditados |
+| TypeScript/Vite/Vitest | ferramentas experimentais de build/QA | POC | versões e dependências transitivas no package-lock; rever antes de produção |

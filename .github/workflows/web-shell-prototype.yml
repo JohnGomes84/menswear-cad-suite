@@ -1,0 +1,37 @@
+name: Experimental Web Shell
+
+on:
+  push:
+    paths:
+      - "prototype/web-app/**"
+      - ".github/workflows/web-shell-prototype.yml"
+  pull_request:
+    paths:
+      - "prototype/web-app/**"
+      - ".github/workflows/web-shell-prototype.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: prototype/web-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install experimental dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run contract tests
+        run: npm run test
+      - name: Build TypeScript and Vite
+        run: npm run build
+      - name: Verify build without shipping as product
+        run: test -s dist/index.html
+
