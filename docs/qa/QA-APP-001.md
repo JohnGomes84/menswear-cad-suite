@@ -54,3 +54,10 @@ Os testes `scene.test.ts` exercitam identidade de grupo/entidade, edição de li
 
 
 **Adendo Playwright:** [CI #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662) aprovou **5/5 testes E2E**; o quinto calcula o contraste do aviso de segurança no Chromium e exige razão ≥4,5:1. A cobertura limita-se ao aviso e não equivale à auditoria WCAG completa.
+
+
+## Primeira projeção de constraints no navegador
+
+As fixtures de `constraints.test.ts` exercitam alinhamento, coincidência, distância em mm, dependências acíclicas, referência cruzada de grupos e falhas de input/ambiguidade; evidência [unit CI #38465429034](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429034) **65/65 PASS**. A interface implementa alinhamento de extremos de uma **linha sintética** e seu undo; [Chromium CI #38465429112](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429112) registrou **6/6 E2E PASS**.
+
+**Não são PASS:** solver simultâneo, constraints persistidas/recalculadas, pences, `SeamPair`, moldes reais, impressão física e releases.

@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.16 DRAFT
+**Baseline corrente:** 1.17 DRAFT (PR de engenharia)
 
 ## Situação executiva
 
@@ -108,3 +108,14 @@ PR #39 integrado com `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT`, JSON 0.3 e un
 ## QA de navegador — fechamento do ciclo experimental
 
 PR #41 integrado; [CI Chromium #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662) passou em **5/5 E2E**, incluindo contraste mínimo de 4,5:1 no aviso de não utilização para corte. Não representa auditoria de acessibilidade completa, prova física ou liberação do PILOT-001.
+
+
+## Núcleo de constraints e operação multi-frente — rodada experimental
+
+- Contrato de trabalho: `docs/governance/DELIVERY-OPERATING-MODEL.md` + templates de engenharia, modelagem e PR.
+- `prototype/web-app/src/constraints.ts`: coincidência, horizontalidade, verticalidade e distância, uma constraint dirigida por alvo e DAG; projeção imutável, sem solver industrial.
+- UI experimental: alinhar horizontal/vertical uma linha selecionada, com undo/redo pela movimentação de ponto; a regra não é persistida.
+- [CI #38465429034](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429034): **65/65 testes PASS e build**.
+- [CI E2E #38465429112](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429112): **6/6 cenários Chromium PASS**.
+- Issues: #43 (constraints persistentes e simultâneas), #44 (primeiro método de calça do capítulo 2).
+- O catálogo continua TOC_ONLY, a execução física do PDF não foi realizada, Gate B permanece NO-GO.

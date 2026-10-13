@@ -43,3 +43,10 @@ Documentos: `../../docs/gates/GATE-APP-001.md`, `../../docs/architecture/APP-FOU
 ## Cena 0.3 e testes Chromium
 
 Menu **Editor multi-entidades**: criar/remover linhas e curvas, undo/redo com histórico persistido, salvar/abrir JSON 0.3.0 e converter 0.2 com confirmação. Arquivos 0.1 permanecem no laboratório legado. Com Node 22: `npm ci`, `npm test` para testes unitários, e `npx playwright install chromium` seguido de `npm run test:e2e` para testes reais de browser. Dependências de teste são apenas POC. Nenhum molde real é exportado.
+
+
+## Constraints experimentais de uma etapa
+
+`src/constraints.ts` contém projeções matemáticas **dirigidas** e independentes de peças de roupa: coincidir pontos, alinhamento horizontal/vertical e distância em mm, com falhas explícitas e ordenação topológica. No inspector da cena 0.3, selecione uma **linha FREE** e use `Alinhar H` ou `Alinhar V`. O resultado vira comando reversível `MOVE_POINT`.
+
+**A constraint em si não é salva**, somente as coordenadas alteradas. Edições seguintes não recalculam vínculos. Resolver mais de uma constraint sobre o mesmo destino, tolerâncias de produção e persistência reativa exigem uma futura versão de projeto. Não é ferramenta de geração de moldes reais.
