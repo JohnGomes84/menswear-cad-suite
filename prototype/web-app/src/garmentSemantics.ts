@@ -226,9 +226,10 @@ export function validateGarmentSemanticProject(value: unknown): GarmentSemanticP
 
     const allowances:AllowanceDeclaration[]=[];
     const allowanceEdges=new Set<string>();
+    const allowanceIds=new Set<string>();
     for (const allowance of raw.allowances as unknown[]) {
       exact(allowance, ["id","seamEdgeId","widthMm","treatment","evidenceId"],"margem");
-      if (!identifier(allowance.id) || !identifier(allowance.seamEdgeId) ||
+      if (!identifier(allowance.id) || allowanceIds.has(allowance.id) || !identifier(allowance.seamEdgeId) ||
           allowanceEdges.has(allowance.seamEdgeId) ||
           edges.get(allowance.seamEdgeId)?.role!=="SEAM_LINE" ||
           !finite(allowance.widthMm) || allowance.widthMm<0 || allowance.widthMm>100 ||
@@ -236,6 +237,7 @@ export function validateGarmentSemanticProject(value: unknown): GarmentSemanticP
           !identifier(allowance.evidenceId) || !evidence.has(allowance.evidenceId))
         fail("margem sem costura, repetida, sem evidência ou fora da faixa");
       allowanceEdges.add(allowance.seamEdgeId as string);
+      allowanceIds.add(allowance.id as string);
       allowances.push({
         id:allowance.id as string,seamEdgeId:allowance.seamEdgeId as string,
         widthMm:allowance.widthMm as number,
@@ -254,6 +256,10 @@ export function validateGarmentSemanticProject(value: unknown): GarmentSemanticP
             mark.fromId===mark.toId || !points.has(mark.fromId) ||
             !points.has(mark.toId) || !identifier(mark.evidenceId) ||
             !evidence.has(mark.evidenceId)) fail("linha do fio sem referências verificáveis");
+        const grainFrom=points.get(mark.fromId as string)!.positionMm;
+        const grainTo=points.get(mark.toId as string)!.positionMm;
+        if(!positive(Math.hypot(grainTo.x-grainFrom.x,grainTo.y-grainFrom.y)))
+          fail("fio de comprimento nulo ou excessivo");
         annotations.push({id:mark.id as string,kind:"GRAINLINE",
           fromId:mark.fromId as string,toId:mark.toId as string,
           evidenceId:mark.evidenceId as string});
