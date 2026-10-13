@@ -93,7 +93,7 @@ svg.extend(['</g>', '<text x="8" y="12" font-size="4">Blue: Bezier; red dashed: 
 
 # PDF diagnostic at a nominal 1 drawing unit = 1 mm, with a 25 mm calibration ruler.
 pdf_path = OUT / "geometry_diagnostic.pdf"
-c = canvas.Canvas(str(pdf_path), pagesize=(240*mm, 160*mm), pageCompression=1)
+c = canvas.Canvas(str(pdf_path), pagesize=(240*mm, 160*mm), pageCompression=1, invariant=1)
 c.setTitle("Fase 1.5 — Diagnóstico geométrico sintético (POC)")
 c.setFont("Helvetica", 8)
 c.drawString(8*mm, 151*mm, "POC sintetica — Bezier, aproximacao, piques por arco e contorno teste")

@@ -18,11 +18,12 @@ No sweep de discretização, flatness `5 mm` usou 9 vértices e ficou aproximada
 
 A operação `buffer` de Shapely **2.2.0** produziu saída válida para contornos sintéticos convexo e côncavo de largura constante. Um laço (bow-tie) foi marcado `INVALID_INPUT`, sem reparo silencioso; erosão que eliminou um retângulo foi marcada `INVALID_RESULT`. A interseção de diagonais retornou `(5,5) mm`; segmentos separados retornaram `NONE`. Largura variável ainda está `NOT_IMPLEMENTED`.
 
-## Exportação diagnóstica
+## Exportação e reprodução
 
 - SVG analisado como XML válido e gerado com largura/altura em mm.
 - PDF gerado em uma página de **240 × 160 mm**, contendo curva, discretização, piques, contorno de entrada, offset e régua nominal de 25 mm.
 - PDF convertido em imagem e inspecionado visualmente: camadas distinguíveis por cor, embora curva e polígono se sobreponham na mesma área. Uma rodada futura deve separar melhor os painéis.
+- Dois runs consecutivos produziram hashes SHA-256 idênticos para `poc_results.json`, SVG e PDF depois de ativado o modo invariante do ReportLab; assim, a reprodução byte a byte foi demonstrada para o ambiente e fixture atuais.
 - **Não** foi feita impressão física nem medição da régua; escala de tela ou `pdfinfo` não prova escala real na impressora.
 
 ## Limitações e próximos testes
