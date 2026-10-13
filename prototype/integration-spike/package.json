@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@freesewing/core": "4.0.0",
-    "@freesewing/config": "4.0.0"
+    "@freesewing/config": "4.0.0",
+    "@freesewing/plugin-annotations": "4.0.0"
   }
 }

@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.23 DRAFT — interoperabilidade real FreeSewing + inventário de reaproveitamento CAD
+**Baseline corrente:** 1.24 DRAFT — FreeSewing Part semântico e anotações sintéticas
 
 ## Situação executiva
 
@@ -165,3 +165,12 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - **Reprodutibilidade adicional:** arquivo `prototype/integration-spike/package-lock.json` foi gerado a partir de CI bem-sucedida (16 entradas de pacote) e o workflow foi alterado para **npm ci**. Revisão final do novo workflow ainda sujeita a CI do PR.
 
 - **Supply chain:** 2 testes adicionais verificam `package-lock.json`/integridade e marcam lacuna de licença em `hooks@0.3.2`; não autorizar distribuição comercial automaticamente por ter pacotes FreeSewing MIT.
+
+
+## Contrato de peça de pesquisa + anotações sintéticas (FreeSewing)
+
+- Dois objetos **FreeSewing Part** reais serializados como guias de dependência, `CONSTRUCTION_GROUP_NOT_GARMENT_PIECE`, sem sewing/cutting/pique/fio da obra.
+- Macro real de `grainline` e `Snippet(notch)` executados em **Design sintético isolado** para avaliar APIs do plugin; não aplicados ao CH02.
+- Correção: primeiras referências de fórmula são **conectores de dependência**, não necessariamente linhas de construção do desenho original (`DEPENDENCY_CONNECTOR_NOT_BOOK_LINE`).
+- [CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes PASS**, quatro artefatos segregados; `npm ci` reprodutível.
+- Riscos: `Part.__boundary` é API interna, `grainline` interage com cutlist, licença transitiva `hooks@0.3.2` ainda pendente de auditoria. Gate B NO-GO.

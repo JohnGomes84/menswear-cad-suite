@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.23 DRAFT — integração vertical com componentes CAD existentes e matriz de reaproveitamento integral
+**Versão da baseline:** 1.24 DRAFT — semântica de peças e API FreeSewing de anotações sintéticas
 **Data:** 13/10/2026  
-**Status:** método de construção CH02 (texto e diagrama parciais) em RESEARCH_ONLY, com prova isolada de execução mediante @freesewing/core 4.0.0: 9/9 testes de integração e SVG/JSON diagnóstico gerados na CI. O aplicativo principal permanece sem dependência FreeSewing, nenhum molde real liberado. Catálogo: 53 TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL; Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** CH02 de Aldrich ainda RESEARCH_ONLY e DIAGRAM_PARTIAL, com grupos de pontos transportados via Part do FreeSewing sem costuras/corte. API de linha do fio e pique testada somente com figura sintética. CI da integração: 21/21 testes PASS (incluindo dependências travadas); nenhuma peça real aprovada. 53 métodos TOC_ONLY e um TEXT_REVIEWED parcial. Gate APP experimental; A IN_REVIEW; B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -801,3 +801,18 @@ Evidência [CI #38480789883](https://github.com/JohnGomes84/menswear-cad-suite/a
 **Diretrizes definitivas:** Aldrich segue como autoridade dos métodos e medidas, a biblioteca externa como implementação de operações verificadas, e o formato nativo mantém independência de fornecedor. Adaptadores serão promovidos módulo a módulo mediante QA; não copiar software completo sem avaliar licenças, não afirmar que `PatternSampler` equivale à gradação CH12 ou que bin packing retangular substitui nesting industrial. Este passo **não altera o estado de aprovação das curvas, margens, impressão 1:1 ou molde real**.
 
 Próximos testes necessários: auditoria de transitivas já travadas em lockfile, interoperabilidade geométrica analítica, estruturas de peça semânticas, anotações/fio/piques com API externa, protocolo CH1/13, exportadores SVG/PDF/DXF e validação de corte/encaixe. Gates: **APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO**.
+
+
+---
+
+## 42. Semântica industrial separada de FreeSewing Part — baseline 1.24 DRAFT
+
+A prova de integração em `prototype/integration-spike/src/partBridge.mjs` executa **objetos reais** `Part/Point/Path` de FreeSewing para armazenar referências de construção calculadas pelo interpretador de Aldrich, mantendo origem por passo e comprimentos em mm. O contrato está em [PIECE-ANNOTATION-SEMANTICS-001](architecture/PIECE-ANNOTATION-SEMANTICS-001.md). `Part` é classe de contêiner da biblioteca, **não uma peça validada**: a nossa semântica permanece `CONSTRUCTION_GROUP_NOT_GARMENT_PIECE`, `CUT_READY=false` e com `SEAM_LINE`, `CUT_LINE`, `GRAINLINE`, `PRODUCTION_NOTCH` e margens bloqueados.
+
+**Correção conceitual importante:** uma linha que liga um ponto à primeira referência usada em sua fórmula nem sempre foi mandada traçar pelo livro. Esses vetores passam a ter rótulo `DEPENDENCY_CONNECTOR_NOT_BOOK_LINE`, sem reivindicar que sejam traços literais de Aldrich.
+
+Em uma fixture **exclusivamente SINTÉTICA**, `Design` + `@freesewing/plugin-annotations@4.0.0` executam a macro real `grainline` e criam um `Snippet('notch')`; nenhum deles é transplantado para a calça. O plugin interage com `cutlist` e exige um contrato de elegibilidade antes de ser ativado em roupas. A preparação de `Part.asRenderProps()` depende hoje de `Part.__boundary()` (método interno), portanto **não é API de produção aprovada**.
+
+[CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes de integração PASS** depois da precisão de nomenclatura. A CI publica **quatro arquivos de pesquisa**: SVG de referências, JSON de proveniência, JSON de contêineres Part e JSON de fixture sintética de anotações. [QA-PART-ANNOTATIONS-001](qa/QA-PART-ANNOTATIONS-001.md) rastreia os limites.
+
+**Próxima prova autorizada:** tipar semântica de `PatternPiece/SeamLine/CutLine` de forma independente do fornecedor e auditar, pela fonte, quais arestas reais existem. Não gerar costura/margem/pique/fio simplesmente porque o FreeSewing suporta essas entidades. Gates mantidos: APP EXPERIMENTAL_ONLY; A IN_REVIEW; B NO-GO; release NO-GO.

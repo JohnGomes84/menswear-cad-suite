@@ -82,3 +82,8 @@ Os grupos **NÃO** são peças de roupa, e as linhas **NÃO** são arestas de co
 | P3 | Visualização 3D/simulação validada e integrações PLM | Fora do MVP |
 
 **Gates:** APP somente EXPERIMENTAL; numérico A IN_REVIEW; modelagem real B NO-GO; comercial NO-GO. **Sem aprovação por quantidade de testes**.
+
+
+## 6. Segunda prova: FreeSewing Part + anotações reais sem produzir roupa (13/10/2026)
+
+`prototype/integration-spike/src/partBridge.mjs` transporta os pontos da receita CH02 para objetos reais `FreeSewing.Part` e rótulos nativos `Point.addText`. O contrato **fail-closed** diferencia conectores de dependência e costura/corte, com `CUT_READY=false`. A execução da macro `grainline` e do `Snippet('notch')` ocorre só em `Design` sintético; é **teste de API de anotações**, não inferência de fio/pique no método Aldrich. [Especificação](PIECE-ANNOTATION-SEMANTICS-001.md) e [QA](../qa/QA-PART-ANNOTATIONS-001.md). `Part.__boundary()` é API interna (risco técnico documentado). [CI #38483660435](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38483660435): **21/21 testes PASS**, ainda em laboratório. Nenhuma implementação de `SeamPair`, cortes ou molde aprovado nesta etapa.
