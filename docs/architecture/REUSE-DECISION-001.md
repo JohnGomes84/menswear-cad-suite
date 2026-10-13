@@ -41,7 +41,7 @@
 - Part e Path: https://github.com/freesewing/freesewing/blob/develop/packages/core/src/part.mjs e https://github.com/freesewing/freesewing/blob/develop/packages/core/src/path.mjs
 - Plugin de anotações: https://github.com/freesewing/freesewing/tree/develop/plugins/plugin-annotations/src
 - Encaixe retangular: https://github.com/freesewing/freesewing/blob/develop/plugins/plugin-bin-pack/src/growing-packer.mjs
-- Seamly: https://github.com/seamly/Seamly2D/tree/develop/src/libs/vpatterndb
+- Seamly: https://github.com/seamly/Seamly2D/tree/run-seamlyLayout/src/libs/vpatterndb
 - Valentina semântica: https://github.com/dismine/valentina/blob/develop/src/libs/vpatterndb/vpiece.h
 - Valentina exportador: https://github.com/dismine/valentina/blob/develop/src/libs/vlayout/vlayoutexporter.h
 - ezdxf: https://github.com/mozman/ezdxf
