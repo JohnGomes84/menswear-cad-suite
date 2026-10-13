@@ -389,7 +389,8 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 |---|---|---|
 | 0. Descoberta de produto | Produto web, público, editor e piloto escolhidos | Fechada |
 | 1. Especificação | Domínio, geometria, formato, QA, medidas, margens, costuras, regras | Em revisão; ainda há bloqueantes específicos |
-| 2. POC geométrica sintética | Curvas sintéticas, comprimento, piques, discretização, offsets e SVG/PDF diagnóstico | Em andamento em branch/PR isolado; 14 testes iniciais passam; revisão de engenharia/QA pendente |
+| 1.5. Fechamento dirigido do domínio + POC geométrica sintética | Mecanismos genéricos do kernel, experimentos, medições e saídas diagnósticas | Em andamento em branch/PR isolado; 14 testes iniciais passam; revisão de engenharia/QA pendente |
+| 2. POC geométrica específica do `PILOT-001` | Aplicação do kernel ao flat shirt após resolver regras de domínio e montagem | Bloqueada pelas pendências específicas da seção 14.1 |
 | 3. Exportação piloto | Escala, PDF paginado/plotter, SVG e calibração física | Posterior à POC |
 | 4. Implementação do piloto | Fluxo web de perfil a molde validado | Bloqueada até evidência técnica e prova |
 | 5. Expansão | Calça, outros blocos, gradação, DXF e módulos especiais | Fora do piloto; gate próprio |
