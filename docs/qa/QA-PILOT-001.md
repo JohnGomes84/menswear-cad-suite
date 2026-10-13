@@ -41,17 +41,42 @@ Fonte/semântica em revisão: `../domain/RESEARCH-ISSUES-1-2-Sleeve-and-Wrist.md
 O protocolo operacional proposto para `L-M` (braço ao lado, cotovelo sem flexão forçada, punho neutro) e o alias de punho precisam de aprovação de modelagem antes de qualquer caso ser marcado como `PASS` para o produto. O valor numérico esperado pode ser aprovado separadamente da semântica e da interpretação de espelhamento do desenho.
 
 
-## Casos preliminares de margens — Issue #3 (NOT_RUN)
+## Casos preliminares de margens — Issue #3
 
 Mapa de referência: `../domain/RESEARCH-ISSUE-3-Seam-Allowance-Map.md`. Os casos esperam revisão da classificação antes da implementação.
 
 | ID | Verificação | Resultado esperado | Estado |
 |---|---|---|---|
-| QA-MARG-001 | Cobertura do contorno do corpo e da manga | Cada aresta recebe origem e uma classe explícita: default 10 mm incluído, sem margem, sem bainha, centro/dobra ou `NOT_YET_DEFINED` | NOT_RUN |
-| QA-MARG-002 | Conversão da margem incluída no bloco | A regra geral de 1 cm não gera um segundo offset sobre uma linha que já a incorpore | NOT_RUN |
-| QA-MARG-003 | Bordos explicitamente sem margem/bainha | Decote/trecho 0–1 e barras/2–4 permanecem sem offset apenas nas partes confirmadas na revisão | NOT_RUN; escopo pendente |
-| QA-MARG-004 | Centro frente/costas e centro da manga | Não gerar costura/corte duplicado; operação dobra/par exige especificação explícita | NOT_RUN; `NOT_YET_DEFINED` |
-| QA-MARG-005 | Encontros de ombro/decote, cava/lateral, lateral/barra e cabeça/underarm | Junções não se auto-reparam silenciosamente; regra de canto ou erro explícito | NOT_RUN; junções `NOT_YET_DEFINED` |
-| QA-MARG-006 | Separação de caminhos | `seam_geometry` mantém-se independente de `cut_geometry`; margens por aresta têm largura/origem próprias | NOT_RUN |
+| QA-MARG-001 | Cobertura do contorno do corpo e da manga | Cada aresta recebe origem e uma classe explícita: default 10 mm incluído, sem margem, sem bainha, centro/dobra ou `NOT_YET_DEFINED` | PASS_DOC (11 trechos auditados); motor NOT_RUN |
+| QA-MARG-002 | Conversão da margem incluída no bloco | A regra geral de 1 cm não gera um segundo offset sobre uma linha que já a incorpore | PASS_DOC (regra explícita); motor NOT_RUN |
+| QA-MARG-003 | Bordos explicitamente sem margem/bainha | Decote/trecho 0–1 e barras/2–4 permanecem sem offset apenas nas partes confirmadas na revisão | PASS_DOC (mapa); motor NOT_RUN; escopo do decote pendente |
+| QA-MARG-004 | Centro frente/costas e centro da manga | Não gerar costura/corte duplicado; operação dobra/par exige especificação explícita | NOT_YET_DEFINED; construção pendente |
+| QA-MARG-005 | Encontros de ombro/decote, cava/lateral, lateral/barra e cabeça/underarm | Junções não se auto-reparam silenciosamente; regra de canto ou erro explícito | NOT_YET_DEFINED; junções pendentes |
+| QA-MARG-006 | Separação de caminhos | `seam_geometry` mantém-se independente de `cut_geometry`; margens por aresta têm largura/origem próprias | NOT_RUN; motor ainda não implementa estes caminhos |
 
 Nenhum desses casos conta como aprovação até modelagem confirmar a leitura dos traços do diagrama, os centros/dobras e a convenção de linha de costura versus corte.
+
+### Registro de execução — 2026-10-13
+
+A auditoria documental dos casos QA-MARG-001 a QA-MARG-003 passou nos limites indicados na tabela. Ela confere cobertura e consistência do mapa; **não** testa geometria de peça nem offset por aresta.
+
+A suíte genérica da POC foi executada na `main` após o merge do PR #11: **14/14 testes passaram**. Inclui offsets sintéticos convexos/côncavos, erosão inválida, entradas não finitas e interseções. Esses testes não recebem o mapa do flat shirt e não contam como execução do motor para QA-MARG-002/003/006.
+
+A inspeção do código da POC não encontrou implementação de `SeamAllowance` por aresta nem caminhos separados `seam_geometry`/`cut_geometry`. QA-MARG-004/005 permanece `NOT_YET_DEFINED`; QA-MARG-006 permanece `NOT_RUN`. A validação de produção e o gate do piloto seguem bloqueados.
+
+
+## Casos iniciais de matriz geométrica — Issue #4 (NOT_RUN)
+
+Fonte de detalhe: `../domain/RESEARCH-ISSUE-4-Point-Matrix.md`. A fixture aritmética é rastreada às pp. 35–36 do PDF; o diagrama está na p. 38. Os valores são esperados, não golden case aprovado.
+
+| ID | Verificação | Resultado esperado | Estado |
+|---|---|---|---|
+| QA-POINT-001 | Conversão das dimensões dadas na fixture | `0–1=30 mm`; `1–2=284 mm`; `1–3=442 mm`; `2–5=315 mm`; `1–9=74 mm`; `9–10=30 mm`; `1–11=142 mm`; `11–12=150 mm`; `1–15=27.5 mm`; `16–17=15 mm`; `1–18=60 mm` | PASS_ARITHMETIC (2026-10-13); geometria NOT_RUN |
+| QA-POINT-002 | Projeções ortogonais nos pontos 6–8 e 13–14 | Cada ponto deriva da linha de topo, profundidade da cava, cintura ou barra declarada, sem eixo-alvo implícito | NOT_RUN; linha-alvo de 14 e sinal dos eixos pendentes |
+| QA-POINT-003 | Pontos 15–17 | Não atribuir coordenadas a 16/17 sem resolver o alvo do “square out” e o sentido de 16–17 | NOT_RUN; `NOT_YET_DEFINED` |
+| QA-POINT-004 | Decotes e cava | Curvas passam pelos marcos textuais e fitting line; handles/tangências só após regra aprovada | NOT_RUN; controles não definidos |
+| QA-POINT-005 | Comprimento de camisa e frente/costas | Golden case exige comprimento de estilo e regra aprovada para centro, dobra ou peças separadas | NOT_RUN; dados/construção pendentes |
+
+Nenhum ponto de coordenada condicional da pesquisa pode ser promovido para produção até aprovação do referencial, das projeções, da separação frente/costas e das curvas.
+
+QA-POINT-001 foi conferido por cálculo reproduzível com os valores publicados. O resultado não valida o sentido dos segmentos, o referencial, as coordenadas absolutas ou a curva; QA-POINT-002–005 permanecem `NOT_RUN`/`NOT_YET_DEFINED`.

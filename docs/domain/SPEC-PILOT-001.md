@@ -68,3 +68,10 @@ Fonte de detalhe: `RESEARCH-ISSUE-3-Seam-Allowance-Map.md`. O texto da p. 35 do 
 | Manga — bordo inferior 2–4 | 0 mm de margem de bainha | Chamada “no hem allowance” |
 
 `DEFAULT_10_MM_INCLUDED` descreve o que a fonte diz sobre o bloco; **não** é uma instrução para aplicar outro offset de 10 mm sobre a geometria recebida. `seam_geometry` e `cut_geometry` continuam distintas. O papel de cada traço, o encontro das margens nos cantos e o tratamento de centros ainda não são especificação aprovada.
+
+
+## Matriz inicial de pontos — Issue #4 (proposta, não aprovada)
+
+Fonte e transcrição detalhada: `RESEARCH-ISSUE-4-Point-Matrix.md`. O texto do bloco está nas pp. 35–36 do PDF e o diagrama na p. 38. Para a fixture publicada, as relações aritméticas em milímetros incluem `0–1=30`, `1–2=284`, `1–3=442`, `2–5=315`, `1–9=74`, `9–10=30`, `1–11=142`, `11–12=150`, `1–15=27.5`, `16–17=15` e `1–18=60`. O comprimento da camisa varia por estilo e não está numericamente fixado.
+
+`P0=(0,0)`, `+x` à direita e `+y` para baixo são apenas uma hipótese de coordenadas para conferir a transcrição. Os pontos 13/14/16/17, os alvos de projeção, o sentido de algumas cotas, as curvas de decote/cava e a separação frente/costas continuam sem decisão suficiente para um golden case. Não gerar nem congelar o bloco real com essas coordenadas condicionais; QA-POINT permanece `NOT_RUN` até revisão de modelagem e geometria.
