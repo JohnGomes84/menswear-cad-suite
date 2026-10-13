@@ -106,7 +106,7 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
    try {
      const used=new Set([
        ...editor.project.entities.map(e=>e.id),
-       ...editor.project.history.filter(e=>e.kind==="ADD_ENTITY").map(e=>e.entity.id)
+       ...editor.project.history.flatMap(e=>e.kind==="ADD_ENTITY"?[e.entity.id]:[])
      ]);
      let i=1;while(used.has(`lab-${i}`))i++;
      const center={x:view.x+view.width/2,y:view.y+view.height/2};
