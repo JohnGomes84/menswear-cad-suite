@@ -2,7 +2,7 @@
 
 **Versão da baseline:** 1.0 consolidada  
 **Data:** 13/10/2026  
-**Status:** descoberta de produto fechada; especificação do piloto em revisão; POC geométrica e código de produção ainda não autorizados.  
+**Status:** descoberta de produto fechada; especificação do piloto em revisão; POC geométrica sintética autorizada como atividade isolada de engenharia; validação do `PILOT-001` e código de produção ainda não autorizados.  
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -389,13 +389,13 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 |---|---|---|
 | 0. Descoberta de produto | Produto web, público, editor e piloto escolhidos | Fechada |
 | 1. Especificação | Domínio, geometria, formato, QA, medidas, margens, costuras, regras | Em revisão; ainda há bloqueantes específicos |
-| 2. POC geométrica | Curvas sintéticas, comprimento, piques, offsets e SVG/PDF diagnóstico | Não aprovada/iniciada; aguarda fechamento mínimo e revisão |
+| 2. POC geométrica sintética | Curvas sintéticas, comprimento, piques, discretização, offsets e SVG/PDF diagnóstico | Autorizada; não valida o `PILOT-001` |
 | 3. Exportação piloto | Escala, PDF paginado/plotter, SVG e calibração física | Posterior à POC |
 | 4. Implementação do piloto | Fluxo web de perfil a molde validado | Bloqueada até evidência técnica e prova |
 | 5. Expansão | Calça, outros blocos, gradação, DXF e módulos especiais | Fora do piloto; gate próprio |
 | 6. Distribuição | Privacidade, direitos, licenças, documentação e release | Posterior à validação |
 
-### 14.1 Itens que bloqueiam a POC do piloto
+### 14.1 Itens que bloqueiam a validação geométrica específica do `PILOT-001`
 
 1. Selecionar entre protocolo `one_piece_sleeve_length` e `shirt_sleeve_length` para a medida pessoal usada, mantendo 65 cm como fixture até esclarecer a relação.
 2. Resolver se `close_wrist` equivale à medida de circunferência do punho do capítulo 13.
@@ -405,7 +405,9 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 6. Aprovar representação inicial de curvas, método de arco, tolerâncias a testar, formatos e subset de constraints.
 7. Revisar `SPEC-PILOT-001`, `GEOM-001`, `QA-PILOT-001` e `PROJECT-FORMAT-001`.
 
-A POC deve ser isolada, reproduzível e não contar como produto: geometria sintética, comprimento paramétrico, piques por arco, discretização controlada, offsets e exportação diagnóstica. Após POC aprovada, seguir para impressão e toile. A implementação web funcional só será liberada após esse conjunto de evidências.
+A POC sintética está autorizada como atividade isolada e reproduzível de engenharia. Ela deve usar apenas geometrias artificiais/controladas para provar comprimento paramétrico, `point_at_arc_length`, discretização, offsets, topologia e exportação diagnóstica. Seus resultados validam mecanismos geométricos genéricos, **não** regras de modelagem, encaixe, margens, `SeamPair`, `AssemblyEase` ou caimento do `PILOT-001`.
+
+A validação geométrica específica do `PILOT-001` permanece bloqueada pelos itens desta seção. Somente após fechar essas decisões o piloto poderá usar as evidências da POC sintética para validar sua própria geometria. Impressão, toile e implementação web funcional continuam posteriores ao gate específico do piloto.
 
 ---
 
@@ -419,7 +421,7 @@ Mudança em medida necessária, fórmula, ease padrão, tecido, construção, to
 
 ## 16. Próxima ação recomendada
 
-Realizar uma **revisão cruzada única deste documento com foco nas sete pendências da seção 14.1**, começando pela decisão entre as medidas de manga e pela conversão das margens do diagrama. Registrar cada decisão com responsável de revisão, evidência e versão. Com isso fechado, autorizar somente a POC geométrica isolada — não ainda o código de produção.
+Executar em paralelo dois fluxos controlados: **(A)** iniciar a POC geométrica sintética, limitada a mecanismos genéricos do kernel e exportação diagnóstica; **(B)** continuar a revisão cruzada das pendências da seção 14.1 para desbloquear a validação geométrica específica do `PILOT-001`. Nenhum resultado da POC sintética pode ser apresentado como validação do molde. O código de produção permanece bloqueado.
 
 ---
 
