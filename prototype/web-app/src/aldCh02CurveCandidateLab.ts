@@ -8,7 +8,7 @@ import type {FrontMethod,FrontVariant} from "./aldCh02FlatTrouserProgram";
 import type {TrouserSectionInputs} from "./flatTrouserBackResearch";
 import {draftFlatTrouserSectionsResearch} from "./flatTrouserBackResearch";
 import {
- threePointG1Candidate,midpointSagittaCandidate,radialDistanceEnvelope
+ waypointG1Candidate,midpointSagittaCandidate,radialDistanceEnvelope
 } from "./curveCandidateLab";
 import type {CandidateSpline,CurveSide} from "./curveCandidateLab";
 
@@ -33,7 +33,7 @@ export type CurveHypothesis={
 };
 export type CurveAssessment=
  | {state:"BLOCKED";ruleId:string;reason:
-   "HYPOTHESIS_REQUIRED"|"SOURCE_UNVERIFIED"|"INVALID_REGISTRY"|"INVALID_GEOMETRY";detail:string}
+   "HYPOTHESIS_REQUIRED"|"SOURCE_UNVERIFIED"|"INVALID_REGISTRY"|"INVALID_GEOMETRY"|"CONTACT_CONDITION_NOT_MET";detail:string}
  | {state:"CANDIDATE_UNVERIFIED";ruleId:string;method:FrontMethod;
    section:"FRONT"|"BACK";kind:"CROTCH"|"INSEAM";
    variant:FrontVariant;candidate:CandidateSpline;
@@ -95,24 +95,44 @@ export function assessChapter2Curve(
   return block("INVALID_REGISTRY","Referência de contato inválida");
  if(kind==="INSEAM"&&(!finite(rule.inwardDepthMm)||rule.inwardDepthMm<=0))
   return block("INVALID_REGISTRY","Profundidade de entrada inválida");
- if((kind==="CROTCH"&&!finite(hypothesis.handleFraction)) ||
+ if((kind==="CROTCH"&&(!finite(hypothesis.handleFraction)||!finite(hypothesis.contactBearingDeg))) ||
     (kind==="INSEAM"&&!hypothesis.sagittaSide))
-  return block("HYPOTHESIS_REQUIRED","Definir explicitamente escolha de tangência ou lado de entrada");
+  return block("HYPOTHESIS_REQUIRED","Definir explicitamente alças, ângulo de contato e/ou lado de entrada; não inferir do diagrama");
  try{
   const research=draftFlatTrouserSectionsResearch(method,measurements);
   const points=(rule.pointPath as string[]).map(id=>getPoint(research.pointsMm,id));
   let candidate:CandidateSpline;
   let sourceConstraint:Extract<CurveAssessment,{state:"CANDIDATE_UNVERIFIED"}>["sourceConstraint"];
   if(kind==="CROTCH"){
-   candidate=threePointG1Candidate(points[0],points[1],points[2],hypothesis.handleFraction!);
    const target=measurements.variant==="BASIC"
     ?rule.distanceBasicMm as number:rule.distanceEasyMm as number;
    const reference=rule.referencePoint as string;
+   const origin=getPoint(research.pointsMm,reference);
+   const bearing=hypothesis.contactBearingDeg!;
+   if(bearing < -180||bearing > 180)
+    return block("INVALID_GEOMETRY","Ângulo de contato fora de [-180,180]");
+   // The source gives a distance, not a signed bearing. The latter is an
+   // explicit, unapproved engineering choice; never infer it silently.
+   const radians=bearing*Math.PI/180;
+   const contactPointMm={
+    x:origin.x+target*Math.cos(radians),
+    y:origin.y+target*Math.sin(radians)
+   };
+   candidate=waypointG1Candidate([
+    points[0],points[1],contactPointMm,points[2]
+   ],hypothesis.handleFraction!);
+   const radialResidualMm=Math.abs(
+    Math.hypot(contactPointMm.x-origin.x,contactPointMm.y-origin.y)-target
+   );
+   const envelope=radialDistanceEnvelope(candidate,origin,target);
+   if(radialResidualMm>1e-7||!envelope.targetWithinEnvelope)
+    return block("CONTACT_CONDITION_NOT_MET",
+      "Curva não alcança a cota radial declarada no método");
    sourceConstraint={
     pdfPage:page,
     crotchContactReference:{
-     pointId:reference,distanceMm:target,
-     envelope:radialDistanceEnvelope(candidate,getPoint(research.pointsMm,reference),target)
+     pointId:reference,distanceMm:target,explicitContactPointMm,
+     radialResidualMm,envelope
     }
    };
   }else{
@@ -125,7 +145,7 @@ export function assessChapter2Curve(
    state:"CANDIDATE_UNVERIFIED",ruleId,method,section,kind,
    variant:measurements.variant,candidate,sourceConstraint,
    mandatoryUnresolved:kind==="CROTCH"
-    ?["Exata posição e direção da referência de contato de Aldrich",
+    ?["Ângulo escolhido para o contato é hipótese CAD, ainda não confirmado por Aldrich",
       "Tangentes de alfaiataria e trueing das costuras",
       "Prova física/toile antes de qualquer corte"]
     :["Lado interior e posição longitudinal da entrada de Aldrich",
