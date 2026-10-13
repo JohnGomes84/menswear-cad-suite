@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.16 DRAFT — operações transacionais e testes de navegador em laboratório sintético
+**Versão da baseline:** 1.17 DRAFT — operação de engenharia e constraints geométricas dirigidas
 **Data:** 13/10/2026  
-**Status:** PRs #34–#36 e #39–#41 incorporados à `main`. Laboratório sintético: 50/50 testes unitários e 5/5 E2E Chromium PASS; código web compila. Catálogo: 54 assuntos candidatos TOC_ONLY, sem moldes reais implementados. Gate APP experimental, Gate A IN_REVIEW, Gate B PILOT-001 NO-GO.
+**Status:** baseline experimental: núcleo de constraints dirigidas, laboratório web e 6 cenários E2E em branch sob PR; 65/65 testes unitários e build aprovados. Catálogo: 54 tópicos TOC_ONLY, sem molde real validado. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -698,3 +698,20 @@ A detecção de alterações parciais no histórico `0.3.0` não constitui assin
 ### Adendo de QA no navegador — PR #41
 
 [PR #41](https://github.com/JohnGomes84/menswear-cad-suite/pull/41) adicionou ensaio básico de contraste do aviso de segurança. [CI Chromium #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662): **5/5 E2E PASS**, incluindo contraste do texto do aviso “não utilizar para corte” de no mínimo 4,5:1. Não é auditoria WCAG completa, nem valida moldes reais.
+
+
+---
+
+## 35. Modelo operacional de desenvolvimento e primeira camada de constraints — 1.17 DRAFT
+
+O [modelo operacional](governance/DELIVERY-OPERATING-MODEL.md) estrutura seis responsabilidades: produto/arquitetura, pesquisa de modelagem, CAD/geometria, engenharia web, QA/integração e compliance. São **frentes técnicas de execução**, não contratação de pessoas ou pareceres profissionais simulados. O fluxo usa issues, branches, testes, revisão e gates; templates de issue/PR foram adicionados.
+
+A especificação [CONSTRAINTS-001](architecture/CONSTRAINTS-001.md) registra o **solver experimental dirigido** `constraints.ts`, independente de famílias de vestuário, que projeta coincidência, horizontalidade, verticalidade e distância em mm. Há ordenação de dependências acíclicas e falha explícita em conflitos, referências inválidas, auto-dependências, ciclos, direção indefinida e não finitude. **Uma regra por destino** é limite intencional; não é solver simultâneo nem define tolerância industrial.
+
+No laboratório web, dois comandos visuais de alinhamento horizontal/vertical projetam uma linha sintética selecionada e registram o resultado como `MOVE_POINT`, com undo/redo. A regra de alinhamento **não** é guardada no arquivo `SceneProject 0.3.0` nem reagirá a edições futuras; sua persistência/satisfação múltipla foi separada na [Issue #43](https://github.com/JohnGomes84/menswear-cad-suite/issues/43).
+
+[CI web #38465429034](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429034): **65/65 testes e build PASS**. [CI Chromium #38465429112](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429112): **6/6 E2E PASS**, incluindo interação de alinhamento dirigida e undo. São validações técnicas da branch, não validação de costura, produção ou do livro.
+
+A investigação de uma **família de calça** foi registrada na [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44), para evitar que todo o desenvolvimento fique preso à camisa. O inventário de 54 assuntos do livro permanece `TOC_ONLY` até leitura específica de textos/diagramas; nenhuma ficha real de calça está aprovada.
+
+**Gates permanecem:** APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO.
