@@ -163,3 +163,5 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - **Bloqueios:** dependências transitivas travadas em lockfile mas sem auditoria de licenças/segurança, anotações reais não integradas, costuras/margens/curvas ainda não aprovadas, escala 1:1 não executada, Gate B PILOT-001 NO-GO.
 
 - **Reprodutibilidade adicional:** arquivo `prototype/integration-spike/package-lock.json` foi gerado a partir de CI bem-sucedida (16 entradas de pacote) e o workflow foi alterado para **npm ci**. Revisão final do novo workflow ainda sujeita a CI do PR.
+
+- **Supply chain:** 2 testes adicionais verificam `package-lock.json`/integridade e marcam lacuna de licença em `hooks@0.3.2`; não autorizar distribuição comercial automaticamente por ter pacotes FreeSewing MIT.
