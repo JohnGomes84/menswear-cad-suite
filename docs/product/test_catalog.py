@@ -18,6 +18,8 @@ class CatalogContractTest(unittest.TestCase):
         self.assertEqual(reviewed[0]["sourceLocation"]["methodPdfPageRange"], [31, 34])
         self.assertTrue(all(m["geometrySpecification"] == "NOT_YET_DEFINED" for m in doc["methods"]))
         self.assertTrue(all(m["modelValidation"] == "NOT_RUN" for m in doc["methods"]))
+        self.assertEqual(reviewed[0]["diagramReview"], "PARTIAL_FRONT_GRID")
+        self.assertEqual(reviewed[0]["geometrySpecification"], "NOT_YET_DEFINED")
 
     def test_rejects_duplicate_id(self):
         doc = json.loads(REGISTRY.read_text(encoding="utf-8"))
