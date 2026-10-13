@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.19 DRAFT — diagrama parcial e coordenadas verificadas da frente flat trouser
+**Versão da baseline:** 1.20 DRAFT — persistência reativa de constraints no laboratório 0.4
 **Data:** 13/10/2026  
-**Status:** núcleo CAD de constraints genéricas na main; auditoria visual parcial da calça CH02 e scaffold numérico da frente em revisão por PR. 73/73 testes web + build aprovados em CI da branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL, sem moldes reais. Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** CH02 com esqueleto de pontos de pesquisa integrado à main, sem moldes reais. Overlay experimental 0.4 de constraints dirigidas reativas em revisão; 93/93 testes unitários e build PASS em CI de branch. Catálogo: 53 tópicos TOC_ONLY; um TEXT_REVIEWED com DIAGRAM_PARTIAL. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -739,3 +739,18 @@ O módulo `prototype/web-app/src/flatTrouserResearch.ts` calcula esqueletos da *
 A auditoria dos diagramas está em estado **`PARTIAL_FRONT_GRID`** no catálogo, não `DIAGRAM_REVIEWED` integral. O método `ALD-CH02-01` continua `TEXT_REVIEWED` e `NOT_STARTED` como implementação de bloco real. [CI web #38467502627](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38467502627): **73/73 testes PASS + build**. A revisão integral de costas e curvas continua na Issue #44.
 
 Essa é a primeira verificação computacional de **outra família de roupa** com motor e unidades comuns. Não altera o Gate B nem libera produto industrial.
+
+
+---
+
+## 38. Modelo persistente e reativo de constraints dirigidas — baseline 1.20 DRAFT
+
+`prototype/web-app/src/constrainedSceneV4.ts` introduz uma **camada experimental de documento `0.4.0`** sobre um `SceneProject 0.3.0` validado e congelado. O contrato detalhado está em [CONSTRAINTS-V4-001](architecture/CONSTRAINTS-V4-001.md). O arquivo inclui um histórico de `ADD_CONSTRAINT`, `REMOVE_CONSTRAINT` e `MOVE_DRIVER`; os vetores `driverEntities` guardam as coordenadas autorais, enquanto `resolvedEntities` guarda as posições matematicamente projetadas.
+
+**Capacidade nova:** alterar um ponto de origem faz o solver reavaliar os pontos dependentes; desfazer/refazer e reabrir JSON reconstroem regras e posições, e remover uma regra recupera a coordenada autoral. A importação verifica a sequência completa, IDs, referências, dados finitos e equivalência entre histórico e resultados. Arquivos `0.3.0` **não** são aceitos pelo importador 0.4 sem migração explícita.
+
+[CI web #38468690640](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38468690640): **93/93 testes + build PASS**, incluindo testes do novo overlay. A API é teste de domínio; **a interface do laboratório existente ainda não contém editor visual para adicionar, excluir ou inspecionar as constraints 0.4**, tampouco E2E específico do overlay.
+
+**Limitações inalteradas:** um destino recebe no máximo uma regra dirigida; não existe solver simultâneo, nem recomposição topológica de peça de roupa ou precisão industrial aprovada. O `0.4.0` usa base fixa de entidades e um limite experimental de 256 comandos de constraints. O uso de `SOLVED` significa solução matematicamente consistente no laboratório, não caimento ou costura validada. A continuação está na [Issue #43](https://github.com/JohnGomes84/menswear-cad-suite/issues/43).
+
+Gates permanecem: APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO.

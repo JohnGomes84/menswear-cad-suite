@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.19 DRAFT**
+- Documento Mestre: **baseline 1.20 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -79,3 +79,6 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 
 
 **Pesquisa de calças CH02:** esqueleto de pontos da frente para blocos flat de uma e duas peças em milímetros, [documentado](docs/domain/CH02-DIAGRAM-001.md) e testado. Sem curva, contorno de corte ou molde aprovado.
+
+
+**Constraints 0.4:** contrato experimental de persistência/reavaliação de relações dirigidas em `prototype/web-app/src/constrainedSceneV4.ts`, independente de camisas/calças. Testado em 93 casos unitários; **a UI 0.4 ainda é pendente**. [Contrato](docs/architecture/CONSTRAINTS-V4-001.md).
