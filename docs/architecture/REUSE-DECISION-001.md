@@ -57,9 +57,9 @@
 
 Os grupos **NÃO** são peças de roupa, e as linhas **NÃO** são arestas de costura/corte. A POC suporta BOTH `ONE_PIECE/TWO_PIECE`, `BASIC/EASY` e medidas personalizadas. Valida completude de pontos, encadeamento de origem e cotas textuais, orientação do diagrama e comprimento dos segmentos gerado pela biblioteca externa.
 
-[Workflow Actions](https://github.com/JohnGomes84/menswear-cad-suite/actions/workflows/integration-spike.yml) — primeira execução de sucesso [#38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9/9 testes de integração aprovados**, com SVG e JSON publicados como artefatos temporários do job.
+[Workflow Actions](https://github.com/JohnGomes84/menswear-cad-suite/actions/workflows/integration-spike.yml) — primeira execução de sucesso [#38480789883](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38480789883): **9/9 testes do fluxo original; 2 verificações adicionais de árvore npm/licença**, com SVG e JSON publicados como artefatos temporários do job.
 
-**Obstáculo técnico comprovado:** o pacote FreeSewing 4.0.0 carrega `plugin-annotations/src/logo.mjs`, que importa `@freesewing/config`; o manifesto deste plugin não declara a dependência como runtime. A primeira instalação falhou e a segunda, com `@freesewing/config@4.0.0` explícito, funcionou. A POC possui **package-lock.json** gerado da instalação verificada no Actions e sua CI exige **npm ci**; as licenças transitivas, vulnerabilidades e compatibilidade com builds de produção ainda precisam de auditoria. A dependência externa NÃO está aprovada para release.
+**Obstáculo técnico comprovado:** o pacote FreeSewing 4.0.0 carrega `plugin-annotations/src/logo.mjs`, que importa `@freesewing/config`; o manifesto deste plugin não declara a dependência como runtime. A primeira instalação falhou e a segunda, com `@freesewing/config@4.0.0` explícito, funcionou. A POC possui **package-lock.json** gerado da instalação verificada no Actions e sua CI exige **npm ci**; uma dependência transitiva, `hooks@0.3.2`, **não possui informação de licença no lockfile**; licenças transitivas, vulnerabilidades e compatibilidade com builds de produção ainda precisam de auditoria. A dependência externa NÃO está aprovada para release.
 
 ## 4. Licenças e autoria
 
