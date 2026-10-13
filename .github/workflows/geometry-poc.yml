@@ -1,0 +1,69 @@
+name: Synthetic geometry POC QA
+
+on:
+  push:
+    paths:
+      - "poc/geometry-synthetic/**"
+      - ".github/workflows/geometry-poc.yml"
+  pull_request:
+    paths:
+      - "poc/geometry-synthetic/**"
+      - ".github/workflows/geometry-poc.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-poc:
+    name: Synthetic POC — unit tests and diagnostics
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: poc/geometry-synthetic
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: poc/geometry-synthetic/requirements.txt
+      - name: Install POC-only dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run regression suite
+        run: python -m unittest discover -s . -p 'test_*.py' -v
+      - name: Generate diagnostic artifacts
+        run: python run_poc.py
+      - name: Verify artifact structure (not physical print scale)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from xml.etree import ElementTree
+          folder = Path("artifacts")
+          result = json.loads((folder / "poc_results.json").read_text(encoding="utf-8"))
+          assert result["units"] == "mm"
+          assert "não valida" in result["scope_warning"]
+          root = ElementTree.parse(folder / "geometry_diagnostic.svg").getroot()
+          assert root.attrib["width"] == "240mm"
+          assert root.attrib["height"] == "160mm"
+          assert root.attrib["viewBox"] == "0 0 240 160"
+          assert (folder / "geometry_diagnostic.pdf").read_bytes().startswith(b"%PDF-")
+          print("PASS: JSON, SVG físico nominal e cabeçalho PDF válidos; impressão NÃO testada")
+          PY
+      - name: Verify byte-for-byte reproducibility in this runner
+        run: |
+          sha256sum artifacts/poc_results.json artifacts/geometry_diagnostic.svg artifacts/geometry_diagnostic.pdf > before.sha256
+          python run_poc.py
+          sha256sum artifacts/poc_results.json artifacts/geometry_diagnostic.svg artifacts/geometry_diagnostic.pdf > after.sha256
+          diff -u before.sha256 after.sha256
+      - name: Save POC-only diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-poc-diagnostics
+          path: poc/geometry-synthetic/artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
