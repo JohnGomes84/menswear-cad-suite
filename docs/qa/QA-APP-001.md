@@ -8,14 +8,14 @@
 | APP-QA-001 | Versão | Criar projeto de laboratório | `formatVersion` explícita `0.x`, `unit=mm`, ID estável | NOT_RUN |
 | APP-QA-002 | Versão | Abrir versão desconhecida | Recusa com erro explícito, sem truncar/migrar silenciosamente | NOT_RUN |
 | APP-QA-003 | Dados | JSON malformado ou comandos desconhecidos | Importação bloqueada; nenhum código executado | NOT_RUN |
-| APP-QA-004 | Dados | Salvar/reabrir | Pontos, curvas, IDs, revisões, flags e estado de edição idênticos | NOT_RUN |
+| APP-QA-004 | Dados | Salvar/reabrir | Pontos, curvas, IDs, revisões, flags e estado de edição idênticos | PASS_UNIT_LIMITED: histórico geométrico linear |
 | APP-QA-005 | Unidade | 5 cm de interface | 50 mm na representação canônica, sem alterar o valor exibido silenciosamente | NOT_RUN |
 | APP-QA-006 | Unidade | Propriedade sem unidade/NaN | Rejeição antes de salvar ou gerar curva | NOT_RUN |
 | APP-QA-007 | Viewport | Aplicar zoom e pan | Posição no mundo, comprimento e coordenadas canônicas inalterados | NOT_RUN |
 | APP-QA-008 | Viewport | Seleção de curva/ponto | ID da entidade selecionada corresponde ao hit-test; sem substituir geometria pelo SVG | NOT_RUN |
-| APP-QA-009 | Histórico | Editar ponto livre e desfazer | Geometria, ID, revision e resultados dependentes restaurados | NOT_RUN |
-| APP-QA-010 | Histórico | Refazer após desfazer | Mesmo resultado determinístico da operação original | NOT_RUN |
-| APP-QA-011 | Histórico | Desfazer, depois nova operação | Branch `redo` invalidada de maneira explícita | NOT_RUN |
+| APP-QA-009 | Histórico | Editar ponto livre e desfazer | Geometria, ID, revision e resultados dependentes restaurados | PASS_UNIT_LIMITED: sem estados prévios de QA |
+| APP-QA-010 | Histórico | Refazer após desfazer | Mesmo resultado determinístico da operação original | PASS_UNIT |
+| APP-QA-011 | Histórico | Desfazer, depois nova operação | Branch `redo` invalidada de maneira explícita | PASS_UNIT |
 | APP-QA-012 | Modo | Tentar arrastar entidade PARAMETRIC | Sem alteração destrutiva silenciosa; informar override/desvinculação | NOT_RUN |
 | APP-QA-013 | Modo | PARAMETRIC_OVERRIDE | Preservar referência da regra e delta no arquivo | NOT_RUN |
 | APP-QA-014 | Modo | FREE | Desvinculação identificável e reversível | NOT_RUN |
@@ -37,3 +37,7 @@ O projeto de demonstração deverá conter curvas **inteiramente sintéticas** e
 ## Evidência proposta — adaptador de geometria TypeScript
 
 `prototype/web-app/src/geometry.ts` implementa cálculo semântico desvinculado do SVG e `geometry.test.ts` contém 11 casos de teste com aproximações independentes. O status acima não equivale a integração plena contra runner Python, validação de tolerância de costura ou medição no papel; registrar CI final e revisar tolerância antes de promover estados.
+
+## Execução do histórico persistido (escopo limitado)
+
+`domain.test.ts` passou em GitHub Actions com cenários de reabertura após 3 movimentos, undo/redo reconstruídos, rejeição de revisões inválidas, encadeamento adulterado e invalidação de redo. A prova cobre **somente** `MOVE_CONTROL_POINT` num projeto sintético; snapshots anteriores de `validation` não são preservados no schema 0.1.0 e devem ser marcados `NOT_YET_DEFINED`. Não confundir a lista unitária com validação de UI manual ou editor paramétrico geral.
