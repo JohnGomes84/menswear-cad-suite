@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.0 consolidada  
+**Versão da baseline:** 1.1 — Fase 1.5 em andamento
 **Data:** 13/10/2026  
-**Status:** descoberta de produto fechada; especificação do piloto em revisão; POC geométrica sintética autorizada como atividade isolada de engenharia; validação do `PILOT-001` e código de produção ainda não autorizados.  
+**Status:** descoberta de produto fechada; POC geométrica sintética autorizada e em execução em branch isolada; validação do `PILOT-001` e código de produção continuam não autorizados.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -389,7 +389,8 @@ Modelagem revisa regra, folga, equilíbrio e montagem; geometria/CAD aprova repr
 |---|---|---|
 | 0. Descoberta de produto | Produto web, público, editor e piloto escolhidos | Fechada |
 | 1. Especificação | Domínio, geometria, formato, QA, medidas, margens, costuras, regras | Em revisão; ainda há bloqueantes específicos |
-| 2. POC geométrica sintética | Curvas sintéticas, comprimento, piques, discretização, offsets e SVG/PDF diagnóstico | Autorizada; não valida o `PILOT-001` |
+| 1.5. Fechamento dirigido do domínio + POC geométrica sintética | Mecanismos genéricos do kernel, experimentos, medições e saídas diagnósticas | Em andamento em branch/PR isolado; 14 testes iniciais passam; revisão de engenharia/QA pendente |
+| 2. POC geométrica específica do `PILOT-001` | Aplicação do kernel ao flat shirt após resolver regras de domínio e montagem | Bloqueada pelas pendências específicas da seção 14.1 |
 | 3. Exportação piloto | Escala, PDF paginado/plotter, SVG e calibração física | Posterior à POC |
 | 4. Implementação do piloto | Fluxo web de perfil a molde validado | Bloqueada até evidência técnica e prova |
 | 5. Expansão | Calça, outros blocos, gradação, DXF e módulos especiais | Fora do piloto; gate próprio |
@@ -421,10 +422,35 @@ Mudança em medida necessária, fórmula, ease padrão, tecido, construção, to
 
 ## 16. Próxima ação recomendada
 
-Executar em paralelo dois fluxos controlados: **(A)** iniciar a POC geométrica sintética, limitada a mecanismos genéricos do kernel e exportação diagnóstica; **(B)** continuar a revisão cruzada das pendências da seção 14.1 para desbloquear a validação geométrica específica do `PILOT-001`. Nenhum resultado da POC sintética pode ser apresentado como validação do molde. O código de produção permanece bloqueado.
+Continuar a POC sintética em branch isolada, incluindo casos difíceis de orientação, interseção, degeneração, offsets e limites de aproximação, e submeter seus resultados à revisão de geometria/QA. Em paralelo, resolver as pendências da seção 14.1 para desbloquear a validação específica do `PILOT-001`. A POC ainda não recebeu aprovação final; nenhum resultado pode ser apresentado como validação do molde. Código de produção permanece bloqueado.
 
 ---
 
 ## 17. Histórico de consolidação
 
-Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. Versões anteriores podem ser guardadas como histórico de trabalho, mas decisões repetidas, pendências superadas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
+Este documento substitui como fonte de verdade as minutas e relatórios separados produzidos anteriormente. A versão 1.1 registra o início controlado da POC sintética e o estado das issues. Versões anteriores podem ser guardadas como histórico de trabalho, mas decisões repetidas, pendências superadas ou escopos antigos não prevalecem sobre esta baseline. Qualquer mudança futura deve atualizar este documento e registrar a revisão correspondente.
+
+
+---
+
+## 18. Rastreamento das pendências no GitHub
+
+As issues formais do projeto estão no repositório [JohnGomes84/menswear-cad-suite](https://github.com/JohnGomes84/menswear-cad-suite). As questões #1–#5 bloqueiam a validação geométrica específica do `PILOT-001`; não bloqueiam a POC sintética genérica da Fase 1.5. A issue #6 acompanha o experimento, e a #7 coordena a revisão e mantém os gates separados.
+
+| Issue | Escopo | Link |
+|---:|---|---|
+| #1 | Protocolo da medida de manga e fixture de 65 cm | [Issue #1](https://github.com/JohnGomes84/menswear-cad-suite/issues/1) |
+| #2 | Semântica de `close_wrist` | [Issue #2](https://github.com/JohnGomes84/menswear-cad-suite/issues/2) |
+| #3 | Margens de costura por aresta | [Issue #3](https://github.com/JohnGomes84/menswear-cad-suite/issues/3) |
+| #4 | Matriz geométrica dos pontos 0–18 e frente/costas | [Issue #4](https://github.com/JohnGomes84/menswear-cad-suite/issues/4) |
+| #5 | `SeamPair` e `AssemblyEase` da manga plana | [Issue #5](https://github.com/JohnGomes84/menswear-cad-suite/issues/5) |
+| #6 | POC geométrica sintética e contratos experimentais | [Issue #6](https://github.com/JohnGomes84/menswear-cad-suite/issues/6) |
+| #7 | Revisão integrada e GO/NO-GO separados | [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7) |
+
+## 19. Evidência inicial da Fase 1.5
+
+O primeiro protótipo foi publicado na branch `poc/phase-1-5-synthetic-geometry` e está em [PR #8 (rascunho)](https://github.com/JohnGomes84/menswear-cad-suite/pull/8). Ele cobre uma Bézier cúbica sintética, comprimento e posição por arco, piques, reversão, discretização, interseções, detecção de degeneração, offsets constantes auxiliares e exportação diagnóstica.
+
+A rodada inicial passou em **14 testes**. A fixture de curva teve comprimento computacional de referência de aproximadamente **258,1271 mm**. Dois runs consecutivos produziram hashes SHA-256 idênticos para os artefatos JSON, SVG e PDF no ambiente/fixture atual. O resultado e os sweeps estão em [`poc/geometry-synthetic/`](../poc/geometry-synthetic/), com análise detalhada em [`POC_REPORT.md`](../poc/geometry-synthetic/POC_REPORT.md). Esse comprimento é referência numérica da fixture, não solução analítica independente; as medições não definem tolerância de produção.
+
+**Estado dos gates:** a autorização para executar a POC sintética está vigente; sua conclusão e aceitação por geometria/QA ainda estão **pendentes** (issue #7/PR #8). A validação do `PILOT-001` permanece **NO-GO** até resolver as pendências aplicáveis da seção 14.1. Código de produção e implementação web continuam bloqueados. PDF/SVG são apenas saídas diagnósticas; não houve impressão física nem aprovação industrial.
