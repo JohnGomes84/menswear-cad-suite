@@ -31,18 +31,12 @@ jobs:
           node-version: "22"
       - name: Install existing dependencies
         run: npm ci --no-audit --no-fund
-      - name: Acquire pinned Playwright and resolve lockfile (temporary)
-        run: npm install --save-dev --save-exact @playwright/test@1.56.1 --no-audit --no-fund
-      - name: Emit lockfile for reproducible source commit (temporary)
-        run: |
-          echo LOCKFILE_B64_BEGIN
-          base64 -w0 package-lock.json
-          echo
-          echo LOCKFILE_B64_END
       - name: Install Chromium and runtime libraries
         run: npx playwright install --with-deps chromium
       - name: Run browser E2E tests
         run: npx playwright test
+        env:
+          CI: "true"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
