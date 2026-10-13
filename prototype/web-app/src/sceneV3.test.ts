@@ -85,7 +85,7 @@ describe("scene 0.3 transactional event sourcing",()=>{
   const s=removeSceneEntity(createSceneEditorV3(),"curve-a");
   const raw=JSON.parse(serializeSceneV3(s.project));
   raw.history[0].entity.pointsMm[0].x=999;
-  expect(()=>validateSceneV3(raw)).toThrow(/adulterado|incompatível/i);
+  expect(()=>validateSceneV3(raw)).toThrow(/adulterado|incompatível|estado inicial/i);
  });
  it("rejects forged add payload instead of silently replacing geometry",()=>{
   const s=addSceneEntity(createSceneEditorV3(),line("line-new"));
@@ -107,7 +107,7 @@ describe("scene 0.3 transactional event sourcing",()=>{
   expect(()=>validateSceneV3(bad)).toThrow(/Entidade/);
  });
  it("prevents arbitrary edits/removal of parametric entity",()=>{
-  const s=exampleSceneV3();s.entities[0].mode="PARAMETRIC";
+  const s=exampleSceneV3();s.entities[0].mode="PARAMETRIC";s.initialEntities[0].mode="PARAMETRIC";
   const editor=createSceneEditorV3(s);
   expect(()=>moveScenePointV3(editor,"curve-a",0,{x:20,y:21})).toThrow(/paramétrico/);
   expect(()=>removeSceneEntity(editor,"curve-a")).toThrow(/paramétrica/);
