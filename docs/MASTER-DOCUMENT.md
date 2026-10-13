@@ -1,6 +1,6 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.13 DRAFT — histórico reversível do laboratório e geometria web experimental
+**Versão da baseline:** 1.14 DRAFT — catálogo técnico estruturado de toda a obra
 **Data:** 13/10/2026  
 **Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
 **Idioma inicial:** português brasileiro  
@@ -660,3 +660,12 @@ O `PILOT-001` continua NO-GO; a presença de Bézier no navegador não valida ne
 ## 31. Histórico persistido experimental — baseline 1.13 DRAFT
 
 O protótipo web suporta recarregar e reconstruir undo/redo de movimentos lineares de pontos `FREE` a partir de eventos validados do JSON `0.1.0`. Importações com revisão ou cadeia inconsistentes falham explicitamente, sem executar código de arquivo externo. São restauradas coordenadas, revisões e comandos; estados anteriores de QA não fazem parte do histórico 0.1.0 e recebem `NOT_YET_DEFINED` ao desfazer. Histórico de override paramétrico, regras, constraints e transactions compostas ainda não está implementado. A validação aplica-se apenas a geometrias sintéticas do laboratório, não a moldes reais.
+
+
+---
+
+## 32. Catálogo operacional por tema e capítulo — baseline 1.14 DRAFT
+
+O sumário da obra completa foi convertido em [PATTERN-CATALOG-001.json](product/PATTERN-CATALOG-001.json) com **54 registros temáticos candidatos**, distribuídos pelos **14 capítulos** e **23 agrupamentos funcionais**. Um registro pode representar um processo, família, bloco ou assunto de CAD, não necessariamente um molde único. **Nenhuma das 54 entradas é contabilizada como bloco especificado, implementado ou validado**; todos os estados permanecem `TOC_ONLY` / `NOT_STARTED`. A investigação do `PILOT-001` continua em documentação especializada, com bloqueios próprios.
+
+O registro possui IDs estáveis, capítulo, família, tipo, estados separados de fonte, implementação, QA e prova física, e campo próprio de versão de `DraftRuleSet`. Um validador e CI verificam cobertura dos 14 capítulos, unicidade e que uma alegação futura de implementação exija especificação aprovada e `ruleSetId`. Próximo passo de pesquisa: substituir inventário por auditoria real do conteúdo dos capítulos, uma regra por vez; não presumir que os títulos do sumário representem métodos implementáveis.
