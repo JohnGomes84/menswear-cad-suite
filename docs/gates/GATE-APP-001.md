@@ -62,3 +62,7 @@
 **Gate de release:** teste de montagem/toile, impressão calibrada, requisitos legais, privacidade e robustez do produto.
 
 O início experimental do web app **não revoga** a decisão de manter bloqueado o código de produção.
+
+## 6. Evidência inicial da fundação web
+
+Há uma implementação em `prototype/web-app` sob branch/PR de protótipo. Foram testados em CI o contrato de JSON sintético, conversão de unidade, recusa de formato e valores inválidos, edição FREE/undo/redo e reconstrução de arquivos. A suíte inicial tem **8 testes unitários**; o compilador TypeScript e o bundler Vite passaram. Ainda são `NOT_RUN` os testes manuais de interação por browser, o teste cruzado do motor TS (Issue #25), o undo após reabrir a sessão e a auditoria completa de licenças. `APP-01` e `APP-02` podem avançar isoladamente, mas nenhuma barra de saída de produto foi concluída.
