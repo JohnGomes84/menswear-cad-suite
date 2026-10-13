@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.9 DRAFT — evidências da POC sintética e contratos de falha numérica
+**Versão da baseline:** 1.10 DRAFT — Gate APP experimental, pesquisa de domínio dirigida e benchmark numérico independente
 **Data:** 13/10/2026  
-**Status:** PRs #17, #18 e #19 incorporados à `main`; POC sintética tem 27/27 testes PASS_CI. Gate A permanece IN_REVIEW até decisão formal de geometria/QA; Issues #1–#5 e Gate B continuam pendentes/NO-GO. Cache, diagnósticos e SARIF são propostas não implementadas nem aprovadas para produção.
+**Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -600,3 +600,32 @@ A POC sintética passou de 14 para **27 casos de teste**, com [CI #38454065254](
 Os métodos experimentais `_adaptive_simpson` e `CubicBezier.flatten` deixam agora de devolver silenciosamente uma estimativa quando seus respectivos limites numéricos não são satisfeitos: emitem `ArithmeticError`. Isso melhora a sinalização de falhas, mas **não** prova uma garantia geral de erro de comprimento ou tesselação, não substitui uma validação independente para curvas difíceis e não transforma o offset constante do Shapely em operação de margem por aresta.
 
 **Situação:** Gate A = `IN_REVIEW`; Gate B = `NO-GO`. O [registro de revisão do Gate A](qa/GATE-A-REVIEW.md) documenta as evidências e riscos remanescentes. Nenhuma regra, piquê funcional, `SeamPair`, `AssemblyEase`, margem ou construção do bloco real foi aprovada.
+
+
+---
+
+## 28. Decisão sobre o início do aplicativo — baseline 1.10 DRAFT
+
+A decisão anterior de bloquear a implementação web **funcional de modelagem real** permanece válida. Fica explicitada a diferença entre essa implementação e uma **fundação experimental de aplicação** que não usa dados antropométricos reais, nem gera blocos do livro ou saídas aptas para corte.
+
+O **Gate APP-001** autoriza desenvolver a estrutura web experimental, viewport/editor com geometrias sintéticas, serialização JSON versionada de laboratório, unidades, modos de edição, histórico e testes. Trata-se de protótipo, não produto. O Gate APP **não substitui** o Gate A (kernel sintético sob revisão) ou o Gate B (`PILOT-001` ainda bloqueado).
+
+Decisões de engenharia reversíveis para esta fundação: TypeScript strict, React, Vite e SVG como representação gráfica, mantendo o kernel separado. Python continua experimento/benchmark; portar resultados para TypeScript requer teste de equivalência e referência independente. O arquivo-fonte de projeto não será SVG ou PDF.
+
+Os requisitos, limites e critérios de aceite constam de:
+
+- [ADR-0003](decisions/ADR-0003-experimental-app-foundation.md): decisão do início experimental;
+- [APP-FOUNDATION-001](architecture/APP-FOUNDATION-001.md): contratos e arquitetura do shell;
+- [GATE-APP-001](gates/GATE-APP-001.md): separação de gates e barreiras de promoção;
+- [QA-APP-001](qa/QA-APP-001.md): matriz de aceitação ainda `NOT_RUN`;
+- [PILOT-001-OPEN-DECISIONS](domain/PILOT-001-OPEN-DECISIONS.md): lacunas do bloco, sem aprovações presumidas.
+
+### 28.1 Decisões de contenção do bloco
+
+O aplicativo não converterá `shirt_sleeve_length` em `one_piece_sleeve_length`. O alias `close_wrist ← wrist_circumference` permanece **desabilitado** até revisão; a proposta do livro não é promovida a equivalência automática. O mapa preliminar de margens por aresta e as coordenadas condicionais de pontos servem para revisão documental, não para gerar peça real. Piques de cava/manga, `AssemblyEase` e tolerâncias físicas continuam `NOT_YET_DEFINED`.
+
+### 28.2 Avanço do benchmark numérico independente
+
+Uma segunda técnica de quadratura, **Gauss-Legendre**, foi acrescentada em branch de pesquisa aos casos de teste da POC. Ela é independente do algoritmo de integração adaptativa Simpson, embora compartilhe a derivada matemática da mesma curva. Os testes incluem uma parábola com comprimento de arco analítico `√5/2 + asinh(2)/4`, uma cúbica com inflexão e a curva sintética original. A primeira execução de CI da branch registrou **30/30 testes PASS**. Isso reduz o risco de referência circular, mas não encerra a Issue #21, que também exige curvas patológicas, erro global e reprodutibilidade. Não constitui garantia industrial.
+
+**Estados atuais:** Gate A = `IN_REVIEW`; Gate APP = `GO_EXPERIMENTAL_ONLY`; Gate B = `NO-GO`; release industrial = `NO-GO`.
