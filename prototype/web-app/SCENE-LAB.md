@@ -22,3 +22,11 @@ Os formatos 0.1.0 e 0.2.0 são **distintos**, sem migração silenciosa. Cada la
 Ainda não há construção de componentes de roupa, centros/dobras, pences, margens, `SeamEdge`, `SeamPair`, constraints, operações CAD do livro, gradação ou PDF para corte. Geometrias são inteiramente inventadas e indicadas como não aptas para corte. O termo `pieces` no schema 0.2 representa apenas **grupos de esboço**, sem semântica de vestuário.
 
 **Gate APP:** experimental. **Gate B — PILOT-001:** NO-GO.
+
+## Operações transacionais — esquema 0.3.0
+
+No editor experimental, `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT` são reversíveis com undo/redo mesmo após salvar e reabrir JSON 0.3.0. É possível acrescentar linhas/Béziers a diferentes grupos e remover todas as entidades.
+
+O esquema guarda `initialEntities` e valida a cadeia inteira por reversão/reprodução. Detecta alterações parciais nos eventos, mas **não é assinatura criptográfica**. IDs adicionados não podem ser reutilizados depois de remoção. `0.2.0` só é convertido com confirmação explícita no importador; `0.1.0` permanece no editor inicial.
+
+Isso não adiciona costuras, regras do livro, gradação ou formas aptas a corte; Gate B segue NO-GO.
