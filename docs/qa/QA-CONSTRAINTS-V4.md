@@ -2,7 +2,7 @@
 
 **Fonte:** `prototype/web-app/src/constrainedSceneV4.test.ts`.  
 **Tipo:** testes de laboratório sintético; sem desenho de molde validado.  
-**Status:** unit tests implementados; registrar CI final do PR.
+**Status:** [CI web #38468690640](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38468690640) **93/93 testes PASS e build TypeScript/Vite aprovado**. Testes do overlay são unitários; ainda **NOT_RUN** para UI/E2E 0.4.
 
 | Grupo | Aceite |
 |---|---|
