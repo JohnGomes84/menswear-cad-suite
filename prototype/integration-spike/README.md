@@ -22,7 +22,7 @@ Da raiz do repositório:
 
 ```bash
 npm ci --prefix prototype/web-app
-npm install --prefix prototype/integration-spike --no-package-lock --ignore-scripts
+npm ci --prefix prototype/integration-spike --ignore-scripts
 mkdir -p prototype/integration-spike/generated
 prototype/web-app/node_modules/.bin/esbuild \
   prototype/web-app/src/flatTrouserBackResearch.ts \
@@ -39,7 +39,7 @@ A CI repete os comandos em Node 22 e publica os dois arquivos resultantes como a
 - Nenhuma dependência nova foi adicionada ao aplicativo web existente.
 - O formato nativo de projetos 0.1/0.2/0.3/0.4 não foi reescrito; apenas um **adaptador descartável de interoperabilidade** lê a saída do interpretador.
 - O pacote FreeSewing 4.0.0 exigiu adicionar explicitamente `@freesewing/config@4.0.0`: o plugin de anotações o importa em runtime sem declará-lo como dependência, no estado inspecionado. **É um risco de empacotamento real**, não uma garantia de suporte industrial.
-- Versões diretas estão fixadas, **mas a POC não tem `package-lock.json`**; dependências transitivas poderão variar. É obrigatório criar lockfile, auditar dependências/licenças e atualizar o baseline antes de aprovar a integração no aplicativo principal.
+- Versões diretas e transitivas agora são fixadas em **`package-lock.json`**, materializado no GitHub Actions a partir da instalação efetiva do core 4.0.0. A CI usa `npm ci` para reprodutibilidade. **Ainda são obrigatórias** auditoria de licença, segurança, compatibilidade de API e atualização de upstream antes de promover ao aplicativo principal.
 - FreeSewing é MIT; manter atribuições e avisos em qualquer redistribuição. Bibliotecas GPL e softwares proprietários permanecem somente como referências técnicas até decisão jurídica de integração.
 
 ## Próximo critério para expansão
