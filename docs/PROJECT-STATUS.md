@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.17 DRAFT (PR de engenharia)
+**Baseline corrente:** 1.18 DRAFT (auditoria textual inicial de calça plana)
 
 ## Situação executiva
 
@@ -119,3 +119,8 @@ PR #41 integrado; [CI Chromium #38464138662](https://github.com/JohnGomes84/mens
 - [CI E2E #38465429112](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429112): **6/6 cenários Chromium PASS**.
 - Issues: #43 (constraints persistentes e simultâneas), #44 (primeiro método de calça do capítulo 2).
 - O catálogo continua TOC_ONLY, a execução física do PDF não foi realizada, Gate B permanece NO-GO.
+
+
+## Início efetivo de análise de outra família do livro — CH02
+
+O registro `ALD-CH02-01` recebeu estado **TEXT_REVIEWED** com fonte em pp. 31–34 do PDF, documento `docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md` e fixture aritmética para variantes básica/folgada. **53 registros** continuam `TOC_ONLY`; nenhum bloco real foi implementado ou validado. Diagramas e provas de modelagem ainda pendentes na Issue #44. Gate B PILOT-001 permanece NO-GO.

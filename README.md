@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.17 DRAFT**
+- Documento Mestre: **baseline 1.18 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -40,7 +40,7 @@ O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experi
 - `docs/architecture/APP-SCENE-002.md` — contrato da cena multi-entidades
 - `docs/MASTER-DOCUMENT.md`
 - `docs/product/BOOK-COVERAGE-001.md` — inventário dos 14 capítulos, não implementação
-- `docs/product/PATTERN-CATALOG-001.json` — 54 assuntos candidatos; todos TOC_ONLY/NOT_STARTED
+- `docs/product/PATTERN-CATALOG-001.json` — 54 assuntos candidatos; 53 TOC_ONLY e 1 TEXT_REVIEWED; todos NOT_STARTED
 - `docs/decisions/ADR-0004-full-book-product-coverage.md`
 - `docs/gates/GATE-APP-001.md`
 - `docs/architecture/APP-FOUNDATION-001.md`
@@ -71,3 +71,8 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 - `docs/governance/DELIVERY-OPERATING-MODEL.md`: responsabilidades, evidências, gates e operação por PR.
 - `docs/architecture/CONSTRAINTS-001.md`: contratos e limites do solver.
 - Testes experimentais desta evolução: **65 unitários + 6 E2E Chromium**; nenhum molde real aprovado.
+
+
+## Auditoria do livro — fora do piloto da camisa
+
+`ALD-CH02-01`: auditoria **textual** do bloco de calças *flat* (uma e duas peças), PDF pp. 31–34, com fixture escalar de amostra. Geometria/diagramas/caimento ainda não aprovados. Veja `docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md`.

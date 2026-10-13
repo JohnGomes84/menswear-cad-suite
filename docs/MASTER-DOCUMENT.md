@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.17 DRAFT — operação de engenharia e constraints geométricas dirigidas
+**Versão da baseline:** 1.18 DRAFT — primeira auditoria textual da família de calças flat
 **Data:** 13/10/2026  
-**Status:** baseline experimental: núcleo de constraints dirigidas, laboratório web e 6 cenários E2E em branch sob PR; 65/65 testes unitários e build aprovados. Catálogo: 54 tópicos TOC_ONLY, sem molde real validado. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
+**Status:** PR #45 integrado à main: constraints experimentais, 65 testes unitários e 6 E2E Chromium aprovados; documentação de governança implementada. No catálogo de 54 assuntos do livro, 53 seguem TOC_ONLY e um registro de calça plana CH02 foi TEXT_REVIEWED; geometria e moldes reais ainda não aprovados. Gate APP experimental; Gate A IN_REVIEW; Gate B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -715,3 +715,14 @@ No laboratório web, dois comandos visuais de alinhamento horizontal/vertical pr
 A investigação de uma **família de calça** foi registrada na [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44), para evitar que todo o desenvolvimento fique preso à camisa. O inventário de 54 assuntos do livro permanece `TOC_ONLY` até leitura específica de textos/diagramas; nenhuma ficha real de calça está aprovada.
 
 **Gates permanecem:** APP experimental; A IN_REVIEW; B NO-GO; comercial NO-GO.
+
+
+---
+
+## 36. Auditoria textual de uma família inferior — baseline 1.18 DRAFT
+
+A fonte fornecida foi consultada nas páginas **31–34 do PDF** da 5ª edição da obra. O registro `ALD-CH02-01` passou de `TOC_ONLY` para **`TEXT_REVIEWED`**, com evidência original em [RESEARCH-CH02-FLAT-TROUSERS-001](domain/RESEARCH-CH02-FLAT-TROUSERS-001.md). O conteúdo distingue blocos de calça plana **uma peça** e **duas peças**, aplicações em tecidos planos e jersey, e alternativas de folga construtiva.
+
+A fixture textual utiliza o exemplo `seat=1020 mm`, `body_rise=282 mm`, `inside_leg=800 mm` e testa **sete relações escalares** por variante básica/folgada. [Fixture](domain/FLAT-TROUSER-SCALAR-FIXTURE-001.json). As relações são verificações de aritmética derivadas da leitura; **não** definem a orientação x/y, curvas, encaixe, margens por aresta ou dimensões de peças completas. Imagens/diagramas do PDF ainda não foram auditados e a validação de modelagem/QA física permanece `NOT_RUN`. Os outros **53 registros** permanecem apenas `TOC_ONLY`.
+
+Essa frente é independente das regras do `PILOT-001`: não altera o seu Gate B, ainda NO-GO, e não anuncia gerador de calças funcional. Sua continuação está na [Issue #44](https://github.com/JohnGomes84/menswear-cad-suite/issues/44).
