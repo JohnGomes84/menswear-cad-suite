@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.23 DRAFT**
+- Documento Mestre: **baseline 1.24 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -97,3 +97,8 @@ Os pontos de pesquisa das costas dos blocos flat de uma e duas peças seguem as 
 ## Prova vertical com tecnologia reutilizada
 
 A análise de reaproveitamento **de todo o CAD** está documentada em [REUSE-DECISION-001](docs/architecture/REUSE-DECISION-001.md), não apenas de curvas. A [POC independente](prototype/integration-spike/) usa a biblioteca real `@freesewing/core@4.0.0` para converter **coordenadas calculadas pelo interpretador de Aldrich** em guias vetoriais medidos, anotados e entregues como SVG diagnóstico + JSON de rastreabilidade. [CI de integração](https://github.com/JohnGomes84/menswear-cad-suite/actions/workflows/integration-spike.yml): 9 testes, artefatos de pesquisa. Nenhum molde real, anotação de produção, grade ou PDF de corte é liberado.
+
+
+## Contêineres Part e anotações técnicas — somente POC
+
+A segunda etapa da integração FreeSewing usa os contêineres `Part` para referências calculadas a partir do CH02, com isolamento rigoroso entre conectores de dependência, costura e corte. A macro real `grainline` e o marcador `Snippet(notch)` foram testados **somente em desenho sintético**, sem atribuí-los ao método da obra. [Contrato e limites](docs/architecture/PIECE-ANNOTATION-SEMANTICS-001.md) · [QA](docs/qa/QA-PART-ANNOTATIONS-001.md). `CUT_READY=false` permanece obrigatório.
