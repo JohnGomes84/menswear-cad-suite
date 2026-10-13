@@ -16,7 +16,7 @@
   },
   "governance": {
     "evidenceLevel": "MIXED_TOC_AND_TEXT",
-    "caveat": "53 assuntos em TOC_ONLY; 1 assunto do CH02 foi TEXT_REVIEWED exclusivamente no texto (PDF 31-34), com diagramas ainda pendentes. Nenhum método implementado.",
+    "caveat": "53 assuntos TOC_ONLY; 1 assunto CH02 TEXT_REVIEWED com inspeção visual PARCIAL da frente (não DIAGRAM_REVIEWED integral); scaffold matemático RESEARCH_ONLY não é implementação de molde.",
     "copyright": "Only original concise descriptions; no diagrams, scans, formulas or copied pages.",
     "coverage": "All 14 chapters present; no claim of technical implementation."
   },
@@ -172,7 +172,7 @@
         ]
       },
       "ruleSetId": null,
-      "notes": "Texto revisado: blocos flat de calça de uma e duas peças, básico/folgado. Diagramas, coordenadas, curvas, margens por aresta e prova física pendentes.",
+      "notes": "Capítulo 2, PDF 31–34: texto lido; diagrama p.34 inspecionado visualmente para eixos/posições da frente. Skeleton coordenado de pesquisa implementado em TS. Curvas, costas, costuras e moldes reais pendentes. Não promover a DIAGRAM_REVIEWED/APPROVED.",
       "reviewEvidence": "docs/domain/RESEARCH-CH02-FLAT-TROUSERS-001.md",
       "submethods": [
         {
@@ -183,7 +183,10 @@
           "id": "FLAT-TROUSER-TWO-PIECE",
           "status": "TEXT_REVIEWED"
         }
-      ]
+      ],
+      "diagramEvidence": "docs/domain/CH02-DIAGRAM-001.md",
+      "diagramReview": "PARTIAL_FRONT_GRID",
+      "researchImplementation": "prototype/web-app/src/flatTrouserResearch.ts"
     },
     {
       "methodId": "ALD-CH02-02",
