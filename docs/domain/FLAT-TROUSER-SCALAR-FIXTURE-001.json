@@ -1,0 +1,60 @@
+{
+  "schema": "flat-trouser-scalar-research/0.1",
+  "source": {
+    "book": "Metric Pattern Cutting for Menswear",
+    "edition": 5,
+    "chapter": 2,
+    "pdfPageRange": [
+      31,
+      34
+    ],
+    "textReviewed": true,
+    "diagramReviewed": false
+  },
+  "usage": "ARITHMETIC_ONLY — cannot generate pattern coordinates",
+  "measurementsMm": {
+    "seat": 1020,
+    "bodyRise": 282,
+    "insideLeg": 800
+  },
+  "tests": [
+    {
+      "variant": "BASIC",
+      "parameters": {
+        "id": "BASIC",
+        "riseExtraMm": 20,
+        "seatExtraMm": 40,
+        "innerForkOffsetMm": -5,
+        "hemWidthExtraMm": 20
+      },
+      "expectedMm": {
+        "frontRise_0_1": 302,
+        "insideLeg_1_2": 800,
+        "kneePosition_1_3": 400,
+        "frontSeatWidth_1_4": 295,
+        "frontFork_4_8": 68.75,
+        "onePieceHemReference_2_9": 216.66666666666666,
+        "twoPieceReference_1_9": 157.5
+      }
+    },
+    {
+      "variant": "EASY",
+      "parameters": {
+        "id": "EASY",
+        "riseExtraMm": 40,
+        "seatExtraMm": 80,
+        "innerForkOffsetMm": 5,
+        "hemWidthExtraMm": 25
+      },
+      "expectedMm": {
+        "frontRise_0_1": 322,
+        "insideLeg_1_2": 800,
+        "kneePosition_1_3": 400,
+        "frontSeatWidth_1_4": 335,
+        "frontFork_4_8": 88.75,
+        "onePieceHemReference_2_9": 248.33333333333334,
+        "twoPieceReference_1_9": 177.5
+      }
+    }
+  ]
+}
