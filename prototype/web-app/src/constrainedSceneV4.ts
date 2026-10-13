@@ -48,12 +48,16 @@ const copyEntity=(e:SketchEntity):SketchEntity=>({
   pointsMm:e.pointsMm.map(copyPoint)
 });
 const eqPoint=(a:Vec2,b:Vec2)=>a.x===b.x&&a.y===b.y;
-const eqEntities=(a:readonly SketchEntity[],b:readonly SketchEntity[]) =>
-  a.length===b.length&&a.every((v,i)=>{
-    const w=b[i];
+const eqEntities=(a:readonly SketchEntity[],b:unknown):boolean =>
+  Array.isArray(b) && a.length===b.length && a.every((v,i)=>{
+    const w:unknown=b[i];
+    if(!record(w)||!Array.isArray(w.pointsMm)||w.pointsMm.length!==v.pointsMm.length)
+      return false;
     return v.id===w.id&&v.pieceId===w.pieceId&&v.kind===w.kind&&
-      v.mode===w.mode&&v.pointsMm.length===w.pointsMm.length&&
-      v.pointsMm.every((p,j)=>eqPoint(p,w.pointsMm[j]));
+      v.mode===w.mode&&v.pointsMm.every((p,j)=>{
+        const q:unknown=w.pointsMm[j];
+        return point(q)&&eqPoint(p,q);
+      });
   });
 const copyConstraint=(c:DirectedConstraint):DirectedConstraint =>
   c.kind==="DISTANCE"
@@ -158,13 +162,15 @@ export function validateConstrainedV4(raw:unknown):ConstrainedSceneV4{
   if(!Array.isArray(raw.constraints)||!Array.isArray(raw.driverEntities)||
      !Array.isArray(raw.resolvedEntities))
     throw new Error("Estado calculado ausente");
+  if(raw.history.length>256)
+    throw new Error("Histórico 0.4 excede limite experimental");
   const base=validateSceneV3(raw.baseScene);
   const events=raw.history.map((ev,i)=>parseEvent(ev,i));
   const final=build(base,events).frames.at(-1)!;
   const sourceConstraints=raw.constraints.map(parseConstraint);
   if(!eqConstraints(final.constraints,sourceConstraints)||
-     !eqEntities(final.driverEntities,raw.driverEntities as SketchEntity[])||
-     !eqEntities(final.resolvedEntities,raw.resolvedEntities as SketchEntity[]))
+     !eqEntities(final.driverEntities,raw.driverEntities)||
+     !eqEntities(final.resolvedEntities,raw.resolvedEntities))
     throw new Error("Cena 0.4 não corresponde ao histórico de comandos");
   return final;
 }
