@@ -104,3 +104,7 @@ Na branch `fix/web-persisted-undo-history`, `createEditor` passa a validar a cad
 ## Execução browser e transações de entidades — 13/10/2026
 
 PR #39 integrado com `ADD_ENTITY`, `REMOVE_ENTITY` e `MOVE_POINT`, JSON 0.3 e undo/redo entre sessões. [CI unitária #38463463286](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463463286) passou **50/50 testes e build**. [CI Chromium #38463489072](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38463489072) passou **4/4 E2E** em branch de QA. Gate A IN_REVIEW e Gate B NO-GO.
+
+## QA de navegador — fechamento do ciclo experimental
+
+PR #41 integrado; [CI Chromium #38464138662](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38464138662) passou em **5/5 E2E**, incluindo contraste mínimo de 4,5:1 no aviso de não utilização para corte. Não representa auditoria de acessibilidade completa, prova física ou liberação do PILOT-001.
