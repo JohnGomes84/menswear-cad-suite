@@ -5,7 +5,7 @@
  */
 import type { Vec2 } from "./domain";
 import {
-  exampleScene, validateScene
+  createSceneEditor, exampleScene, validateScene
 } from "./scene";
 import type { SketchEntity, SketchPiece, SceneProject } from "./scene";
 
@@ -15,6 +15,8 @@ export type SceneEventV3 =
 
 export type SceneProjectV3 = Omit<SceneProject,"formatVersion"|"history"> & {
   formatVersion:"0.3.0";
+  /** Immutable genesis snapshot for deterministic event replay and integrity checks. */
+  initialEntities:SketchEntity[];
   history:SceneEventV3[];
 };
 
@@ -148,11 +150,22 @@ export function validateSceneV3(input:unknown):SceneProjectV3{
     entities.push(copyEntity(entity));
   }
   ensureIdentity(entities,pieces);
+  if(!Array.isArray(input.initialEntities)||input.initialEntities.length>500)
+    throw new Error("Estado inicial obrigatório para conferir eventos");
+  const initialEntities:SketchEntity[]=[];
+  for(const raw of input.initialEntities){
+    if(!validEntity(raw,pieces))throw new Error("Entidade inicial inválida");
+    initialEntities.push(copyEntity(raw));
+  }
+  ensureIdentity(initialEntities,pieces);
   if(!Array.isArray(input.history)||input.history.length!==input.revision)
     throw new Error("Histórico/revisão inconsistentes");
   const history=input.history.map((item,i)=>parseEvent(item,i+1,pieces));
   let base=entities.map(copyEntity);
   for(let i=history.length-1;i>=0;i--) base=invert(base,history[i],pieces);
+  if(base.length!==initialEntities.length ||
+     base.some((entity,i)=>!sameEntity(entity,initialEntities[i])))
+    throw new Error("Histórico não coincide com o estado inicial");
   // An entity ID cannot be reused after deletion. This preserves permanent identity.
   const seen=new Set(base.map(e=>e.id));
   let replay=base;
@@ -167,20 +180,22 @@ export function validateSceneV3(input:unknown):SceneProjectV3{
     throw new Error("Histórico difere da cena final");
   return {
     formatVersion:"0.3.0",purpose:"SYNTHETIC_ONLY",id:input.id,
-    unit:"mm",revision:input.revision as number,pieces,entities,history
+    unit:"mm",revision:input.revision as number,pieces,entities,initialEntities,history
   };
 }
 
 export function exampleSceneV3():SceneProjectV3{
   const legacy=exampleScene();
-  return {...legacy,formatVersion:"0.3.0",history:[]};
+  return {...legacy,formatVersion:"0.3.0",initialEntities:legacy.entities.map(copyEntity),history:[]};
 }
 
 /** Explicit migration only. Caller must ask user before using this function. */
 export function migrateSceneV2(input:unknown):SceneProjectV3{
   const v2=validateScene(input);
+  const editor=createSceneEditor(v2);
+  const genesis=editor.past[0]?.entities??v2.entities;
   return validateSceneV3({
-    ...v2,formatVersion:"0.3.0",
+    ...v2,formatVersion:"0.3.0",initialEntities:genesis.map(copyEntity),
     history:v2.history.map(e=>({
       kind:"MOVE_POINT",revision:e.revision,entityId:e.entityId,
       pointIndex:e.pointIndex,before:e.before,after:e.after
