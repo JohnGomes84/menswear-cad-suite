@@ -21,7 +21,7 @@ function normalizePoint(point,id){
  return new Point(point.x,point.y);
 }
 function assertPureGuide(guide,steps){
- if(guide.referenceKind!=="CONSTRUCTION_GUIDE"||!steps.has(guide.sourceStepId)||
+ if(guide.referenceKind!=="DEPENDENCY_CONNECTOR_NOT_BOOK_LINE"||!steps.has(guide.sourceStepId)||
     !/^\d{1,3}$/.test(guide.fromPointId)||!/^\d{1,3}$/.test(guide.toPointId)||
     !Number.isFinite(guide.lengthMm)||guide.lengthMm<0)
    throw new RangeError("Guia sem referência verificada na cadeia do livro");
