@@ -1,6 +1,6 @@
 # PROJECT-FORMAT-001 — Formato de Projeto
 
-Status: DRAFT 0.1
+Status: DRAFT 0.2
 
 O projeto editável será estruturado e versionado. SVG/PDF não substituem o arquivo de projeto.
 
