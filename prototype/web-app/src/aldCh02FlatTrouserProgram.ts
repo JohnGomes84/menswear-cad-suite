@@ -5,7 +5,7 @@
  * Do NOT represent curves, back, seams, allowances or a usable garment.
  */
 import type { DraftInstruction, DraftProgram, ScalarExpr } from "./draftingInterpreter";
-import { measure, mm, plus, minus, span, times } from "./draftingInterpreter";
+import { measure, mm, plus, span, times } from "./draftingInterpreter";
 
 export type FrontMethod="ONE_PIECE"|"TWO_PIECE";
 export type FrontVariant="BASIC"|"EASY";
@@ -54,7 +54,7 @@ export function flatTrouserFrontProgram(
      "Um quarto do assento mais folga; sentido definido no diagrama"),
    project("5","4","0",basePage,
      "Esquadrar de 4 até a horizontal superior"),
-   offset("6","5","RIGHT",mm(10),32,"Deslocamento superior 5→6 de 1 cm"),
+   offset("6","5","RIGHT",mm(10),basePage,"Deslocamento superior 5→6 de 1 cm"),
    offset("7","4","UP",times(span("4","5"),1/4),basePage,
      "Quarto do comprimento vertical 4→5"),
    offset("8","4","LEFT",gap(easy),basePage,
@@ -64,8 +64,8 @@ export function flatTrouserFrontProgram(
    offset("9","2","LEFT",
      plus(times(span("1","4"),2/3),mm(easy?25:20)),basePage,
      "Referência da barra 2→9"),
-   project("10","9","3",32,"Projetar a referência 9 na linha do joelho"),
-   offset("11","10","LEFT",mm(20),32,"Deslocar 2 cm à esquerda do joelho")
+   project("10","9","3",basePage,"Projetar a referência 9 na linha do joelho"),
+   offset("11","10","LEFT",mm(20),basePage,"Deslocar 2 cm à esquerda do joelho")
  ];
  const twoPiece:DraftInstruction[]=[
    offset("9","1","LEFT",plus(times(span("1","4"),1/2),mm(10)),33,
