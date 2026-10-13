@@ -50,3 +50,8 @@ Menu **Editor multi-entidades**: criar/remover linhas e curvas, undo/redo com hi
 `src/constraints.ts` contém projeções matemáticas **dirigidas** e independentes de peças de roupa: coincidir pontos, alinhamento horizontal/vertical e distância em mm, com falhas explícitas e ordenação topológica. No inspector da cena 0.3, selecione uma **linha FREE** e use `Alinhar H` ou `Alinhar V`. O resultado vira comando reversível `MOVE_POINT`.
 
 **A constraint em si não é salva**, somente as coordenadas alteradas. Edições seguintes não recalculam vínculos. Resolver mais de uma constraint sobre o mesmo destino, tolerâncias de produção e persistência reativa exigem uma futura versão de projeto. Não é ferramenta de geração de moldes reais.
+
+
+## Documento experimental de constraints 0.4 (motor, ainda sem UI)
+
+`src/constrainedSceneV4.ts` registra regras `COINCIDENT/HORIZONTAL/VERTICAL/DISTANCE` como comandos persistidos, separando `driverEntities` de `resolvedEntities`. Após importação JSON `0.4.0`, o motor refaz os eventos e permite undo/redo. As projeções se atualizam após movimentar a origem de uma regra. O laboratório visível `SceneLab` **continua no esquema 0.3.0** e não expõe os novos comandos; não há migração silenciosa nem E2E de UI 0.4. Uma regra por destino, limite de 256 eventos, sem solver simultâneo ou moldes reais.
