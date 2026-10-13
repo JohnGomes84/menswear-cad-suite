@@ -1,6 +1,6 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.12 DRAFT — núcleo geométrico TypeScript experimental e cobertura multi-família
+**Versão da baseline:** 1.13 DRAFT — histórico reversível do laboratório e geometria web experimental
 **Data:** 13/10/2026  
 **Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
 **Idioma inicial:** português brasileiro  
@@ -653,3 +653,10 @@ A arquitetura para todas as famílias continua única; funções geométricas **
 Casos de teste incluem reta analítica 3-4-5, arco de parábola com fórmula independente e curva Bézier sintética originalmente executada na POC Python, além de reversão, translação/escala, domínio e falhas de convergência. A referência Python é comparada como *fixture estática*, não como pipeline cruzado completo. Não há cota global industrial de erro nem equivalência física demonstrada; os testes são limitados ao ambiente experimental.
 
 O `PILOT-001` continua NO-GO; a presença de Bézier no navegador não valida nenhum bloco da obra, margens ou montagem.
+
+
+---
+
+## 31. Histórico persistido experimental — baseline 1.13 DRAFT
+
+O protótipo web suporta recarregar e reconstruir undo/redo de movimentos lineares de pontos `FREE` a partir de eventos validados do JSON `0.1.0`. Importações com revisão ou cadeia inconsistentes falham explicitamente, sem executar código de arquivo externo. São restauradas coordenadas, revisões e comandos; estados anteriores de QA não fazem parte do histórico 0.1.0 e recebem `NOT_YET_DEFINED` ao desfazer. Histórico de override paramétrico, regras, constraints e transactions compostas ainda não está implementado. A validação aplica-se apenas a geometrias sintéticas do laboratório, não a moldes reais.

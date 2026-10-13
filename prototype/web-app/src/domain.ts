@@ -111,10 +111,15 @@ export function validateProject(value: unknown): SyntheticProject {
     }
     previousRevision = event.revision as number;
   }
-  if (previousRevision > (curve.revision as number)) throw new Error("Histórico mais novo que a geometria");
+  // O formato laboratorial 0.1.0 só permite uma cadeia linear de MoveControl
+  // iniciada em revisão 0. Não tolerar histórico parcial/saltos silenciosos.
+  if (previousRevision !== (curve.revision as number) ||
+      value.history.length !== (curve.revision as number)) {
+    throw new Error("Revisão e histórico inconsistentes");
+  }
 
   // Reconstrução explícita: não executar funções ou protótipos da entrada.
-  return {
+  const normalized: SyntheticProject = {
     formatVersion: "0.1.0",
     purpose: "SYNTHETIC_ONLY",
     unit: "mm",
@@ -139,10 +144,42 @@ export function validateProject(value: unknown): SyntheticProject {
     }),
     validation: value.validation as FindingState
   };
+
+  // Reexecutar o histórico de trás para frente para garantir que os eventos
+  // realmente correspondam às coordenadas finais, antes de aceitar o arquivo.
+  const points = normalized.curve.controlPointsMm.map(p => ({ ...p }));
+  for (let i = normalized.history.length - 1; i >= 0; i--) {
+    const event = normalized.history[i];
+    const last = points[event.controlPointIndex];
+    if (event.revision !== i+1 || last.x !== event.after.x ||
+        last.y !== event.after.y ||
+        (event.before.x === event.after.x && event.before.y === event.after.y)) {
+      throw new Error("Cadeia do histórico incompatível com a geometria");
+    }
+    points[event.controlPointIndex] = { ...event.before };
+  }
+  return normalized;
 }
 
 export function createEditor(project: SyntheticProject = demoProject()): EditorState {
-  return { project: validateProject(project), past: [], future: [] };
+  const current = validateProject(project);
+  let cursor = current;
+  const past: SyntheticProject[] = [];
+  for (let i = current.history.length - 1; i >= 0; i--) {
+    const event = cursor.history[cursor.history.length-1];
+    const points = cursor.curve.controlPointsMm.map(p => ({ ...p })) as Curve["controlPointsMm"];
+    points[event.controlPointIndex] = { ...event.before };
+    const previous: SyntheticProject = {
+      ...cursor,
+      curve: { ...cursor.curve, controlPointsMm: points, revision: event.revision-1 },
+      history: cursor.history.slice(0,-1),
+      // Validação do estado anterior não está persistida no schema 0.1.0.
+      validation: "NOT_YET_DEFINED"
+    };
+    past.unshift(previous);
+    cursor = previous;
+  }
+  return { project: current, past, future: [] };
 }
 
 export function moveControl(state: EditorState, index: PointIndex, position: Vec2): EditorState {
