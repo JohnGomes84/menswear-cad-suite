@@ -77,8 +77,12 @@ describe("Generic sagitta research hypothesis",()=>{
  it("choosing the opposite side reverses signed sagitta, but does not change endpoints",()=>{
   const left=midpointSagittaCandidate(p(0,0),p(100,0),20,"LEFT_OF_DIRECTED_CHORD");
   const right=midpointSagittaCandidate(p(0,0),p(100,0),20,"RIGHT_OF_DIRECTED_CHORD");
-  expect(cubicPoint(left.pieces[0],0.5)).toEqual({x:50,y:20});
-  expect(cubicPoint(right.pieces[0],0.5)).toEqual({x:50,y:-20});
+  const leftMid=cubicPoint(left.pieces[0],0.5);
+  const rightMid=cubicPoint(right.pieces[0],0.5);
+  expect(leftMid.x).toBeCloseTo(50,10);
+  expect(leftMid.y).toBeCloseTo(20,10);
+  expect(rightMid.x).toBeCloseTo(50,10);
+  expect(rightMid.y).toBeCloseTo(-20,10);
   expect(left.lengthMm).toBeCloseTo(right.lengthMm,8);
   expect(right.diagnostics.midpointSignedSagittaMm).toBe(-20);
  });
