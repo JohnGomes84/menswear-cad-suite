@@ -1,0 +1,379 @@
+{
+  "schema": "book-command-line-register/0.1.0",
+  "source": {
+    "title": "Metric Pattern Cutting for Menswear",
+    "edition": 5,
+    "chapter": 2,
+    "diagramPdfPage": 34
+  },
+  "purpose": "RESEARCH_ONLY",
+  "diagramReview": "PARTIAL_TWO_FLAT_TROUSER_BLOCKS",
+  "statements": {
+    "bookAllowance": {
+      "sourcePdfPage": 31,
+      "widthMm": 10,
+      "includedInBlock": true,
+      "exceptionRequiresEdgeReview": true,
+      "application": "NO_AUTOMATIC_OFFSET"
+    },
+    "assembly": {
+      "method": "ONE_PIECE",
+      "sourcePdfPage": 32,
+      "operation": "TRACE_BACK_AND_FRONT_MIRROR_FRONT_ALIGN_SIDE_SEAMS",
+      "status": "DOCUMENTED_OPERATION_NOT_EXECUTED"
+    }
+  },
+  "lineCommands": [
+    {
+      "id": "ALD-CH02-1P-FRONT_CROTCH",
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "geometry": "CURVE",
+      "pointIds": [
+        "6",
+        "7",
+        "8"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve through 6, 7 and 8; contact distance referenced from 4, 30/32.5 mm",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-FRONT_LOWER_INSEAM",
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "9",
+        "11"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Explicit straight segment between 9 and 11",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-FRONT_UPPER_INSEAM",
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "geometry": "CURVE",
+      "pointIds": [
+        "8",
+        "11"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve between 8 and 11, inward 10 mm",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-BACK_WAIST",
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "13",
+        "0"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Join 13 to 0",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-BACK_CROTCH",
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "geometry": "CURVE",
+      "pointIds": [
+        "13",
+        "14",
+        "16"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve through 13,14,16; contact 55/60 mm from 4",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-BACK_LOWER_INSEAM",
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "17",
+        "18"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Straight lower inseam between 17 and 18",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-1P-BACK_UPPER_INSEAM",
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "geometry": "CURVE",
+      "pointIds": [
+        "16",
+        "18"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 32,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve 16 to 18 inward 20 mm",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-FRONT_CROTCH",
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "geometry": "CURVE",
+      "pointIds": [
+        "6",
+        "7",
+        "8"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve through 6,7,8; contact 30/32.5 mm from 4",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-FRONT_LEG_GUIDE",
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "1",
+        "12"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Join construction points 1 and 12, locate knee point 14 on this line",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-FRONT_LOWER_INSEAM",
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "13",
+        "15"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Explicit straight segment between 13 and 15",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-FRONT_UPPER_INSEAM",
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "geometry": "CURVE",
+      "pointIds": [
+        "8",
+        "15"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve 8 to 15 inward 10 mm",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-BACK_WAIST",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "17",
+        "18"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Join 17 to 18",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-BACK_CROTCH",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "geometry": "CURVE",
+      "pointIds": [
+        "17",
+        "19",
+        "21"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve through 17,19,21; contact 55/60 mm from 4",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-BACK_LEG_GUIDE",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "18",
+        "22"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Join 18 to 22, locate knee point 23",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-BACK_LOWER_INSEAM",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "geometry": "STRAIGHT",
+      "pointIds": [
+        "24",
+        "25"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Explicit straight segment between 24 and 25",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    },
+    {
+      "id": "ALD-CH02-2P-BACK_UPPER_INSEAM",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "geometry": "CURVE",
+      "pointIds": [
+        "21",
+        "25"
+      ],
+      "source": {
+        "methodId": "ALD-CH02-01",
+        "chapter": 2,
+        "pdfPage": 33,
+        "diagramPdfPage": 34,
+        "basis": "EXPLICIT_TEXT_COMMAND_DIAGRAM_PARTIAL"
+      },
+      "description": "Curve 21 to 25 inward 20 mm",
+      "industrialRole": "UNCLASSIFIED_NOT_CUT"
+    }
+  ],
+  "figureLabels": [
+    {
+      "id": "ALD-CH02-1P-WAIST-NO-SA",
+      "method": "ONE_PIECE",
+      "region": "UPPER_WAIST",
+      "textMeaning": "NO_SEAM_ALLOWANCE",
+      "diagramPdfPage": 34,
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED"
+    },
+    {
+      "id": "ALD-CH02-1P-HEM-NO-SA",
+      "method": "ONE_PIECE",
+      "region": "LOWER_HEM",
+      "textMeaning": "NO_SEAM_ALLOWANCE",
+      "diagramPdfPage": 34,
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED"
+    },
+    {
+      "id": "ALD-CH02-2P-WAIST-NO-SA",
+      "method": "TWO_PIECE",
+      "region": "UPPER_WAIST",
+      "textMeaning": "NO_SEAM_ALLOWANCE",
+      "diagramPdfPage": 34,
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED"
+    },
+    {
+      "id": "ALD-CH02-2P-HEM-NO-SA",
+      "method": "TWO_PIECE",
+      "region": "LOWER_HEM",
+      "textMeaning": "NO_SEAM_ALLOWANCE",
+      "diagramPdfPage": 34,
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED"
+    }
+  ],
+  "prohibitedClaims": [
+    "COMPLETE_DIAGRAM_EDGE_MAP",
+    "SEAM_LINE",
+    "CUT_LINE",
+    "CUT_ON_FOLD",
+    "SEAM_ALLOWANCE_OFFSET",
+    "FIT_VALIDATED",
+    "PRODUCTION_APPROVED"
+  ]
+}
