@@ -151,6 +151,21 @@ describe("Persistent directed constraints — scene 0.4 research overlay",()=>{
    raw.history[0].constraint.source.entityId="missing";
    expect(()=>validateConstrainedV4(raw)).toThrow(/UNKNOWN_POINT/);
  });
+ it("rejects malformed resolved geometry without crashing on untrusted fields",()=>{
+   const s=addDirectedConstraintV4(base(),lineRule);
+   const raw=JSON.parse(serializeConstrainedV4(s.project));
+   raw.resolvedEntities[0]=null;
+   expect(()=>validateConstrainedV4(raw)).toThrow(/não corresponde/);
+   raw.resolvedEntities=[];
+   expect(()=>validateConstrainedV4(raw)).toThrow(/não corresponde/);
+ });
+ it("rejects oversized event history before replay",()=>{
+   const s=addDirectedConstraintV4(base(),lineRule);
+   const raw=JSON.parse(serializeConstrainedV4(s.project));
+   raw.history=Array(257).fill(raw.history[0]);
+   raw.revision=257;
+   expect(()=>validateConstrainedV4(raw)).toThrow(/limite experimental/);
+ });
  it("does not include garment seams and never claims production validation",()=>{
    const s=addDirectedConstraintV4(base(),lineRule).project;
    expect("seamPair" in s).toBe(false);
