@@ -74,3 +74,9 @@ A base para um shell web com curvas sintéticas foi formalizada em `docs/gates/G
 ## Pesquisa numérica complementar
 
 Foi incluído na branch de pesquisa um benchmark Gauss-Legendre independente do integrador Simpson e um fixture matemático analítico de parábola. A primeira execução em CI da branch passou **30/30 testes**; merge e testes pós-merge ainda precisam ser confirmados.
+
+## Fundação experimental do web app — implementação inicial
+
+Foi criado na branch `prototype/web-shell-synthetic` um shell TypeScript/React/Vite/SVG em `prototype/web-app`. O editor usa **exclusivamente** uma curva Bézier sintética, suporta seleção/arraste de quatro pontos, zoom/pan, undo/redo em memória, JSON versionado (`0.1.0`) e avisos de proibição de corte.
+
+A suíte inicial registra **8 testes de contrato PASS_CI** e build Vite/TypeScript bem-sucedido na [execução #38457022142](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38457022142). A árvore npm foi fixada em `package-lock.json`; a execução final com `npm ci` deverá ser confirmada antes do merge. O histórico de desfazer **não** é reconstituído após reabrir o JSON (embora os eventos sejam persistidos); comprimento de arco TS e `SeamPair` não estão implementados. Isso não libera Gate B ou release.
