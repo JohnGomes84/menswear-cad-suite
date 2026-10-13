@@ -21,8 +21,8 @@
 | Entrada degenerada | erro/diagnóstico explícito | PASS_CI nos casos cobertos |
 | Interseções tangenciais/colineares | classificação e contorno | PASS_CI para toque terminal/sobreposição |
 | Offsets difíceis | split, colapso e auto-interseção em casos adicionais | NOT_YET_DEFINED |
-| Limite de recursão do integrador | sinalização de não convergência em vez de precisão presumida | NOT_YET_DEFINED |
-| Limite de subdivisão da tesselação | sinalização de erro/tolerância não atendida | NOT_YET_DEFINED |
+| Limite de recursão do integrador | sinalização de não convergência em vez de precisão presumida | PASS_CI (PR #19; sem garantia global de erro) |
+| Limite de subdivisão da tesselação | sinalização de erro/tolerância não atendida | PASS_CI (PR #19; sem garantia global de erro) |
 | PDF em escala física | imprimir régua, medir e registrar leitor/impressora | NOT_RUN |
 | Revisão de geometria e QA | aprovação explícita baseada em evidências | NOT_RUN |
 
@@ -36,8 +36,8 @@
 
 ## Riscos identificados no código
 
-1. `_adaptive_simpson` pode encerrar ao esgotar `depth` e retornar número sem indicar se satisfez `eps`. Não afirmar que sempre garante erro máximo de `eps`.
-2. `flatten` encerra ao atingir `max_depth` mesmo se `flatness > tolerance_mm`; não há sinalização de tolerância insatisfeita.
+1. **Mitigado no PR #19:** `_adaptive_simpson` agora sinaliza recursão esgotada e erro não finito. O estimador Simpson ainda exige validação independente antes de estabelecer contrato global de erro.
+2. **Mitigado no PR #19:** `flatten` agora sinaliza `max_depth` atingido sem satisfazer `flatness`; a relação entre flatness dos controles e desvio máximo global ainda não está comprovada.
 3. `validity_status` só mede comprimento quase nulo; não testa cuspidez, loops, sobreposição, auto-interseção nem aptidão para offset.
 4. `offset_polygon` faz buffer poligonal constante; não implementa largura por aresta nem linha líquida/linha de corte.
 5. PDF diagnóstico só comprova dimensões nominais do arquivo. Não comprova impressão em escala real.
@@ -47,3 +47,10 @@
 A Issue #6 poderá obter **GO para conclusão da POC sintética** após execução reprodutível da CI, verificação dos riscos críticos, benchmark independente e revisão formal documentada. Pode-se emitir GO **com limitações explicitamente aceitas** se a decisão estabelecer que as falhas permanecem fora do contrato da POC, mas não as apagar. A Issue #7 registra a decisão.
 
 Gate B (`PILOT-001`) permanece **NO-GO**.
+
+## Revisão incremental — PR #19
+
+- [Workflow #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254): **SUCCESS**, 27 testes, `OK`.
+- [PR #19](https://github.com/JohnGomes84/menswear-cad-suite/pull/19): incorporado à `main`; tratamento explícito de não convergência, overflow e limites de tesselação.
+- Falha explícita foi comprovada nos cenários testados. Cota geral de precisão, quadratura independente de uma curva complexa e escala medida em papel continuam pendentes.
+- Este documento representa avaliação técnica baseada em código e CI; não equivale a aprovação independente de modelagem ou QA de produção.

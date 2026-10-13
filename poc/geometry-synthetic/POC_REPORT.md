@@ -31,3 +31,11 @@ A operação `buffer` de Shapely **2.2.0** produziu saída válida para contorno
 A referência de integração é computacional, não uma solução fechada independente. A métrica de flatness atual usa distância dos controles à corda; não demonstra por si só uma cota rigorosa do desvio global da curva ou do erro de comprimento. O offset usa `buffer` constante de Shapely e serve somente como referência topológica exploratória; larguras variáveis e regra de margem de vestuário não estão implementadas.
 
 Próxima rodada: comparar o integrador com método independente de alta precisão; testar cúbicas com inflexão, curvatura alta e tangentes degeneradas; medir desvio curva–polilinha nos dois sentidos; avaliar interseções tangenciais/coincidentes e offsets que se dividem, colapsam ou criam componentes; e imprimir/medir o controle de 25 mm. Só após revisão, registrar contratos experimentais candidatos. Nada nesta rodada aprova o `PILOT-001`, margens, montagem cava/manga, caimento ou tolerância industrial.
+
+## Adendo — CI e falhas numéricas explícitas (13/10/2026)
+
+A rodada inicial de 14 testes permanece documentada acima como histórico. [PR #18](https://github.com/JohnGomes84/menswear-cad-suite/pull/18) adicionou 9 testes de regressão/metamórficos e CI; [PR #19](https://github.com/JohnGomes84/menswear-cad-suite/pull/19) adicionou 4 testes e alterou o comportamento do integrador e discretizador para lançar erro quando excedido o orçamento de convergência/subdivisão ou quando a quadratura é não finita.
+
+Evidência: [workflow #38454065254](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38454065254), **27 testes PASS**, além de validação estrutural nominal dos artefatos e comparação de hashes no mesmo runner. Esses resultados não constituem medição física de impressão nem garantia universal de tolerância numérica.
+
+Permanecem por investigar: curvas com cuspidez/inflexão extrema, quadratura de alta precisão independente da referência do integrador, comparação curva–polilinha em casos difíceis, offsets multicomponentes/de largura variável, impressão física e medição de escala.
