@@ -1,6 +1,6 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.10 DRAFT — Gate APP experimental, pesquisa de domínio dirigida e benchmark numérico independente
+**Versão da baseline:** 1.11 DRAFT — cobertura integral da obra e separação entre catálogo de métodos e pilotos
 **Data:** 13/10/2026  
 **Status:** a POC sintética tem 27/27 testes PASS_CI na `main`; três casos adicionais de quadratura independente passaram em branch de pesquisa (promoção à `main` sujeita a PR). Gate A continua IN_REVIEW. Gate APP autoriza apenas protótipo web de engenharia com dados sintéticos. Gate B do `PILOT-001` continua NO-GO. Código funcional de produção permanece bloqueado.
 **Idioma inicial:** português brasileiro  
@@ -629,3 +629,16 @@ O aplicativo não converterá `shirt_sleeve_length` em `one_piece_sleeve_length`
 Uma segunda técnica de quadratura, **Gauss-Legendre**, foi acrescentada em branch de pesquisa aos casos de teste da POC. Ela é independente do algoritmo de integração adaptativa Simpson, embora compartilhe a derivada matemática da mesma curva. Os testes incluem uma parábola com comprimento de arco analítico `√5/2 + asinh(2)/4`, uma cúbica com inflexão e a curva sintética original. A primeira execução de CI da branch registrou **30/30 testes PASS**. Isso reduz o risco de referência circular, mas não encerra a Issue #21, que também exige curvas patológicas, erro global e reprodutibilidade. Não constitui garantia industrial.
 
 **Estados atuais:** Gate A = `IN_REVIEW`; Gate APP = `GO_EXPERIMENTAL_ONLY`; Gate B = `NO-GO`; release industrial = `NO-GO`.
+
+
+---
+
+## 29. Cobertura da obra inteira e arquitetura de múltiplas famílias (baseline 1.11 DRAFT)
+
+O objetivo é uma **suíte CAD paramétrica de modelagem masculina**, baseada nos métodos e princípios das **14 seções capitulares** da obra, não um programa destinado apenas a camisas. O piloto `Flat Shirt Core` é um teste **local** do motor; não restringe arquitetura, família de molde, formatos ou roadmap.
+
+O sumário do PDF de referência, páginas 2–6/309, foi conferido e deu origem ao inventário [BOOK-COVERAGE-001](product/BOOK-COVERAGE-001.md), organizado por capítulos, famílias de modelagem (`flat`, `form`, peças superiores/inferiores, componentes, transformações, gradação e ajustes individuais) e funções CAD. O [ADR-0004](decisions/ADR-0004-full-book-product-coverage.md) registra essa decisão como **escopo permanente de produto**.
+
+**Evidência e status:** cobertura editorial por sumário confirmada; nenhum percentual de fórmulas/métodos implementados ou validados decorre disso. Cada bloco futuro exige ficha de origem, entradas, relações e geometria auditadas, testes, estado de QA e aprovação de modelagem. Capítulo 14 contém também temas de CAD/PLM/3D e não implica que todas essas tecnologias sejam componentes do primeiro release.
+
+Depois do `PILOT-001`, a generalidade do sistema será validada em pilotos de famílias **não equivalentes**, incluindo ao menos um bloco de calça e um bloco `form`, antes da alegação de cobertura multipadrão. Gate APP experimental pode continuar; Gate B e código de produção ainda obedecem aos gates específicos.
