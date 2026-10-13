@@ -4,12 +4,13 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.9 DRAFT**
+- Documento Mestre: **baseline 1.10 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
-- Código de produção / implementação web funcional: **bloqueados**
+- Fundação experimental do web app (somente geometria sintética): **Gate APP limitado autorizado**
+- Código de produção / implementação web funcional de molde real: **bloqueados**
 - Saídas iniciais previstas: SVG e PDF
 - DXF, gradação, nesting e 3D: fora do primeiro gate
 
@@ -28,11 +29,16 @@ A fonte única de verdade do projeto é `docs/MASTER-DOCUMENT.md`. Em caso de di
 
 ## Estado operacional
 
-O estado executivo resumido está em `docs/PROJECT-STATUS.md`. As issues #1–#5 bloqueiam o Gate B; a #6 acompanha a POC sintética e a #7 coordena os GO/NO-GO.
+O estado executivo resumido está em `docs/PROJECT-STATUS.md` e o início experimental web está delimitado em `docs/gates/GATE-APP-001.md`. As issues #1–#5 bloqueiam o Gate B; a #6 acompanha a POC sintética e a #7 coordena os GO/NO-GO.
 
 ## Documentação
 
 - `docs/MASTER-DOCUMENT.md`
+- `docs/gates/GATE-APP-001.md`
+- `docs/architecture/APP-FOUNDATION-001.md`
+- `docs/qa/QA-APP-001.md`
+- `docs/domain/PILOT-001-OPEN-DECISIONS.md`
+- `docs/decisions/ADR-0003-experimental-app-foundation.md`
 - `docs/PROJECT-STATUS.md`
 - `docs/00-product-vision.md`
 - `docs/01-baseline-v0.5.md` — histórico
