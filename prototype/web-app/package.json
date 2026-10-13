@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "test": "vitest run src"
+    "test": "vitest run src",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "react": "19.1.1",
