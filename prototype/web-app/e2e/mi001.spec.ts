@@ -83,10 +83,10 @@ test('MI-001 shows all edge industrial-role classifications and downloads proven
  await expect(page.getByTestId('mi001-classification-count')).toContainText('Arestas: 22');
  await expect(page.getByTestId('mi001-classification-count')).toContainText('indefinidas: 18');
  await expect(page.getByTestId('mi001-line-FRONT:E07')).toContainText('CONSTRUCTION_LINE | SOURCE_INFERRED');
- await expect(page.getByTestId('mi001-line-FRONT:E03')).toContainText('UNCLASSIFIED | PENDING_REVIEW');
+ await expect(page.getByTestId('mi001-line-FRONT:E03')).toContainText('UNCLASSIFIED | PENDING_OWNER_DECISION');
  await page.getByRole('button',{name:/SLEEVE ·/}).click();
  await expect(page.getByTestId('mi001-line-SLEEVE:E08')).toContainText('CONSTRUCTION_LINE | SOURCE_EXPLICIT');
- await expect(page.getByTestId('mi001-line-SLEEVE:E01')).toContainText('UNCLASSIFIED | PENDING_REVIEW');
+ await expect(page.getByTestId('mi001-line-SLEEVE:E01')).toContainText('UNCLASSIFIED | PENDING_OWNER_DECISION');
  const [file]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/Classificação das 22 arestas/}).click()]);
  const diagnostic=JSON.parse(await readFile(await file.path(),'utf8'));
  expect(diagnostic.edgeClassifications).toHaveLength(22);
