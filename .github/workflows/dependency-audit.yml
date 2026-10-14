@@ -56,16 +56,10 @@ jobs:
             scopes:rows
           },null,2)+"\n");
           NODE
-      - name: Try security-fixed web toolchain candidate on ephemeral runner
-        shell: bash
+      - name: Verify locked web app after security updates
         run: |
-          npm install --prefix prototype/web-app --save-dev --save-exact --no-audit --no-fund vite@7.3.7 vitest@5.0.4
-          npm ci --prefix prototype/web-app --no-audit --no-fund
           npm test --prefix prototype/web-app
           npm run build --prefix prototype/web-app
-          npm audit --prefix prototype/web-app --json > security-audit/web-app-candidate.json || echo "::warning::candidate still has npm advisories"
-          cp prototype/web-app/package.json security-audit/web-app-candidate.package.json
-          cp prototype/web-app/package-lock.json security-audit/web-app-candidate.package-lock.json
       - name: Upload advisory inventory for remediation review
         if: always()
         uses: actions/upload-artifact@v4
