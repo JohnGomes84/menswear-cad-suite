@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.29 DRAFT — interface CH02 ligada ao interpretador paramétrico e ao registro de origem, com 182 testes aprovados
-**Data:** 13/10/2026  
-**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e agora área visível de pesquisa CH02: medidas editáveis, método uma/duas peças, variantes BASIC/EASY, pontos calculados e retas explicitamente prescritas exibidas, curvas pendentes sem spline, inspetor por fonte e bloqueios de corte. Baseline 1.29 na branch PR #57; CI web #38542973698: 182/182 testes PASS (12 novos), TypeScript e Vite build PASS. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
+**Versão da baseline:** 1.29 DRAFT — integrada à `main`; APP-004/Issue #49 é candidato de próxima entrega, ainda não integrado
+**Data:** 14/10/2026
+**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e workspace CH02 de pesquisa. A branch `feature/app-004-persistent-constraint-ui` acrescenta interface isolada para constraints persistentes 0.4; validação local limpa: 184/184 testes, 21/21 E2E Chromium e build PASS; CI remoto pendente. Esta entrega é software genérico/sintético, não altera método de vestuário. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -909,3 +909,18 @@ Os comandos de trecho inferior de entreperna são percorridos em **sentido inver
 **Gates e riscos preservados:** linhas de costura/corte, oito curvas CH02, margens de 10 mm já incluídas com exceções regionais, composição/espelhamento, impressão e toile permanecem bloqueados ou parciais. O desenho não é comercializável. PILOT-001 — Flat Shirt Core continua o piloto formal e suas regras ainda requerem fechamento próprio; o aplicativo foi preparado para adaptar a camada de pesquisa a outras famílias sem instalar dependências proprietárias ou abandonar o formato universal.
 
 **Próximo passo de produto:** obter revisão de modelista para as decisões abertas do PILOT-001 e, só depois, aplicar a interface de pesquisa a dados de camisa aprovados. A validação visual deste workspace CH02 foi concluída, mas não substitui decisão de domínio, impressão calibrada, teste de montagem/toile nem publicação de um serviço de produção. O Gate B e o estado comercial permanecem `NO-GO`.
+
+
+---
+
+## 48. Interface experimental de constraints persistentes 0.4 — APP-004 em validação
+
+A branch `feature/app-004-persistent-constraint-ui`, derivada da `main` pós-PR #58 (`1d65c8c`), liga o contrato experimental `ConstrainedSceneV4` a um modo independente no laboratório web. O modo 0.3 continua disponível e inalterado; a entrada no 0.4 e a conversão 0.3→0.4 exigem confirmação explícita. Isso fecha uma lacuna de interação do editor sintético, não um bloqueio de modelagem de vestuário.
+
+A tela `SceneLabV4` permite criar, editar e remover constraints dirigidas `COINCIDENT`, `HORIZONTAL`, `VERTICAL` e `DISTANCE` em mm; selecionar entidades/pontos de origem e destino; visualizar IDs e distinguir posições driver/autoriais de posições resolvidas; salvar/abrir JSON versionado 0.4.0; e desfazer/refazer inclusive após reabertura. Mover uma origem válida recalcula o destino. Os conflitos `DUPLICATE_TARGET`, `CYCLIC_DEPENDENCY` e `UNDETERMINED_DIRECTION` são apresentados sem commit parcial. `PLAYWRIGHT_PORT` selecionável evita que E2E reutilize um preview pertencente a outro worktree.
+
+**Evidência local com instalação limpa do lockfile:** `npm ci`; **184/184 unitários**, `tsc --noEmit` e Vite build PASS; **21/21 E2E Chromium** (11 casos APP-004 e dez casos legados/CH02). A inspeção do screenshot móvel foi seguida por correção da grade dos campos de coordenadas e repetição da suíte completa. A execução remota de CI ainda é necessária antes de declarar o aceite do PR/Issue #49; os estados locais não substituem a validação dos workflows do repositório.
+
+**Limites deliberados:** schema 0.4 continua experimental, com uma regra por ponto de destino, máximo de 256 eventos, sem adicionar/remover entidades do documento e sem solver simultâneo. Não contém regras Aldrich, semântica de `SeamPair`/margens, contorno de roupa, PDF 1:1 ou exportação para corte. Aviso permanente: laboratório não apto para corte. Issue #49 permanece aberta até o aceite remoto.
+
+**Gates:** APP experimental; Gate A `IN_REVIEW`; Gate B do `PILOT-001` `NO-GO`; comercial `NO-GO`. A implementação é uma entrega técnica limitada explicitamente solicitada pelo usuário; não dispensa revisão de modelagem das Issues #1–#5 nem aprovação do Gate A.

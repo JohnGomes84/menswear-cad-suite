@@ -52,9 +52,11 @@ Menu **Editor multi-entidades**: criar/remover linhas e curvas, undo/redo com hi
 **A constraint em si não é salva**, somente as coordenadas alteradas. Edições seguintes não recalculam vínculos. Resolver mais de uma constraint sobre o mesmo destino, tolerâncias de produção e persistência reativa exigem uma futura versão de projeto. Não é ferramenta de geração de moldes reais.
 
 
-## Documento experimental de constraints 0.4 (motor, ainda sem UI)
+## Documento experimental de constraints 0.4 (UI isolada)
 
-`src/constrainedSceneV4.ts` registra regras `COINCIDENT/HORIZONTAL/VERTICAL/DISTANCE` como comandos persistidos, separando `driverEntities` de `resolvedEntities`. Após importação JSON `0.4.0`, o motor refaz os eventos e permite undo/redo. As projeções se atualizam após movimentar a origem de uma regra. O laboratório visível `SceneLab` **continua no esquema 0.3.0** e não expõe os novos comandos; não há migração silenciosa nem E2E de UI 0.4. Uma regra por destino, limite de 256 eventos, sem solver simultâneo ou moldes reais.
+`src/constrainedSceneV4.ts` registra regras `COINCIDENT/HORIZONTAL/VERTICAL/DISTANCE` como comandos persistidos, separando `driverEntities` de `resolvedEntities`. O `SceneLab` mantém o editor 0.3 e oferece uma entrada explícita para o `SceneLabV4`; a primeira migração 0.3→0.4 exige confirmação. A UI 0.4 permite criar/editar/remover regra dirigida, selecionar entidades e pontos, visualizar drivers e posições resolvidas, salvar/abrir JSON 0.4 e desfazer/refazer após reabertura. Movimento da origem recalcula o destino dependente. Diagnósticos de destino duplicado, ciclo e direção indeterminada são explícitos. Uma regra por ponto de destino; não há adição/remoção de entidades no 0.4, solver simultâneo ou semântica de vestuário.
+
+O aviso `LABORATÓRIO — NÃO APTO PARA CORTE` permanece visível. O schema 0.4 é experimental, limita o histórico a 256 eventos e os arquivos a 1 MiB; não representa molde de roupa nem autoriza produção.
 
 
 ## Workspace de pesquisa paramétrica CH02 — baseline 1.29
@@ -63,4 +65,4 @@ Pelo botão **Construção Aldrich CH02**, é possível escolher `ONE_PIECE`/`TW
 
 O workspace é `RESEARCH_ONLY`: as curvas continuam sem geometria, retas são somente os comandos textuais que foram auditados, margem por aresta permanece não mapeada, o espelhamento não é executado e o corte/exportação ficam desabilitados. A tela não gera camisa, molde pronto, PDF 1:1 nem saída de fabricação. A inspeção visual em browser não comprova caimento ou montagem física.
 
-**Validação atual do workspace:** `npm test` — 182/182 unitários; `npm run build` — TypeScript/Vite PASS; `npm run test:e2e` — 10/10 Playwright Chromium, incluindo interações CH02 em desktop e viewport móvel de 390 px. O app web usa `vite@7.3.7` e `vitest@5.0.4`; `npm audit` reportou 0 vulnerabilidades no pacote do app na data da baseline. A integração FreeSewing fica em `prototype/integration-spike`, isolada do bundle do browser e com análise de dependências/licenças separada.
+**Validação local atual:** instalação limpa com `npm ci`; `npm test` — 184/184 unitários; `npm run build` — TypeScript/Vite PASS; E2E Chromium — 21/21 (10 do app legado/CH02 e 11 do 0.4). Para evitar reutilizar uma prévia ativa em 4173, a suite foi executada com `CI=1 PLAYWRIGHT_PORT=4174 npm run test:e2e`. O teste móvel usa viewport de 390 px e verifica ausência de overflow horizontal. O app web usa `vite@7.3.7` e `vitest@5.0.4`; `npm audit` reportou 0 vulnerabilidades no pacote do app na data da baseline. A integração FreeSewing fica em `prototype/integration-spike`, isolada do bundle do browser e com análise de dependências/licenças separada. Resultados locais ainda aguardam confirmação no CI do PR.
