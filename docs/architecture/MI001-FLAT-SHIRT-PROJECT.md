@@ -48,3 +48,11 @@ A importação reexecuta a receita congelada e rejeita geometria adulterada, ver
 - Gate A independente continua `IN_REVIEW`. Gate B do Flat Shirt Core continua **NO-GO** por Issues #1–#5/#26. Integração FreeSewing e CH02 não são dependências deste incremento.
 
 **Antes do próximo incremento:** revisão formal da interpretação das curvas e do conceito de fechamento/aresta; adicionar conferência das relações de montagem e output A4/plotter robusto somente com regras/evidências específicas. Nunca promover cutReady por CI.
+
+## Conflito de gate identificado — decisão de escopo exigida antes do merge
+
+O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sintética da aplicação**: APP-05 exige apenas fixtures sintéticas e a contenção da Issue #4 instrui não usar a matriz de camisa como fixture canônica do app. O MI-001 acrescenta visualização de cálculos de **fonte real do Flat Shirt Core**, mesmo com curvas/fechamentos provisórios e `cutReady=false`. Portanto **não se enquadra automaticamente** na autorização APP-001 atual e não pode ser mesclado como se Gate B estivesse aprovado.
+
+**Proposta mínima para aprovação expressa do titular do produto/revisão dos gates:** permitir, dentro do mesmo web app, exclusivamente um **workspace isolado `SOURCE_DRAFT_DIAGNOSTIC_ONLY`** com coordenadas condicionais calculadas pelo interpretador existente, todas as soluções técnicas não literais explicitamente versionadas, sem atribuição de `SEAM`/`CUT`, sem margens aplicadas, sem produção e com toda exportação marcada `NO-CUT`; exigir testes negativos, rastreabilidade e preservação de estados `NOT_RUN`. Não promover qualquer aprovação de geometria, montagem, impressão física ou caimento. Essa exceção habilita uma experiência digital demonstrável, **não** libera o método no Gate B.
+
+**Estado da proposta:** `PENDING_APPROVAL`. PR MI-001 deve permanecer **Draft e sem merge** até aceite explícito da alteração limitada do escopo APP e revisão de modelagem dos elementos provisórios que seriam incorporados futuramente.
