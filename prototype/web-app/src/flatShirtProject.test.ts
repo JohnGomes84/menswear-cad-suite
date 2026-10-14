@@ -86,7 +86,7 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   const p=createShirtProject();const pts=Object.fromEntries(p.pieces[2].points.map(x=>[x.id,x.positionMm]));
   const linear=(pts['SLEEVE:3'].y*0.8+pts['SLEEVE:0'].y*0.2);
   expect(pts['SLEEVE:5'].y-linear).toBeCloseTo(-7.5,7);
-  const cap=p.pieces[2].edges.find(e=>e.from==='SLEEVE:7'&&e.to==='SLEEVE:8');
+  const cap=p.pieces[2].edges.find(e=>e.from==='SLEEVE:8'&&e.to==='SLEEVE:7');
   expect(cap?.solution).toBe('SLEEVE_HEAD_INTERPOLATION@1.0.1');
   expect(p.decisions.find(x=>x.id==='SLEEVE_HEAD_INTERPOLATION')?.version).toBe('1.0.1');
   expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.1.0'}}))).toThrow(/migra/);
