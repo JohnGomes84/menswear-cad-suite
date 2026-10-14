@@ -29,7 +29,8 @@ Na interface inicial, selecione **Flat Shirt Core — projeto experimental**, al
 2. `NECK_INTERPOLATION@1.0.0`: controles de cúbicas para decotes não impressos no livro.
 3. `ARMHOLE_INTERPOLATION@1.0.0`: cúbicas passando por pontos 17,12,5, com tangências/handles técnicos.
 4. `SLEEVE_HEAD_INTERPOLATION@1.0.0`: reconstrução provisória por quintos, ajustes e curvas Bézier; sentido, tangências e encaixe ainda dependem de revisão.
-5. `CLOSURE_EXPERIMENT@1.0.0`: fechamento diagnóstico das três figuras; não há papel industrial atribuído a essa linha.
+5. `SLEEVE_DIAGONAL_PROJECTION@1.0.0`: decomposição da diagonal 0–3 em componente horizontal usando a altura 0–1; não é um novo traço textual da fonte.
+6. `CLOSURE_EXPERIMENT@1.0.0`: fechamento diagnóstico das três figuras; não há papel industrial atribuído a essa linha.
 
 A projeção da diagonal `0–3` da manga para a horizontal da linha `1` usa Pitágoras e não deve ser vendida como operador textual de Aldrich. Piques, montagem/`SeamPair`, margens por borda, dobras definitivas, trueing, tolerâncias de montagem, orientação de corte e acabamento não foram aprovados.
 
