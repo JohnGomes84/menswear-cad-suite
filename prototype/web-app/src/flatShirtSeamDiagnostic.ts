@@ -8,6 +8,77 @@ import {cubicLength, reverseCubic} from './geometry';
 import type { CubicControls } from './geometry';
 import type {Vec2} from './domain';
 
+/**
+ * MI-001 classification of the existing edge IDs. This is *not* the
+ * construction provenance: it independently records the evidence for an
+ * industrial function. "1 cm allowance included" (PDF p35) does not tell us
+ * which draft stroke is the stitch line. No inferred seam or fold is allowed.
+ */
+export type LineClass='SEAM_LINE'|'CONSTRUCTION_LINE'|'FOLD_LINE'|'MARK'|'UNCLASSIFIED';
+export type ClassificationOrigin='SOURCE_EXPLICIT'|'SOURCE_INFERRED'|'TECHNICAL_DECISION'|'PENDING_REVIEW';
+export type EdgeClassification={
+ edgeId:string;from:string;to:string;previousRole:ShirtEdge['role'];
+ classification:LineClass;classificationOrigin:ClassificationOrigin;
+ sourceLocation:string;sourceEvidence:string;justification:string;
+ solution:string;geometryOrigin:ShirtEdge['origin'];roleRevision:'DRAFT';stitchLineConfirmed:false;
+};
+type LineClassificationSpec={
+ id:string;from:string;to:string;classification:LineClass;
+ classificationOrigin:ClassificationOrigin;sourceLocation:string;
+ sourceEvidence:string;justification:string;
+};
+const uncertain=(id:string,from:string,to:string,sourceLocation:string,sourceEvidence:string,justification:string):LineClassificationSpec=>({
+ id,from,to,classification:'UNCLASSIFIED',classificationOrigin:'PENDING_REVIEW',
+ sourceLocation,sourceEvidence,justification
+});
+const construction=(id:string,from:string,to:string,origin:'SOURCE_EXPLICIT'|'SOURCE_INFERRED',sourceLocation:string,sourceEvidence:string,justification:string):LineClassificationSpec=>({
+ id,from,to,classification:'CONSTRUCTION_LINE',classificationOrigin:origin,
+ sourceLocation,sourceEvidence,justification
+});
+const edgeClassificationContract:readonly LineClassificationSpec[]=[
+ uncertain('FRONT:E01','18','10','PDF p.35–36; fig. p.38','Front neck to fitting line 1 cm below 10','Neck edge is ordered but a stitch line is not identified; diagram also notes no seam allowance near neck'),
+ uncertain('FRONT:E02','10','17','PDF p.36; fig. p.38','Join 10–17','Join establishes geometry, not its seam or cutting role'),
+ uncertain('FRONT:E03','17','12','PDF p.36; fig. p.38','Armhole curve passes through 17,12,5','Curve is provisional and seam versus cut line is unverified'),
+ uncertain('FRONT:E04','12','5','PDF p.36; fig. p.38','Armhole curve passes through 17,12,5','Curve is provisional and seam versus cut line is unverified'),
+ uncertain('FRONT:E05','5','8','PDF p.35; fig. p.38','Square through 5 to waist 7 and hem 8','May form side boundary; original square-down instruction does not identify a stitch line'),
+ uncertain('FRONT:E06','8','4','PDF p.35; fig. p.38','Hem shown with no hem allowance','Hem boundary is not one of the requested roles; do not mislabel as seam/fold'),
+ construction('FRONT:E07','4','18','SOURCE_INFERRED','PDF p.35–36; fig. p.38','Centre front/back and vertical drafting axis; no seam allowance marked at centre','Digital 4→18 coincides with the central drafting axis, not an approved fold'),
+ uncertain('BACK:E01','1','10','PDF p.35; fig. p.38','Back neck to fitting line 1 cm below 10','Neck curve role unverified; no seam allowance callout does not prove a stitch line'),
+ uncertain('BACK:E02','10','17','PDF p.36; fig. p.38','Join 10–17','Join is a construction order; no industrial role demonstrated'),
+ uncertain('BACK:E03','17','12','PDF p.36; fig. p.38','Armhole curve passes through 17,12,5','Identical provisional front/back curvature; stitch line not identified'),
+ uncertain('BACK:E04','12','5','PDF p.36; fig. p.38','Armhole curve passes through 17,12,5','Identical provisional front/back curvature; stitch line not identified'),
+ uncertain('BACK:E05','5','8','PDF p.35; fig. p.38','Square through 5 to waist 7 and hem 8','Outer boundary may be used for assembly, but not proven as seam line'),
+ uncertain('BACK:E06','8','4','PDF p.35; fig. p.38','Hem shown with no hem allowance','Do not infer a seam from no-hem-allowance caption'),
+ construction('BACK:E07','4','1','SOURCE_INFERRED','PDF p.35; fig. p.38','Centre front/back and 0→4 vertical axis','Digital 4→1 is the central construction reference; no fold instruction'),
+ uncertain('SLEEVE:E01','0','HEAD_RAISE_78','PDF p.36; fig. p.38','Raise cap contour 1.5 cm between references 7 and 8','Candidate cap Bézier; not confirmed as stitch line'),
+ uncertain('SLEEVE:E02','HEAD_RAISE_78','6','PDF p.36; fig. p.38','Divide diagonal into fifths and draw sleeve head','Candidate cap Bézier; no industrial seam role established'),
+ uncertain('SLEEVE:E03','6','HEAD_HOLLOW_5','PDF p.36; fig. p.38','Draw sleeve head; hollow 0.75 cm at 5','Candidate cap Bézier; no industrial seam role established'),
+ uncertain('SLEEVE:E04','HEAD_HOLLOW_5','3','PDF p.36; fig. p.38','Hollow curve near reference 5','Candidate cap Bézier; no industrial seam role established'),
+ construction('SLEEVE:E05','3','0','SOURCE_INFERRED','PDF p.36; fig. p.38','0–3 diagonal measured from body 5–17 plus 3 cm, then divided into five','Construction diagonal defining sleeve head references; not the cap contour'),
+ uncertain('SLEEVE:E06','3','4','PDF p.36; fig. p.38','Join 3–4','No textual seam-line role; diagram is not a stitch-line annotation'),
+ uncertain('SLEEVE:E07','4','2','PDF p.36; fig. p.38','Sleeve hem marked no hem allowance','Hem boundary must not be promoted to seam or fold'),
+ construction('SLEEVE:E08','2','0','SOURCE_EXPLICIT','PDF p.36; fig. p.38','Centre line / no seam allowance on sleeve 0–2','Diagram explicitly calls it centre line; not an instruction to fold')
+];
+export function classifyFlatShirtEdges(raw:ShirtProject):EdgeClassification[]{
+ const project=validateShirtProject(raw);
+ const edges=project.pieces.flatMap(piece=>piece.edges);
+ if(edges.length!==edgeClassificationContract.length)throw new Error('LINE_CLASSIFICATION_EDGE_COUNT_CHANGED');
+ const map=new Map(edgeClassificationContract.map(x=>[x.id,x]));
+ if(map.size!==edgeClassificationContract.length)throw new Error('LINE_CLASSIFICATION_DUPLICATE_ID');
+ return edges.map(e=>{
+  const spec=map.get(e.id);
+  if(!spec||e.from!==e.id.split(':')[0]+':'+spec.from||e.to!==e.id.split(':')[0]+':'+spec.to)
+   throw new Error('LINE_CLASSIFICATION_EDGE_CONTRACT_CHANGED '+e.id);
+  if(spec.classification==='SEAM_LINE'||spec.classification==='FOLD_LINE')
+   throw new Error('LINE_CLASSIFICATION_REQUIRES_INDEPENDENT_SOURCE_EVIDENCE '+e.id);
+  return {edgeId:e.id,from:e.from,to:e.to,previousRole:e.role,
+   classification:spec.classification,classificationOrigin:spec.classificationOrigin,
+   sourceLocation:spec.sourceLocation,sourceEvidence:spec.sourceEvidence,
+   justification:spec.justification,solution:e.solution,geometryOrigin:e.origin,
+   roleRevision:'DRAFT' as const,stitchLineConfirmed:false as const};
+ });
+}
+
 export const ARMHOLE_CHAIN = [
   {edgeId:'E04', from:'5',to:'12', orientation:'REVERSED'},
   {edgeId:'E03', from:'12',to:'17', orientation:'REVERSED'},
@@ -26,6 +97,7 @@ export type SeamComparison={
   format:'MI001-CAVA-MANGA-DIAGNOSTIC/1.0.0';
   projectId:string;projectRevision:number;method:ShirtProject['method'];unit:'mm';
   verdict:'INDEFINIDA';
+  edgeClassifications:EdgeClassification[];
   reason:string;
   scope:{frontArmhole:'5→12→17';backArmhole:'5→12→17';halfSleeveHead:'3→HEAD_HOLLOW_5→6→HEAD_RAISE_78→0';source:'Aldrich 5, PDF pp.35–36 + p.38';currentGeometry:'ARMHOLE_INTERPOLATION@1.0.0 / SLEEVE_HEAD_INTERPOLATION@1.0.2'};
   front:MeasuredChain;back:MeasuredChain;halfSleeveHead:MeasuredChain;
@@ -85,6 +157,7 @@ export function compareShirtArmholesToHalfSleeve(raw:ShirtProject):SeamCompariso
   reason:'Excedente geométrico total mensurável = 2 × cabeça da meia manga − (cava frente + cava costas). A hipótese de espelhamento não classifica o traço como linha de costura. Frente/costas possuem curvas idênticas por decisão provisória, sem correspondência de lados, SeamPair, piques, zonas, alvo ou tolerância aprovados. A intenção de modelagem permanece INDEFINIDA.',
   scope:{frontArmhole:'5→12→17',backArmhole:'5→12→17',halfSleeveHead:'3→HEAD_HOLLOW_5→6→HEAD_RAISE_78→0',source:'Aldrich 5, PDF pp.35–36 + p.38',currentGeometry:'ARMHOLE_INTERPOLATION@1.0.0 / SLEEVE_HEAD_INTERPOLATION@1.0.2'},
   front,back,halfSleeveHead,
+  edgeClassifications:classifyFlatShirtEdges(project),
   construction:{bodyChord5to17Mm,sleeveDiagonal3to0Mm,sourceAddedToDiagonalMm:clean(sleeveDiagonal3to0Mm-bodyChord5to17Mm),hollow5Mm,riseBetween7and8Mm,frontBackArcDifferenceMm:clean(front.totalMm-back.totalMm)},
   differences:{halfHeadMinusFrontMm:halfSleeveHead.totalMm-front.totalMm,halfHeadMinusBackMm:halfSleeveHead.totalMm-back.totalMm,twoMirroredHalvesMinusBothArmholesMm:2*halfSleeveHead.totalMm-front.totalMm-back.totalMm},
   geometricExcess:{
