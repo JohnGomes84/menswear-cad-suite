@@ -101,6 +101,19 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(x).toContain('25 x 25');expect(x).toContain('NOT_RUN');
  });
 
+ it('preserves real cross-piece sleeve dependencies and avoids stale evidence for unrelated neck change',()=>{
+  const original=createShirtProject();
+  const p3=original.pieces[2].points.find(p=>p.id==='SLEEVE:3')!;
+  expect(p3.dependsOn).toContain('FRONT:5');
+  expect(p3.dependsOn).toContain('FRONT:17');
+  expect(p3.dependsOn).not.toContain('BODY:5');
+  expect(p3.dependsOn).not.toContain('neck_size');
+  const reviewed={...original,evidence:original.evidence.map(e=>({...e,state:'REVIEWED' as const,evidenceRef:'simulated-reference',evaluatedRevision:0,basisFingerprint:evidenceFingerprint(original,e)}))};
+  validateShirtProject(reviewed);
+  const after=changeShirtMeasurement(reviewed,'neck_size',430);
+  expect(after.evidence.map(e=>e.state)).toEqual(['STALE','REVIEWED','REVIEWED']);
+  expect(after.pieces[2]).toEqual(original.pieces[2]);
+ });
  it('separates source fifths on the diagonal from the proposed sleeve-head contour',()=>{
   const p=createShirtProject(),s=p.pieces[2];
   const pts=Object.fromEntries(s.points.map(q=>[q.id,q.positionMm]));
