@@ -4,6 +4,7 @@ import type {ChangeEvent} from 'react';
 import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
 import type {ShirtProject,ShirtMeasureKey} from './flatShirtProject';
 import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf} from './flatShirtExport';
+import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg} from './flatShirtSeamDiagnostic';
 const labels:Record<ShirtMeasureKey,string>={chest:'Tórax',scye_depth:'Profundidade de cava',back_neck_to_waist:'Nuca à cintura',neck_size:'Pescoço',half_back:'Meia-costas',garment_length:'Comprimento da camisa',one_piece_sleeve_length:'Manga uma folha',close_wrist:'Punho justo'};
 function saveFile(data:string|Uint8Array,mime:string,name:string){
  const blob=new Blob([typeof data==='string'?data:new Uint8Array(data).buffer],{type:mime});
@@ -15,6 +16,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
  const [error,setError]=useState('');const input=useRef<HTMLInputElement>(null);
  const [selection,setSelection]=useState<string>('FRONT');
  const svg=useMemo(()=>exportShirtSvg(project,false),[project]);
+ const cavityDiagnostic=useMemo(()=>compareShirtArmholesToHalfSleeve(project),[project]);
  const selected=project.pieces.find(p=>p.id===selection)??project.pieces[0];
  function diagnosticExport(kind:'SVG'|'PDF'){
   try{
@@ -65,6 +67,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
      <button onClick={()=>diagnosticExport('SVG')}>Exportar SVG nominal 1:1</button>
      <button onClick={()=>diagnosticExport('PDF')}>Exportar PDF nominal 1:1</button>
      <button onClick={()=>saveFile(exportCalibrationPdf(),'application/pdf','calibracao-a4-100percent.pdf')}>Ficha A4 de calibração</button>
+     <button onClick={()=>saveFile(exportCavaMangaOverlaySvg(project),'image/svg+xml','mi001-cava-manga-sobreposicao.svg')}>Comparação cava–manga SVG</button>
     </div>
     <small>PDF diagnóstico: folha personalizada de 1200 × 850 mm para plotter; sem paginação A4. Exportações falham se peças não couberem sem sobreposição. Imprimir sem ajustar à página. Conferir primeiro o PDF de calibração A4.</small>
    </section>
@@ -79,6 +82,9 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
     <p><strong>{selected.id}</strong> · {selected.points.length} pontos, {selected.edges.length} linhas diagnósticas</p>
     <p>ID e dependências preservados. Papéis industriais indefinidos até revisão.</p>
     <div className="mi001-scroll">{selected.edges.map(e=><div key={e.id} className="mi001-edge"><strong>{e.id}</strong> · {e.kind}<small>{e.origin} / {e.role}</small><small>{e.solution}</small><small>{e.review.state} · {e.source}</small></div>)}</div>
+    <h3>Cava × meia cabeça · {cavityDiagnostic.verdict}</h3>
+    <p data-testid="mi001-cava-comparison">Frente: <strong>{cavityDiagnostic.front.totalMm.toFixed(3)} mm</strong> | Costas: <strong>{cavityDiagnostic.back.totalMm.toFixed(3)} mm</strong> | Meia cabeça: <strong>{cavityDiagnostic.halfSleeveHead.totalMm.toFixed(3)} mm</strong></p>
+    <p>Diferença meia cabeça − frente: <strong>{cavityDiagnostic.differences.halfHeadMinusFrontMm.toFixed(3)} mm</strong>. Sem piques, SeamPair, folga ou correspondência de costuras aprovados. Frente e costas usam curvas diagnósticas coincidentes.</p>
     <h3>Decisões técnicas versionadas</h3>
     <div className="mi001-scroll">{project.decisions.map(d=><p key={d.id}><strong>{d.id}@{d.version}</strong><small> · {d.status}</small><br/><small>{d.description}</small></p>)}</div>
     <h3>Gate e provas</h3>
