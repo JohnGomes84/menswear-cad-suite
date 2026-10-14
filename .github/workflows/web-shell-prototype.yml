@@ -34,4 +34,14 @@ jobs:
         run: npm run build
       - name: Verify build without shipping as product
         run: test -s dist/index.html
+      - name: Generate MI-001 example and nominal print diagnostics
+        run: node scripts/export-mi001.mjs
+      - name: Upload MI-001 digital evidence (not scale or fit proof)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi001-flatshirt-experimental-artifacts
+          path: prototype/web-app/mi001-artifacts/
+          if-no-files-found: error
+          retention-days: 14
 
