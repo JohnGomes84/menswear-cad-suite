@@ -213,9 +213,9 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 
 **Próxima decisão — NÃO executar sem instrução:** optar pela correspondência cava–manga, margens, `PatternPiece`, validação da impressão a partir das medições, ou outra prioridade do titular, cada uma com pré-requisitos e riscos específicos.
 
-## Registro de observação física do titular — calibração relatada, sem métricas (14/10/2026)
+## Registro de observação física do titular — calibração dimensional parcial (14/10/2026)
 
-**Origem da informação:** declaração direta do titular nesta conversa em 14/10/2026: **"O CUBO DE ESCALA ESTÁ EXATO E PRECISO"**. O titular havia informado que a impressão foi realizada. Esta declaração é **evidência qualitativa relatada**, não medição numérica disponibilizada ao projeto nem parecer laboratorial. Não está demonstrado se o "cubo de escala" corresponde à régua impressa de 100 mm, ao quadrado A4 de 25 mm ou a outro objeto; não atribuir suas dimensões sem identificação.
+**Origem da informação:** o titular confirmou nesta conversa, em 14/10/2026, que a impressão foi realizada e declarou **"O CUBO DE ESCALA ESTÁ EXATO E PRECISO"**; ao ser solicitado a informar dimensão nominal e medida real, respondeu **"25MM X 25MM"**. Esta declaração é registrada como **medição física fornecida pelo titular**: a referência quadrada/cubo de escala tem dimensão nominal **25 × 25 mm** e dimensão observada informada **25 × 25 mm**. Medição numérica comunicada sem fotografia, instrumento ou certificado de calibração; não presumir valor da régua de 100 mm ou de qualquer dimensão do molde. A associação dessa medição ao arquivo físico impresso permanece relatada, sem identificação independente do arquivo.
 
 **Vinculação digital (referência, não prova de que foi exatamente esse o arquivo impresso):**
 - Projeto de exemplo `flat-shirt-core-experimental-001`, revisão `1`; método `ALD-FLAT-SHIRT-CORE@research-0.1.2`.
@@ -225,8 +225,8 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 | Grandeza de referência | Valor nominal obtido do artefato digital | Valor real informado | Desvio absoluto | Desvio relativo |
 |---|---:|---|---|---|
 | Régua de calibração | 100 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
-| Quadrado de calibração — largura | 25 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
-| Quadrado de calibração — altura | 25 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Quadrado/cubo de escala — largura | 25 mm | **25 mm (titular)** | **0 mm** | **0%** |
+| Quadrado/cubo de escala — altura | 25 mm | **25 mm (titular)** | **0 mm** | **0%** |
 | Frente — largura entre extremos do conjunto de pontos do exemplo | 345 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
 | Frente — altura entre extremos do conjunto de pontos do exemplo | 730 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
 | Costas — largura entre extremos do conjunto de pontos do exemplo | 345 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
@@ -234,8 +234,8 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 | Manga — distância reta dos pontos 0→2 do exemplo | 630 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
 | Manga — diagonal reta dos pontos 3→0 do exemplo | 298,686155 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
 
-**Definições métricas:** `desvioAbsolutoMm = observadoMm − nominalMm` (sinal preservado; módulo para magnitude); `desvioPercentual = 100 × (observadoMm − nominalMm) / nominalMm`. Estas operações **não foram executadas sobre dados físicos**, pois nenhum valor observado em mm foi apresentado. Os limites nominais das peças são a caixa dos pontos do projeto de exemplo, não medidas de linha de costura nem de corte.
+**Definições métricas:** `desvioAbsolutoMm = observadoMm − nominalMm` (sinal preservado; módulo para magnitude); `desvioPercentual = 100 × (observadoMm − nominalMm) / nominalMm`. **Cálculo executado** apenas sobre os dois valores reais fornecidos para a referência 25 × 25 mm: largura (25−25)=0 mm, desvio relativo 0%; altura (25−25)=0 mm, desvio relativo 0%. Para as demais referências não foi informado valor físico, portanto seus desvios permanecem indeterminados. Os limites nominais das peças são a caixa dos pontos do projeto de exemplo, não medidas de linha de costura nem de corte.
 
-**Estado da evidência:** `PRINTING_REPORTED_BY_OWNER`, `SCALE_CUBE_EXACT_SELF_REPORTED_UNQUANTIFIED`; conferência quantitativa `PENDING_PHYSICAL_MEASUREMENTS`; critérios de aceitação `PENDING_OWNER_DECISION`. **Estado canônico do projeto `scalePhysical=NOT_RUN` permanece inalterado** até dados mensuráveis e decisão explícita do titular; `cutReady=false`, `assembly=NOT_RUN`, `fit=NOT_RUN`; linha de costura `NOT_IDENTIFIED` e encaixe cava–manga `INDEFINITE`. A declaração positiva sobre o cubo não é evidência de que o molde montado foi conferido dimensionalmente e não autoriza alterações no método.
+**Estado da evidência:** `PRINTING_REPORTED_BY_OWNER`, `SCALE_REFERENCE_25X25_MEASURED_BY_OWNER`, desvio registrado `0_mm/0_percent` nos dois eixos; calibração **parcial**, pois a régua de 100 mm e as dimensões montadas do molde não foram medidas/informadas neste registro. Critérios de aceitação globais `PENDING_OWNER_DECISION`. **Estado canônico do projeto `scalePhysical=NOT_RUN` permanece inalterado** até dados mensuráveis e decisão explícita do titular; `cutReady=false`, `assembly=NOT_RUN`, `fit=NOT_RUN`; linha de costura `NOT_IDENTIFIED` e encaixe cava–manga `INDEFINITE`. A declaração positiva sobre o cubo não é evidência de que o molde montado foi conferido dimensionalmente e não autoriza alterações no método.
 
-**Próxima entrada aguardada — sem nova frente de trabalho:** identificação e dimensões nominais/reais do objeto chamado "cubo de escala", mais valores físicos das referências da folha e do molde se o titular desejar sua avaliação; critério de aceitação definido pelo titular. Não presumir `PASSED_WITH_EVIDENCE`, `FAILED_WITH_EVIDENCE` ou promoção automática.
+**Próxima entrada aguardada — sem nova frente de trabalho:** a referência 25 × 25 mm já possui observação real reportada e desvio calculado. Permanecem opcionais, para conferência integral, medição da régua de 100 mm, medidas montadas do molde, identidade do arquivo impresso, equipamento/data e critério quantitativo de aceitação a ser definido pelo titular. Não presumir `PASSED_WITH_EVIDENCE`, `FAILED_WITH_EVIDENCE` ou promoção automática.
