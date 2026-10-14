@@ -114,7 +114,8 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
    .toEqual(['FRONT:E07','BACK:E07','SLEEVE:E05','SLEEVE:E08']);
   expect(roles.filter(x=>x.classification==='UNCLASSIFIED')).toHaveLength(18);
   expect(roles.every(x=>x.classification!=='SEAM_LINE'&&x.classification!=='FOLD_LINE')).toBe(true);
-  expect(roles.every(x=>x.stitchLineConfirmed===false&&x.roleRevision==='DRAFT')).toBe(true);
+  expect(roles.every(x=>x.stitchLineConfirmed===false&&x.roleRevision==='DRAFT'&&x.decisionState==='PENDING_OWNER_DECISION')).toBe(true);
+  expect(roles.every(x=>['CONSTRUCTION_LINE','UNCLASSIFIED'].includes(x.classification))).toBe(true);
   expect(roles.find(x=>x.edgeId==='SLEEVE:E08')).toMatchObject({
    previousRole:'CONSTRUCTION',classification:'CONSTRUCTION_LINE',classificationOrigin:'SOURCE_EXPLICIT',
    sourceLocation:'PDF p.36; fig. p.38'
@@ -125,9 +126,16 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   for(const id of ['FRONT:E03','FRONT:E04','BACK:E03','BACK:E04',
    'SLEEVE:E01','SLEEVE:E02','SLEEVE:E03','SLEEVE:E04']){
    expect(roles.find(x=>x.edgeId===id)).toMatchObject({
-    classification:'UNCLASSIFIED',classificationOrigin:'PENDING_REVIEW',stitchLineConfirmed:false
+    classification:'UNCLASSIFIED',classificationOrigin:'PENDING_OWNER_DECISION',stitchLineConfirmed:false
    });
   }
+  // No imported project can gain an industrial role by changing a field:
+  // canonical project validation recomputes its unchanged geometry/semantics.
+  const tampered=JSON.parse(before);
+  tampered.pieces[0].edges[2].role='SEAM_LINE';
+  expect(()=>parseShirtProject(JSON.stringify(tampered))).toThrow();
+  tampered.pieces[0].edges[2].role='CUT_LINE';
+  expect(()=>parseShirtProject(JSON.stringify(tampered))).toThrow();
   expect(serializeShirtProject(p)).toBe(before);
   expect(p.method.version).toBe('research-0.1.2');
  });
@@ -155,7 +163,7 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect((svg.match(/data-line-class=/g)??[])).toHaveLength(22);
   expect((svg.match(/data-class-origin=/g)??[])).toHaveLength(22);
   expect(svg).toContain('data-line-class="CONSTRUCTION_LINE" data-class-origin="SOURCE_EXPLICIT"');
-  expect(svg).toContain('data-line-class="UNCLASSIFIED" data-class-origin="PENDING_REVIEW"');
+  expect(svg).toContain('data-line-class="UNCLASSIFIED" data-class-origin="PENDING_OWNER_DECISION"');
   expect(svg).toContain('0 SEAM_LINE');
   expect(svg).toContain('cutReady=false');
   expect(p.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
