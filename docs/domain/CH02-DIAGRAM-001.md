@@ -78,3 +78,8 @@ O procedimento das costas foi conferido nas páginas PDF **32 (uma peça)** e **
 As condições **documentadas no livro** para as curvas de gancho e entreperna foram levantadas em [CURVES-RESEARCH-001](CURVES-RESEARCH-001.md) e registradas como oito requisitos declarativos em [CH02-CURVE-REQUIREMENTS-001.json](CH02-CURVE-REQUIREMENTS-001.json). As referências de contato dos ganchos e entradas internas da entreperna estão expressas em mm, porém **sem supor tangentes, parâmetros Bézier ou localização não explicitada de deformação**.
 
 Essa análise **não transforma `TEXT_REVIEWED` em `DIAGRAM_REVIEWED` completo**. Mantemos `PARTIAL_FRONT_BACK_GUIDES`, `geometrySpecification=NOT_YET_DEFINED` e `implementation=NOT_STARTED` para molde real; a ferramenta de desenho deverá preservar essas restrições até que curva, costura e prova física sejam validadas.
+
+
+## Continuação: traços de fonte (sem promoção de corte)
+
+A partir dos passos textuais das pp.32–33 foram identificados **16 comandos explícitos de desenho**, além da construção de pontos: 8 retas diretamente executáveis e 8 curvas ainda indeterminadas. As chamadas visuais `no seam allowance` da p.34 foram observadas na cintura/barra dos dois blocos, mas **não** vinculadas ainda a uma aresta precisa. Detalhamento e status no [registro CH02-SOURCE-LINES-001](CH02-SOURCE-LINES-001.json) e na [auditoria CH02-EXPLICIT-STROKES-AUDIT-001](CH02-EXPLICIT-STROKES-AUDIT-001.md). Os pontos associados às instruções produzem retas de pesquisa no FreeSewing; `SEAM_LINE` e `CUT_LINE` seguem bloqueados.

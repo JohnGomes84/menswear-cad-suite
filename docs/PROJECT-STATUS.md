@@ -2,7 +2,7 @@
 
 **Data:** 13/10/2026  
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.25 DRAFT — semântica própria de vestuário e política de margens fundamentadas no livro
+**Baseline corrente:** 1.26 DRAFT — registro de comandos de desenho do CH02 e teste vetorial com FreeSewing
 
 ## Situação executiva
 
@@ -183,3 +183,12 @@ O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coord
 - `aldCh02AllowancePolicy.ts`: fonte PDF p.31 — **10 mm de costura já incluídos no bloco**, exceções `no seam allowance`; edge mapping ainda `NOT_YET_DEFINED`, nenhum segundo offset automático.
 - [Web #38484936503](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38484936503): **145/145 unitários + build PASS**; [integração #38485166474](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38485166474): **26/26 PASS**, FreeSewing e semântica independentes reconciliados.
 - Quinto artefato `ch02-semantic-contract.json` publicado pelo pipeline; modelo de peça **não aprovado** e nenhum método além do CH02 promovido. Gate B e comercial **NO-GO**.
+
+
+## Próxima camada do livro — comandos reais de desenho (13/10/2026)
+
+- **Fonte PDF pp.32–33:** `CH02-SOURCE-LINES-001.json` registra 16 comandos `join/draw` (uma peça: 7; duas: 9). Deles, 8 são retas e 8 curvas; não é inventário integral dos traços auxiliares.
+- **Diagrama PDF p.34:** rótulos `no seam allowance` em cintura e barra dos dois blocos — 4 observações regionais, escopo por aresta ainda `NOT_YET_DEFINED`. Regra geral PDF p.31: 10 mm **já incluídos** com exceções, sem offset automático.
+- **Código:** `ch02BookLineCommands.ts` liga comandos textuais aos pontos calculados pela obra; `bookCommandBridge.mjs` usa FreeSewing `Path` REAL apenas nas retas. Curvas `SOURCE_CURVE_REQUIREMENTS_PENDING`, sem Bézier arbitrária e sem classificação industrial.
+- [Web #38487642126](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487642126) **157/157 testes + build**; [integração #38487840635](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487840635) **34/34 testes** e sete artefatos de pesquisa.
+- **Gate:** TEXT_COMMANDS_REVIEWED; DIAGRAM_PARTIAL; `noCut=true`; Gate B / comercial NO-GO.

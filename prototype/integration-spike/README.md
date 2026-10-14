@@ -14,7 +14,7 @@
 5. **Estrutura:** os identificadores frente/costas são transportados por `new Part()` e `asRenderProps()` do FreeSewing como **contêineres de referências e dependências**, não como `PatternPiece`, `SeamEdge` ou `CutEdge` prontos.
 6. **Anotações diagnósticas:** `Point.addText` do FreeSewing rotula pontos. O plugin real `@freesewing/plugin-annotations` executa a macro `grainline` e o objeto `Snippet(notch)` **apenas numa fixture sintética independente da obra**. Nenhum fio/pique técnico é publicado nos contêineres CH02.
 7. **Verificações:** entradas válidas, cadeia de proveniência, referências, cotas textuais, sentidos do diagrama, comprimento dos segmentos via biblioteca externa; **trueing e caimento ainda NOT_RUN**.
-8. **Saída:** `out/ch02-guides.svg`, `out/ch02-diagnostics.json`, `out/ch02-construction-components.json` (FreeSewing Part), `out/synthetic-annotation-api-proof.json` (somente sintético) e `out/ch02-semantic-contract.json` (semântica independente + gates). O SVG usa dimensões de visualização em pixels, não é impressão em escala 1:1. O contrato proíbe explicitamente `CUT_CONTOUR`, `SEAM_ALLOWANCE`, `SEAM_PAIR`, `NOTCH_PLACEMENT`, `SIZE_GRADING`, `NESTING`, `PRINT_1_TO_1` e `PRODUCTION_RELEASE`.
+8. **Saída:** `out/ch02-guides.svg`, `out/ch02-diagnostics.json`, `out/ch02-construction-components.json` (FreeSewing Part), `out/synthetic-annotation-api-proof.json` (somente sintético), `out/ch02-semantic-contract.json` (semântica) e `out/ch02-book-command-geometry.json` / `out/ch02-book-command-lines.svg` (retas realmente prescritas pela obra; sem curvas/cortes). O SVG usa dimensões de visualização em pixels, não é impressão em escala 1:1. O contrato proíbe explicitamente `CUT_CONTOUR`, `SEAM_ALLOWANCE`, `SEAM_PAIR`, `NOTCH_PLACEMENT`, `SIZE_GRADING`, `NESTING`, `PRINT_1_TO_1` e `PRODUCTION_RELEASE`.
 
 ## Executar com Node 22
 
@@ -28,11 +28,15 @@ prototype/web-app/node_modules/.bin/esbuild \
   prototype/web-app/src/flatTrouserBackResearch.ts \
   --bundle --platform=node --format=esm \
   --outfile=prototype/integration-spike/generated/aldch02.mjs
+prototype/web-app/node_modules/.bin/esbuild \
+  prototype/web-app/src/ch02BookLineCommands.ts \
+  --bundle --platform=node --format=esm \
+  --outfile=prototype/integration-spike/generated/ch02BookLines.mjs
 npm test --prefix prototype/integration-spike
 npm run demo --prefix prototype/integration-spike
 ```
 
-A CI repete os comandos em Node 22 e executa **26 testes**: 9 da integração original, 2 do lockfile/licença, 10 da prova FreeSewing Part/anotações e 5 de reconciliação com o contrato semântico; publica **cinco arquivos** separados, todos de pesquisa.
+A CI repete os comandos em Node 22 e executa **34 testes**: 9 da integração inicial, 2 do lockfile/licença, 10 FreeSewing Part/anotações, 5 de contrato semântico e 8 de traços explícitos do livro; publica **sete arquivos** separados, todos de pesquisa.
 
 ## Por que a POC é isolada
 
@@ -57,3 +61,8 @@ Os conectores derivados do primeiro ponto de referência da instrução recebem 
 ## Contrato semântico próprio e margens CH02
 
 O quinto arquivo `ch02-semantic-contract.json` contém entidades `SemanticPiece/SemanticEdge` e evidências rastreadas ao livro, cada conector representando **somente uma dependência**. O algoritmo é próprio e agnóstico ao FreeSewing. Testes cruzados reconciliam posições e comprimentos com `Part` nativo. Não há `SEAM_LINE`, `CUT_LINE`, fio ou pique da obra nesta saída. A regra de 10 mm de margem **já incluída** no bloco de Aldrich PDF p.31 está em `aldCh02AllowancePolicy.ts`, mas com exceções ainda não mapeadas por aresta; qualquer offset é bloqueado. Ver [especificação](../../docs/architecture/GARMENT-SEMANTICS-001.md).
+
+
+## Linhas de fonte e desenho externo, sem fabricação
+
+`src/bookCommandBridge.mjs` lê as instruções `join/draw` auditadas na p.32–33 da obra (`CH02-SOURCE-LINES-001.json`): calcula pontos pelo interpretador, liga **somente 8 retas expressamente prescritas** via FreeSewing `Point/Path`, e publica SVG/JSON de diagnóstico. As 8 curvas permanecem exigências geométricas não resolvidas, `curveGenerated=false`. Não representa a peça completa; as observações de `no seam allowance` da figura p.34 permanecem regionais. A nova saída está isolada do antigo gráfico de conectores de dependência, que não equivale a traços literais do livro. [Auditoria de comandos](../../docs/domain/CH02-EXPLICIT-STROKES-AUDIT-001.md).

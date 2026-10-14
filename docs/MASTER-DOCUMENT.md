@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.25 DRAFT — contrato próprio de entidades de vestuário e margens guiadas por fonte
+**Versão da baseline:** 1.26 DRAFT — traços textuais CH02 auditados e desenhados pelo FreeSewing sem extrapolação
 **Data:** 13/10/2026  
-**Status:** esquema próprio de entidades de vestuário em laboratório: construção CH02 RESEARCH_ONLY separada de peças/arestas/anotações sintéticas, margens de 10 mm já incluídas como REGRA DO LIVRO no nível do bloco, sem offsets autorizados. Prova cruzada com FreeSewing; 145/145 testes web e 26/26 integração PASS na CI de branch. 53 registros TOC_ONLY, um TEXT_REVIEWED/DIAGRAM_PARTIAL. Gate APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
+**Status:** 16 comandos explícitos de traçado de Aldrich CH02 mapeados (8 retas, 8 curvas pendentes); 8 retas geradas por FreeSewing em laboratório, 4 chamadas de 'no seam allowance' regionais registradas, nenhuma margem aplicada e nenhum corte aprovado. Testes de branch: 157/157 web com build e 34/34 integração PASS. 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -833,3 +833,18 @@ Evidência antes do PR: [CI Web #38484936503](https://github.com/JohnGomes84/men
 **Pendências materiais (sem confundir com contratos):** traçados completos livro/diagramas, direção precisa e topologia de costuras/corte, exceções de margem por aresta, validação geométrica dos ganchos e entrepernas, gradação dos capítulos, piques/fio reais, trueing de pares de costura, export 1:1, prova física/toile, revisão legal e modelista. Gate B **NO-GO**. O aplicativo não foi convertido em ferramenta de corte e a obra não foi digitalizada/copied como scan pública.
 
 **Próxima prioridade orientada pelo livro:** auditoria dos **traços efetivamente instruídos** nas frentes/costas CH02 e seu mapa de arestas com evidência, antes de transformar `CONSTRUCTION_LINE` em `SEAM_LINE` ou `CUT_LINE`. Expandir o contrato para outras famílias somente quando seus métodos específicos forem revisados.
+
+
+---
+
+## 44. Registro de comandos explícitos de desenho CH02 e integração vetorial — baseline 1.26 DRAFT
+
+O exame literal dos passos da obra *Metric Pattern Cutting for Menswear*, 5ª ed., capítulo 2 PDF pp.31–34, distinguiu as **retas e curvas que o texto MANDA desenhar** dos conectores gerados apenas pela dependência de fórmulas. Os dois blocos de calça plana somam **16 comandos explicitamente descritos** (uma peça: 7 comandos; duas peças: 9), sendo **8 retas verificáveis** e **8 curvas com âncoras mas sem solução geométrica aprovada**. O registro próprio fica em [CH02-SOURCE-LINES-001.json](domain/CH02-SOURCE-LINES-001.json); [auditoria textual e visual](domain/CH02-EXPLICIT-STROKES-AUDIT-001.md), [QA-CH02-EXPLICIT-STROKES-001](qa/QA-CH02-EXPLICIT-STROKES-001.md).
+
+Em `ch02BookLineCommands.ts`, a instrução do livro determina o *caminho nominal* entre pontos calculados pelo mesmo interpretador existente. Retas ganham extremos e comprimentos em mm; curvas permanecem `SOURCE_CURVE_REQUIREMENTS_PENDING`, `hasSpline=false`. Todas continuam `industrialRole=UNCLASSIFIED_NOT_CUT` e o modelo não as registra automaticamente como `SEAM_LINE`, `CUT_LINE` ou dobras. `bookCommandBridge.mjs` executa de fato as 8 retas com FreeSewing `Point/Path`, compara comprimentos e gera SVG **de visualização**, não desenho de corte. A CI publica **sete artefatos** no total, inclusive novos `ch02-book-command-geometry.json` e `ch02-book-command-lines.svg`.
+
+Na imagem real PDF p.34 observam-se rótulos `no seam allowance` próximos à **cintura e à barra dos dois blocos**, quatro observações de âmbito `REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED`; o alcance exato por trecho não foi decidido. Na p.31, a regra geral afirma **10 mm de margem já incluídos no bloco**. Consequentemente, o sistema conserva `NO_AUTOMATIC_OFFSET` e NÃO acrescenta 10 mm de novo por suposição. O texto da construção de uma peça prevê traçar frente/costas, espelhar frente e posicionar laterais; essa instrução consta como `DOCUMENTED_OPERATION_NOT_EXECUTED`.
+
+Evidência de branch: [Web CI #38487642126](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487642126) **157/157 testes + TS/Vite build PASS**; [FreeSewing CI #38487840635](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487840635) **34/34 testes PASS** e artefatos gerados. O código reutiliza fórmulas, não registra novas geometrias de curva e mantém a infraestrutura do livro e dos fornecedores separadas.
+
+**Próximo gate:** mapear cada linha de função industrial e o alcance real de `no seam allowance` no diagrama; depois resolver curvas por técnica documentada, validar contornos, executar espelhamento quando geometria permitir, trueing, plotagem 1:1 e toile. Até lá, **nenhuma calça para corte ou distribuição comercial**.
