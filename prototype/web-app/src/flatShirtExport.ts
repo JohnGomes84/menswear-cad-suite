@@ -3,6 +3,7 @@
  */
 import type { ShirtProject, ShirtPiece, ShirtEdge } from './flatShirtProject';
 import {validateShirtProject} from './flatShirtProject';
+import {classifyFlatShirtEdges} from './flatShirtSeamDiagnostic';
 const PT=72/25.4;
 const n=(x:number)=>Number(x.toFixed(5)).toString();
 const esc=(x:string)=>x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -49,16 +50,19 @@ export function assertNominalSheetFits(project:ShirtProject):void{
 export function exportShirtSvg(raw:ShirtProject,enforcePaperBounds=true):string{
  const project=validateShirtProject(raw), water='DRAFT / NO CUT / GEOMETRIA EXPERIMENTAL';
  if(enforcePaperBounds)assertNominalSheetFits(project);
+ const classes=new Map(classifyFlatShirtEdges(project).map(x=>[x.edgeId,x]));
  const tags=project.pieces.map(piece=>{
    const items=segments(piece).map(({edge,from,to,controls})=>{
      const d=`M ${n(from.x)} ${n(from.y)} ${controls?`C ${n(controls[0].x)} ${n(controls[0].y)} ${n(controls[1].x)} ${n(controls[1].y)} ${n(to.x)} ${n(to.y)}`:`L ${n(to.x)} ${n(to.y)}`}`;
+     const classification=classes.get(edge.id);
+     if(!classification)throw new Error('SVG_EDGE_CLASSIFICATION_MISSING '+edge.id);
      const dash=edge.origin==='TECHNICAL_DECISION'?' stroke-dasharray="5,3"':'';
-     return `<path id="${esc(edge.id)}" d="${d}" fill="none" stroke="#253d66" stroke-width="0.5"${dash} data-origin="${edge.origin}" data-role="${edge.role}" data-review="${edge.review.state}" data-solution="${esc(edge.solution)}"/>`;
+     return `<path id="${esc(edge.id)}" d="${d}" fill="none" stroke="#253d66" stroke-width="0.5"${dash} data-origin="${edge.origin}" data-role="${edge.role}" data-review="${edge.review.state}" data-solution="${esc(edge.solution)}" data-line-class="${classification.classification}" data-class-origin="${classification.classificationOrigin}" data-role-source="${esc(classification.sourceLocation)}"><title>${esc(edge.id)} | ${classification.classification} | ${classification.classificationOrigin} | ${esc(classification.sourceLocation)}</title></path>`;
    }).join('\n');
    return `<g id="${piece.id}"><text x="${placement[piece.id].x}" y="35" font-size="10">${piece.id} / EXPERIMENTAL</text>${items}</g>`;
  }).join('\n');
  const decisions=project.decisions.map(x=>x.id+'@'+x.version).join(', ');
- return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${SHEET.widthMm}mm" height="${SHEET.heightMm}mm" viewBox="0 0 ${SHEET.widthMm} ${SHEET.heightMm}">\n<title>Flat Shirt Core diagnostic - NOT FOR CUTTING</title><desc>PROJECT ${esc(project.projectId)} METHOD ${project.method.id}@${project.method.version}; cutReady=false; physical scale NOT_RUN. ${esc(decisions)}</desc><rect width="100%" height="100%" fill="white"/>\n<text x="25" y="17" font-size="12" font-weight="bold" fill="#a11d2d">${water}</text><text x="25" y="29" font-size="6">Projeto ${esc(project.projectId)} revision ${project.revision} | PDF pp. 35, 36, 38 | cm entrada / mm geometria | CutReady=false</text>\n${tags}\n<g stroke="black" stroke-width="0.35" fill="none"><rect x="990" y="785" width="25" height="25"/><path d="M 990 822 L 1090 822"/></g><g font-size="5"><text x="990" y="781">Quadrado de 25 mm</text><text x="990" y="831">Referencia de 100 mm - imprimir a 100%</text><text x="350" y="824">Calibracao fisica: NOT_RUN | Montagem: NOT_RUN | Caimento: NOT_RUN</text></g></svg>\n`;
+ return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${SHEET.widthMm}mm" height="${SHEET.heightMm}mm" viewBox="0 0 ${SHEET.widthMm} ${SHEET.heightMm}">\n<title>Flat Shirt Core diagnostic - NOT FOR CUTTING</title><desc>PROJECT ${esc(project.projectId)} METHOD ${project.method.id}@${project.method.version}; cutReady=false; physical scale NOT_RUN. ${esc(decisions)}</desc><rect width="100%" height="100%" fill="white"/>\n<text x="25" y="17" font-size="12" font-weight="bold" fill="#a11d2d">${water}</text><text x="25" y="29" font-size="6">Projeto ${esc(project.projectId)} revision ${project.revision} | PDF pp. 35, 36, 38 | cm entrada / mm geometria | CutReady=false | 22 classes: 4 CONSTRUCTION_LINE; 18 UNCLASSIFIED; 0 SEAM_LINE</text>\n${tags}\n<g stroke="black" stroke-width="0.35" fill="none"><rect x="990" y="785" width="25" height="25"/><path d="M 990 822 L 1090 822"/></g><g font-size="5"><text x="990" y="781">Quadrado de 25 mm</text><text x="990" y="831">Referencia de 100 mm - imprimir a 100%</text><text x="350" y="824">Calibracao fisica: NOT_RUN | Montagem: NOT_RUN | Caimento: NOT_RUN</text></g></svg>\n`;
 }
 class PdfBuilder{
  private objs:string[]=[];
