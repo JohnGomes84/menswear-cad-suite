@@ -1,6 +1,6 @@
 # QA-APP-001 — Aceite da fundação experimental web
 
-**Status:** TEST_PLAN; todos os testes do aplicativo abaixo estão `NOT_RUN` até existir o respectivo protótipo.  
+**Status:** matriz evolutiva; cada linha conserva seu estado próprio. Evidências de laboratórios adicionados depois da matriz são registradas em adendos abaixo.
 **Escopo:** somente projeto e geometria **sintéticos**. Não valida `PILOT-001`, impressão ou uso comercial.
 
 | ID | Grupo | Caso | Aceite observável | Estado |
@@ -60,4 +60,23 @@ Os testes `scene.test.ts` exercitam identidade de grupo/entidade, edição de li
 
 As fixtures de `constraints.test.ts` exercitam alinhamento, coincidência, distância em mm, dependências acíclicas, referência cruzada de grupos e falhas de input/ambiguidade; evidência [unit CI #38465429034](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429034) **65/65 PASS**. A interface implementa alinhamento de extremos de uma **linha sintética** e seu undo; [Chromium CI #38465429112](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38465429112) registrou **6/6 E2E PASS**.
 
-**Não são PASS:** solver simultâneo, constraints persistidas/recalculadas, pences, `SeamPair`, moldes reais, impressão física e releases.
+**Não são PASS:** solver simultâneo, pences, `SeamPair`, moldes reais, impressão física e releases.
+
+## Evidência APP-004 — interface de constraints persistentes 0.4
+
+**Escopo:** cena sintética multi-entidades. A entrada no modo 0.4 é separada da edição 0.3 e exige confirmação explícita para migrar a cena atual. Não representa o PILOT-001.
+
+| ID | Aceite observável | Estado |
+|---|---|---|
+| APP-004-A | Criar, editar e remover regras dirigidas `COINCIDENT`, `HORIZONTAL`, `VERTICAL` e `DISTANCE` em mm | PASS_LOCAL_E2E |
+| APP-004-B | Mostrar visualmente driver autoral e posição resolvida, com ID da regra | PASS_LOCAL_E2E |
+| APP-004-C | Recalcular alvo ao mover origem; preservar undo/redo inclusive após salvar e reabrir JSON 0.4 | PASS_LOCAL_UNIT_E2E |
+| APP-004-D | Expor conflitos `DUPLICATE_TARGET`, `CYCLIC_DEPENDENCY` e `UNDETERMINED_DIRECTION` sem commit parcial | PASS_LOCAL_UNIT_E2E |
+| APP-004-E | Recusar referência perdida e preservar a cena aberta; importar 0.3 apenas após confirmação | PASS_LOCAL_E2E |
+| APP-004-F | Pan/zoom não altera geometria canônica; layout 390 px sem overflow horizontal | PASS_LOCAL_E2E |
+| APP-004-G | Aviso não apto para corte permanece visível; nenhuma ação de corte/exportação de molde é oferecida | PASS_LOCAL_E2E |
+| APP-004-H | Sem regressão do 0.3 e da área CH02 | PASS_LOCAL_E2E |
+
+**Validação local reproduzida com dependências do lockfile:** `npm ci`; 184/184 testes Vitest; `tsc --noEmit` e Vite build PASS; 21/21 E2E Chromium (11 novos do APP-004 + 10 existentes). Os 11 casos cobrem drag reativo/undo/redo após reload, rebase explícito ao alterar a cena 0.3 e criação válida de `COINCIDENT`/`DISTANCE`, além dos fluxos citados na tabela. E2E executado em `CI=1 PLAYWRIGHT_PORT=4174 npm run test:e2e` para não reutilizar um preview anterior na porta 4173. A captura de 390 px foi revisada após correção do grid de coordenadas. Status `PENDING_GITHUB_CI` no [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) até o workflow concluir.
+
+**Limites preservados:** documento JSON local; sem backend/autosalvamento. O schema continua 0.4.0 experimental, com uma regra por ponto de destino, sem solver simultâneo ou edição de entidades no modo 0.4. Sem semântica de vestuário, caimento, impressão 1:1 ou aptidão para corte; Gate B do PILOT-001 permanece NO-GO.

@@ -16,6 +16,7 @@ import type { ControlRef, DirectedConstraint } from "./constraints";
 
 export type ConstraintEventV4 =
   | {kind:"ADD_CONSTRAINT"|"REMOVE_CONSTRAINT";revision:number;constraint:DirectedConstraint}
+  | {kind:"UPDATE_CONSTRAINT";revision:number;before:DirectedConstraint;after:DirectedConstraint}
   | {kind:"MOVE_DRIVER";revision:number;ref:ControlRef;before:Vec2;after:Vec2};
 export type ConstrainedSceneV4 = {
   formatVersion:"0.4.0";
@@ -87,6 +88,11 @@ function parseEvent(raw:unknown,index:number):ConstraintEventV4{
   if(!record(raw)||raw.revision!==index+1)throw new Error("Revisão de evento inválida");
   if(raw.kind==="ADD_CONSTRAINT"||raw.kind==="REMOVE_CONSTRAINT")
     return {kind:raw.kind,revision:index+1,constraint:parseConstraint(raw.constraint)};
+  if(raw.kind==="UPDATE_CONSTRAINT"){
+    const before=parseConstraint(raw.before),after=parseConstraint(raw.after);
+    if(before.id!==after.id)throw new Error("UPDATE_CONSTRAINT deve preservar o ID");
+    return {kind:"UPDATE_CONSTRAINT",revision:index+1,before,after};
+  }
   if(raw.kind==="MOVE_DRIVER"){
     if(!ref(raw.ref)||!point(raw.before)||!point(raw.after)||
        eqPoint(raw.before,raw.after))throw new Error("MOVE_DRIVER inválido");
@@ -138,6 +144,11 @@ function build(baseScene:SceneProjectV3,events:readonly ConstraintEventV4[]):{
       if(!existing||!eqConstraint(existing,event.constraint))
         throw new Error("REMOVE_CONSTRAINT não corresponde à regra ativa");
       constraints=constraints.filter(c=>c.id!==event.constraint.id);
+    }else if(event.kind==="UPDATE_CONSTRAINT"){
+      const index=constraints.findIndex(c=>c.id===event.before.id);
+      if(index<0||!eqConstraint(constraints[index],event.before))
+        throw new Error("UPDATE_CONSTRAINT não corresponde à regra ativa");
+      constraints=constraints.map((c,i)=>i===index?copyConstraint(event.after):c);
     }else if(event.kind==="MOVE_DRIVER"){
       if(constraints.some(c=>targetKey(c.target)===targetKey(event.ref)))
         throw new Error("Ponto de destino condicionado: edite a origem da relação");
@@ -208,6 +219,19 @@ export function removeDirectedConstraintV4(
   return commit(s,{
     kind:"REMOVE_CONSTRAINT",revision:s.project.revision+1,
     constraint:copyConstraint(rule)
+  });
+}
+export function updateDirectedConstraintV4(
+  s:ConstrainedEditorV4,id:string,rule:DirectedConstraint
+):ConstrainedEditorV4{
+  const before=s.project.constraints.find(c=>c.id===id);
+  if(!before)throw new Error("Constraint não encontrada");
+  const after=parseConstraint(rule);
+  if(after.id!==id)throw new Error("A edição deve preservar o ID da constraint");
+  if(eqConstraint(before,after))return s;
+  return commit(s,{
+    kind:"UPDATE_CONSTRAINT",revision:s.project.revision+1,
+    before:copyConstraint(before),after
   });
 }
 export function moveDrivingPointV4(

@@ -11,6 +11,9 @@ import type { Vec2 } from "./domain";
 import { evaluateSyntheticCurve } from "./geometry";
 import { solveDirectedConstraints } from "./constraints";
 import type { CubicControls } from "./geometry";
+import SceneLabV4 from "./SceneLabV4";
+import { createConstrainedEditorV4, migrateV3ToConstrainedV4 } from "./constrainedSceneV4";
+import type { ConstrainedEditorV4 } from "./constrainedSceneV4";
 
 type View={x:number;y:number;width:number;height:number};
 type Drag=
@@ -21,6 +24,8 @@ const position=(p:Vec2)=>`${p.x.toFixed(2)}, ${p.y.toFixed(2)} mm`;
 
 export default function SceneLab({onBack}:{onBack:()=>void}) {
  const [editor,setEditor]=useState<SceneEditorV3>(()=>createSceneEditorV3());
+ const [v4Open,setV4Open]=useState(false);
+ const [v4Editor,setV4Editor]=useState<ConstrainedEditorV4|null>(null);
  const [view,setView]=useState<View>(initialView);
  const [selectedId,setSelectedId]=useState<string>("curve-a");
  const [selectedPoint,setSelectedPoint]=useState<number|null>(null);
@@ -169,6 +174,21 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
    }catch(err){setMessage(err instanceof Error?err.message:String(err));}
    finally{e.target.value="";}
  };
+ const enterV4=()=>{
+   const overlayMatchesCurrentScene=v4Editor!==null&&
+     JSON.stringify(v4Editor.project.baseScene)===JSON.stringify(editor.project);
+   if(v4Editor&&overlayMatchesCurrentScene){setV4Open(true);return;}
+   const prompt=v4Editor
+     ?"A cena 0.3 mudou desde a criação do overlay 0.4. Recriar o overlay sobre a cena atual? Isso descartará as regras 0.4 existentes; o JSON 0.3 continuará intacto."
+     :"Criar explicitamente um overlay de constraints 0.4.0 a partir da cena sintética 0.3.0 atual? O laboratório 0.3 permanecerá intacto; nenhum bloco de vestuário será criado.";
+   if(!window.confirm(prompt))return;
+   try{
+     setV4Editor(createConstrainedEditorV4(migrateV3ToConstrainedV4(editor.project)));
+     setV4Open(true);setMessage("");
+   }catch(err){setMessage(err instanceof Error?err.message:String(err));}
+ };
+ if(v4Open&&v4Editor)
+   return <SceneLabV4 editor={v4Editor} onChange={setV4Editor} onBack={()=>setV4Open(false)}/>;
  return <div className="app">
    <aside className="sidebar">
      <div className="brand"><div className="brand-mark">M</div><div><strong>Menswear CAD</strong><span>Laboratório multi-entidades</span></div></div>
@@ -184,6 +204,7 @@ export default function SceneLab({onBack}:{onBack:()=>void}) {
          <button onClick={()=>{setEditor(createSceneEditorV3(exampleSceneV3()));setSelectedId("curve-a");setView(initialView);setMessage("");}}>Novo exemplo</button>
          <button onClick={()=>fileRef.current?.click()}>Abrir JSON 0.3</button>
          <button className="primary" onClick={download}>Salvar JSON 0.3</button>
+         <button onClick={enterV4}>Constraints 0.4 · laboratório</button>
          <input ref={fileRef} type="file" hidden accept=".json,application/json" onChange={open}/>
        </div>
      </header>

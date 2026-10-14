@@ -4,18 +4,18 @@
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
 **Baseline corrente:** 1.29 DRAFT — workspace paramétrico de pesquisa CH02 integrado à `main` (PR #57)
 
-## Prioridade congelada — 14/10/2026
+## Prioridade de entrega — 14/10/2026
 
-- **Ordem obrigatória:** revisão de modelagem documentada das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26), sem inventar parecer; revisão independente e decisão formal do Gate A via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7); só então golden case e POC do bloco de camisa.
+- **Duas trilhas, sem confusão:** enquanto se aguarda revisão de modelagem das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26), podem ser concluídas entregas técnicas já especificadas (por exemplo, APP-004/#49) que não introduzam regras de vestuário. Revisão independente do Gate A segue via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7); só parecer qualificado autoriza golden case e POC do bloco de camisa.
 - **Métrica de progresso:** número de decisões formalmente aprovadas/corrigidas com evidências, e bloqueios efetivamente fechados. Testes de pesquisa, documentação, PRs e versões não constituem aprovação de modelagem.
 - **Status atual:** Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
 - **Integração concluída:** [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclado em 14/10/2026 (commit `8f1e1d80`); a baseline 1.29 está na `main`. O workspace CH02 é de pesquisa, não gera molde de camisa ou saída de corte.
-- **Freeze de expansão:** não ampliar laboratório de calças, FreeSewing ou editor sem resolver bloqueios de domínio/QA. Manutenção de higiene de testes, documentação e dependências pode ocorrer em PR separado sem modificar método/fixture de vestuário.
+- **Limite de expansão:** não iniciar novas famílias de vestuário nem lógica de produção sem fechar domínio/QA. Entregas técnicas limitadas a Issues existentes são permitidas quando seu escopo não inventa método, curva, facilidade, margem ou tolerância de roupa.
 - **Segurança:** `npm audit` do web app reporta **0 achados conhecidos** com `vite@7.3.7` e `vitest@5.0.4`. O spike FreeSewing reporta **10 (9 altos, 1 moderado)** e continua isolado/`NO_RELEASE`. O PR #58 integrou auditoria reproduzível com artefatos JSON; workflow verde não significa vulnerabilidade zero.
 
 ## Snapshot atual
 
-- Testes atuais do web app: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS; quatro checks GitHub do PR #57 passaram antes do merge. Foram inspecionadas capturas desktop 1440×1000 e móvel 390×844, sem overflow horizontal observado.
+- Baseline integrada: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS na CI do PR #57. A branch do [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) acrescenta validação local limpa de **184/184 unitários**, **21/21 E2E Chromium** e build PASS; aguarda CI remoto antes de integrar.
 - **Gate A:** `IN_REVIEW`, requer revisão geométrica independente e escala física documentada. **Gate B:** `NO-GO`, depende de parecer de modelista para Issues #1–#5 via Issue #26. Issues #1–#5, #7 e #26 permanecem abertas.
 - Não há molde de camisa validado, impressão calibrada, toile aprovada ou serviço de produção publicado. A interface CH02 expõe somente pesquisa da construção flat de calça, com corte/exportação bloqueados.
 - [PR #58](https://github.com/JohnGomes84/menswear-cad-suite/pull/58) foi mesclado em 14/10/2026 (commit `1d65c8c`); integrou manutenção de reprodutibilidade/auditoria, sem mudar regras de modelagem nem os estados de Gate A/B.
@@ -149,7 +149,7 @@ O diagrama da página 34 do livro foi inspecionado visualmente, permitindo orien
 
 ## Contrato 0.4 de constraints dirigidas persistentes
 
-O motor de documento experimental `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões. A mudança de origem reavalia o destino. [CI #38468690640](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38468690640): **93/93 testes web e build PASS**. **UI e E2E do schema 0.4 ainda não implementados**; o atual SceneLab segue com 0.3 e alinhamentos pontuais. Solver simultâneo e regras da obra continuam bloqueados/pendentes.
+O motor `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões; a mudança de origem reavalia o destino. O [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) da Issue #49 acrescenta `SceneLabV4` isolado: o laboratório 0.3 permanece, migração/rebase exigem confirmação, regras podem ser criadas/editadas/removidas e conflitos são expostos sem commit parcial. Validação local: **184/184 unitários**, **21/21 E2E Chromium** e build PASS; CI remoto ainda pendente. Solver simultâneo, adição/remoção de entidades no documento 0.4 e regras de vestuário continuam fora do escopo.
 
 
 ## Interpretador fundamentado no passo a passo do livro — 13/10/2026

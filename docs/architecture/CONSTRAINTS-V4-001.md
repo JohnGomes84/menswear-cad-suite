@@ -1,7 +1,7 @@
 # CONSTRAINTS-V4-001 — Persistência reativa de constraints dirigidas (laboratório)
 
 **Formato:** `0.4.0` **experimental**, incompatível com `0.3.0` sem migração explícita.  
-**Status:** implementação sob validação CI.  
+**Status:** motor e interface experimental implementados; validação local completa, CI do [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) pendente.
 **Objetivo:** memorizar constraints e recalculá-las quando o ponto **de origem** mudar, sem confundir esse alcance com um solver paramétrico industrial.
 
 ## Documentos e duas geometrias
@@ -26,14 +26,15 @@ Essa separação impede que uma constraint temporária apague o desenho autoral.
 6. Undo/redo recompõe estados de constraints e geometria após salvar/reabrir; uma nova edição apaga o ramo `redo`.
 7. Limites deliberados da POC: **256 eventos**, JSON até 1 MiB, motor de constraints em mm, tolerância **numérica experimental**.
 
-## NÃO implementado nesta etapa
+## Limites remanescentes nesta etapa
 
 - Solver simultâneo ou múltiplas regras no mesmo destino: o núcleo dirigido ainda exige uma regra por ponto de destino.
-- Adição/remoção de entidades ao documento 0.4 (a composição de `baseScene` permanece fixa).
-- UI de edição/gráfico de constraints 0.4; componentes web existentes continuam usando 0.3 até integração e E2E específicos.
+- Adição/remoção de entidades ao documento 0.4 (a composição de `baseScene` permanece fixa). A edição de regras acontece no modo 0.4 isolado; o laboratório 0.3 continua disponível sem substituição.
 - Regras de moldes do livro, pences, `SeamPair`, `SeamAllowance`, tangências e exportação industrial.
 - Precisão global garantida, calibração de impressão, validação de caimento/toile.
 
 **Gate APP:** experimento; **Gate A:** IN_REVIEW; **Gate B** do PILOT-001: NO-GO.
 
-**Próxima ação:** ligar o modo paramétrico da UI ao documento 0.4, implementar desenho/seleção e visualização de regras e executar E2E; posteriormente construir solver simultâneo com diagnóstico de graus de liberdade e conflitos. Rastrear na Issue #43.
+**Evidência local do APP-004:** 184/184 testes unitários, TypeScript/Vite build PASS e 21/21 E2E Chromium; 11 E2E novos cobrem entrada/migração explícita, regras, drag reativo, rebase após mudança da base, conflitos, serialização, undo/redo, invariância de zoom/pan e layout móvel. O CI remoto ainda precisa confirmar o aceite do PR.
+
+**Próxima ação:** concluir CI e revisão do APP-004; depois, qualquer solver simultâneo com graus de liberdade/conflitos deve ser tratado separadamente na Issue #43. Não usar esta UI ou schema para validar regras de vestuário.

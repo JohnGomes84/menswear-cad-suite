@@ -16,3 +16,23 @@
 .ch02-selected{overflow-wrap:anywhere}
 @media(max-width:1100px){.ch02-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.ch02-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ch02-drawing{height:450px}.ch02-source{font-size:9px}}
+
+
+/* Persistent constraint overlay 0.4 — remains an explicitly synthetic lab. */
+.v4-layout{grid-template-columns:minmax(0,1fr) 360px;min-height:680px}
+.v4-inspector{overflow:auto}
+.v4-entity-list,.v4-constraint-list{display:grid;gap:6px}
+.v4-constraint-card{display:grid;gap:7px;border:1px solid #dfe6ef;background:#f8faff;border-radius:8px;padding:10px;margin:5px 0}
+.v4-constraint-card>strong{font-size:12px;color:#294a7a}
+.v4-constraint-card>span{font-size:10px;color:#536b88}
+.v4-constraint-card>small{font-size:10px;color:#7486a0;overflow-wrap:anywhere}
+.v4-coordinate-row{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr);gap:4px}
+.v4-coordinate-row span{font-size:9px;overflow-wrap:anywhere}
+.v4-form{display:grid;gap:10px}
+.v4-form label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:650;color:#536b88}
+.v4-form input,.v4-form select{width:100%;min-height:38px;border:1px solid #d7e1ef;border-radius:7px;background:#f9fbff;padding:8px;color:#263e63;font-size:12px}
+.v4-form input:focus,.v4-form select:focus{outline:2px solid #7dabea;outline-offset:1px}
+.v4-form .tool-left{flex-wrap:wrap}
+.v4-stats strong{font-size:14px}
+@media(max-width:1150px){.v4-layout{grid-template-columns:1fr;min-height:unset}}
+@media(max-width:700px){.v4-coordinate-row{grid-template-columns:26px minmax(0,1fr) minmax(0,1fr)}.v4-stats strong{font-size:12px}}

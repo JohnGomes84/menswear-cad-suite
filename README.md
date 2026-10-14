@@ -6,11 +6,11 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Prioridade operacional (14/10/2026)
 
-**Congelamento de expansão experimental:** não ampliar novas funcionalidades nos laboratórios CH02, FreeSewing ou editor sem resolver primeiro os bloqueios de domínio/QA. A [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclada em 14/10/2026 (commit `8f1e1d80`), integrando a baseline 1.29 à `main`; o app contém um workspace CH02 de **pesquisa**, não um molde de produção.
+**Limite de expansão:** não iniciar novas famílias de vestuário nem lógica de produção sem resolver domínio/QA. Entregas técnicas já especificadas e sem regras de roupa — como a interface 0.4 da Issue #49 — podem avançar isoladamente. A [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclada em 14/10/2026 (commit `8f1e1d80`), integrando a baseline 1.29 à `main`; o app contém um workspace CH02 de **pesquisa**, não um molde de produção.
 
 **Marco crítico = [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26):** parecer profissional com evidência sobre as pendências do bloco da camisa (#1–#5). Sem decisão formal, **Gate B NO-GO**. [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7) mantém **Gate A IN_REVIEW** até revisão geométrica/QA, referência independente e escala física. O pacote de revisão já está em `docs/domain/MODELING-REVIEW-PACKET-001.md`.
 
-Manutenção técnica do spike não altera as regras de modelagem nem autoriza produção. Informações de `npm audit` devem ser verificadas com a CI específica; integração externa permanece isolada e release de segurança pendente.
+Entregas técnicas limitadas não alteram as regras de modelagem nem autorizam produção. Informações de `npm audit` devem ser verificadas com a CI específica; integração externa permanece isolada e release de segurança pendente.
 
 ## Estado atual
 
@@ -19,7 +19,7 @@ Manutenção técnica do spike não altera as regras de modelagem nem autoriza p
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
-- Fundação experimental do web app: editor geométrico sintético e workspace paramétrico de pesquisa CH02; **182/182 unitários, 10/10 E2E Chromium e build PASS** na validação do PR #57
+- Fundação experimental do web app: a baseline 1.29 passou **182/182 unitários, 10/10 E2E Chromium e build** na CI do PR #57; a branch [APP-004/PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) passou localmente **184/184 unitários, 21/21 E2E Chromium e build**, aguardando CI remoto
 - Código de produção / implementação web funcional de molde real: **bloqueados**
 - `npm audit` do pacote web: **0 achados conhecidos** após patches Vite 7.3.7 / Vitest 5.0.4; spike FreeSewing: **10 achados (9 altos, 1 moderado), ISOLATED / NO_RELEASE**
 - Saídas iniciais previstas: SVG e PDF
@@ -90,7 +90,7 @@ Editor multi-entidades com comandos de criar/excluir/mover e arquivo sintético 
 **Pesquisa de calças CH02:** esqueleto de pontos da frente para blocos flat de uma e duas peças em milímetros, [documentado](docs/domain/CH02-DIAGRAM-001.md) e testado. Sem curva, contorno de corte ou molde aprovado.
 
 
-**Constraints 0.4:** contrato experimental de persistência/reavaliação de relações dirigidas em `prototype/web-app/src/constrainedSceneV4.ts`, independente de camisas/calças. Testado em 93 casos unitários; **a UI 0.4 ainda é pendente**. [Contrato](docs/architecture/CONSTRAINTS-V4-001.md).
+**Constraints 0.4:** contrato experimental de relações dirigidas persistentes em `prototype/web-app/src/constrainedSceneV4.ts`, independente de camisas/calças. O modo `SceneLabV4` da Issue #49 permite editar regras, importar/exportar JSON e revisar drivers/resolvidos; a migração/recriação após mudança da base 0.3 requer confirmação explícita. Aceite local: 184 unitários + 21 E2E + build; CI remoto pendente. Não há solver simultâneo nem moldes reais. [Contrato](docs/architecture/CONSTRAINTS-V4-001.md).
 
 
 ## Motor de instruções do livro (experimento)

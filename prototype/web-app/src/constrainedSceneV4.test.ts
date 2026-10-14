@@ -5,7 +5,7 @@ import {
  addDirectedConstraintV4,createConstrainedEditorV4,
  createConstrainedV4,migrateV3ToConstrainedV4,moveDrivingPointV4,
  parseConstrainedV4,redoConstrainedV4,removeDirectedConstraintV4,
- serializeConstrainedV4,undoConstrainedV4,validateConstrainedV4
+ serializeConstrainedV4,undoConstrainedV4,updateDirectedConstraintV4,validateConstrainedV4
 } from "./constrainedSceneV4";
 
 const ref=(entityId:string,pointIndex:number)=>({entityId,pointIndex});
@@ -52,6 +52,31 @@ describe("Persistent directed constraints — scene 0.4 research overlay",()=>{
    expect(s.project.constraints).toHaveLength(0);
    expect(s.project.resolvedEntities[1].pointsMm[1].y).toBe(95);
    expect(undoConstrainedV4(s).project.resolvedEntities[1].pointsMm[1].y).toBe(115);
+ });
+ it("edits a constraint without changing its ID and keeps the edit reversible after JSON reload",()=>{
+   let state=addDirectedConstraintV4(base(),lineRule);
+   const vertical:DirectedConstraint={
+     id:"h1",kind:"VERTICAL",source:ref("line-a",0),target:ref("line-a",1)
+   };
+   state=updateDirectedConstraintV4(state,"h1",vertical);
+   expect(state.project.constraints).toEqual([vertical]);
+   expect(state.project.history[1].kind).toBe("UPDATE_CONSTRAINT");
+   expect(state.project.resolvedEntities[1].pointsMm[1]).toEqual({x:20,y:95});
+   const loaded=createConstrainedEditorV4(parseConstrainedV4(serializeConstrainedV4(state.project)));
+   const undone=undoConstrainedV4(loaded);
+   expect(undone.project.constraints).toEqual([lineRule]);
+   expect(redoConstrainedV4(undone).project).toEqual(state.project);
+ });
+ it("rejects an edit that conflicts with another active target and leaves the source state intact",()=>{
+   const second:DirectedConstraint={
+     id:"c2",kind:"COINCIDENT",source:ref("line-a",0),target:ref("curve-a",0)
+   };
+   const state=addDirectedConstraintV4(addDirectedConstraintV4(base(),lineRule),second);
+   const conflicting:DirectedConstraint={
+     id:"c2",kind:"VERTICAL",source:ref("line-a",0),target:ref("line-a",1)
+   };
+   expect(()=>updateDirectedConstraintV4(state,"c2",conflicting)).toThrow(/DUPLICATE_TARGET/);
+   expect(state.project.constraints).toEqual([lineRule,second]);
  });
  it("supports coincidence across groups with live recalculation",()=>{
    const rule:DirectedConstraint={
