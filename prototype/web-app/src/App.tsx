@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import SceneLab from "./SceneLab";
+import Ch02ResearchLab from "./Ch02ResearchLab";
 import type { ChangeEvent, PointerEvent } from "react";
 import {
   createEditor, demoProject, exportProject, importProject,
@@ -19,6 +20,7 @@ const formatMm = (value: number) => value.toFixed(2) + " mm";
 
 export default function App() {
   const [multiEntity, setMultiEntity] = useState(false);
+  const [ch02Research, setCh02Research] = useState(false);
   const [editor, setEditor] = useState<EditorState>(() => createEditor());
   const [view, setView] = useState<ViewBox>(initialView);
   const [selected, setSelected] = useState<PointIndex | null>(null);
@@ -140,6 +142,7 @@ export default function App() {
   }
 
   const active = selected === null ? null : points[selected];
+  if (ch02Research) return <Ch02ResearchLab onBack={() => setCh02Research(false)} />;
   if (multiEntity) return <SceneLab onBack={() => setMultiEntity(false)} />;
   return (
     <div className="app">
@@ -150,6 +153,7 @@ export default function App() {
         </div>
         <div className="menu-title">PROJETO</div>
         <button className="nav-button active">▧ Visão geométrica</button>
+        <button className="nav-button" onClick={() => setCh02Research(true)}>◇ Construção Aldrich CH02 <small>fonte auditada · pesquisa</small></button>
         <button className="nav-button" disabled>◉ Medidas do vestuário <small>bloqueado</small></button>
         <button className="nav-button" disabled>♧ Montagem e piques <small>bloqueado</small></button>
         <button className="nav-button" disabled>▤ Exportar para corte <small>bloqueado</small></button>
@@ -160,6 +164,7 @@ export default function App() {
         <header className="topbar">
           <div><span className="breadcrumb">Workspace / Projetos / </span><strong>Curva sintética 001</strong></div>
           <div className="top-actions">
+            <button onClick={() => setCh02Research(true)}>Construção Aldrich CH02</button>
             <button onClick={() => setMultiEntity(true)}>Editor multi-entidades</button>
             <button onClick={() => { setEditor(createEditor(demoProject())); setSelected(null); setView(initialView); setError(""); }}>Novo exemplo</button>
             <button onClick={() => fileInput.current?.click()}>Abrir JSON</button>

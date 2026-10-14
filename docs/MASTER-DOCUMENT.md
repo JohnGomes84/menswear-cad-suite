@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.26 DRAFT — traços textuais CH02 auditados e desenhados pelo FreeSewing sem extrapolação
+**Versão da baseline:** 1.29 DRAFT — interface CH02 ligada ao interpretador paramétrico e ao registro de origem, com 182 testes aprovados
 **Data:** 13/10/2026  
-**Status:** 16 comandos explícitos de traçado de Aldrich CH02 mapeados (8 retas, 8 curvas pendentes); 8 retas geradas por FreeSewing em laboratório, 4 chamadas de 'no seam allowance' regionais registradas, nenhuma margem aplicada e nenhum corte aprovado. Testes de branch: 157/157 web com build e 34/34 integração PASS. 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
+**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e agora área visível de pesquisa CH02: medidas editáveis, método uma/duas peças, variantes BASIC/EASY, pontos calculados e retas explicitamente prescritas exibidas, curvas pendentes sem spline, inspetor por fonte e bloqueios de corte. Baseline 1.29 na branch PR #57; CI web #38542973698: 182/182 testes PASS (12 novos), TypeScript e Vite build PASS. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -848,3 +848,62 @@ Na imagem real PDF p.34 observam-se rótulos `no seam allowance` próximos à **
 Evidência de branch: [Web CI #38487642126](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487642126) **157/157 testes + TS/Vite build PASS**; [FreeSewing CI #38487840635](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487840635) **34/34 testes PASS** e artefatos gerados. O código reutiliza fórmulas, não registra novas geometrias de curva e mantém a infraestrutura do livro e dos fornecedores separadas.
 
 **Próximo gate:** mapear cada linha de função industrial e o alcance real de `no seam allowance` no diagrama; depois resolver curvas por técnica documentada, validar contornos, executar espelhamento quando geometria permitir, trueing, plotagem 1:1 e toile. Até lá, **nenhuma calça para corte ou distribuição comercial**.
+
+
+---
+
+## 45. CH02 — inventário de funções industriais candidatas e composição da peça única (1.27 DRAFT)
+
+Revisão direta da fonte primária de Aldrich, **PDF pp. 31–34**, confrontou os 16 comandos anteriormente catalogados com **as funções explicitamente nomeadas no texto** e a representação do diagrama p. 34. O relatório [CH02-INDUSTRIAL-TOPOLOGY-AUDIT-001](domain/CH02-INDUSTRIAL-TOPOLOGY-AUDIT-001.md) e o registro estruturado [CH02-INDUSTRIAL-TOPOLOGY-CANDIDATES-001](domain/CH02-INDUSTRIAL-TOPOLOGY-CANDIDATES-001.json) diferenciam `TEXT_EXPLICIT_FUNCTION`, `SOURCE_COMMAND`, `DIAGRAM_OBSERVED` e `INDUSTRIAL_EDGE_APPROVED` (último **não atingido**).
+
+**Descoberta textual documentada:** as instruções descrevem explicitamente costura interna da perna nos percursos frente/costas dos métodos de uma e duas peças. Foram registrados **quatro conjuntos candidatos**, cada qual referenciando a curva superior e a reta inferior anteriormente inventariadas, sem alterar `SemanticEdge.role` ou aceitar curvatura que ainda não existe.
+
+**Descoberta topológica:** a confecção da calça de uma peça exige traçar anterior/posterior, espelhar a frente e alinhar as laterais. O desenho de composição final na p. 34 mostra referência interna central **0–2**, que não pode ser automaticamente tratada como contorno de corte externo apenas por estar desenhada na construção; seu papel industrial definitivo não foi atribuído. No desenho de duas peças, as figuras de frente/costas superpostas são referências de construção, não licença para fundir as duas peças em um único contorno. Guias 1–12 e 18–22 também não ganham papéis industriais por suposição.
+
+**Margens:** a regra da p. 31 é **10 mm já incluídos** (com exceções). O diagrama confirma indicações de ausência de margem em regiões de cintura/barra de ambas as famílias; os **quatro registros** mantêm `edgeIds=[]`, `offsetAllowed=false`, `REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED`. Não criar offset adicional nem transformar rótulo regional em escopo de trecho arbitrário.
+
+**Evidência e gate:** [QA-CH02-INDUSTRIAL-TOPOLOGY-001](qa/QA-CH02-INDUSTRIAL-TOPOLOGY-001.md) registra somente consistência documental (`PASS_DOC_PARTIAL`); **nenhum novo teste geométrico/automático foi executado** neste acréscimo. Curvas, orientação de percursos, contornos fechados, espelhamento executado, separação costura/corte, SeamPair, trueing, impressão 1:1 e toile permanecem **NOT_RUN/NOT_YET_DEFINED**. Gates: `APP EXPERIMENTAL_ONLY`, `A IN_REVIEW`, `B PILOT-001 NO_GO`, `COMERCIAL NO_GO`.
+
+**Próxima etapa:** construir uma tabela completa de perímetros orientados em três camadas (construção, composição, contorno industrial), com evidência textual/visual por aresta e exceção, exigindo revisão cruzada e verificação de conectividade antes de qualquer `SEAM_LINE`/`CUT_LINE`. A trilha de pesquisa CH02 **não altera** o piloto formal `PILOT-001 Flat Shirt Core` nem autoriza codificação de produção.
+
+
+---
+
+## 46. Topologia universal e quatro percursos orientados de Aldrich CH02 — baseline 1.28 DRAFT
+
+**Problema isolado:** conectividade de comandos da fonte não equivale a geometria resolvida, costura industrial, peça de tecido ou contorno de corte. O contrato universal [TOPOLOGY-RESEARCH-001](architecture/TOPOLOGY-RESEARCH-001.md) fornece um validador independente de Aldrich, FreeSewing, React e de família de vestuário: `prototype/web-app/src/topologyResearch.ts`. Aceita somente `RESEARCH_ONLY`, rejeita identidade repetida, inversão incoerente, lacunas entre comandos, fonte de outra seção/método, curva tratada como resolvida, papéis industriais escondidos, operações de espelhamento alegadamente executadas e margens não auditadas. Por definição `cutReady=false`, `isCutBoundary=false`.
+
+**Aplicação concreta:** [CH02-ORIENTED-SOURCE-PATHS-001](domain/CH02-ORIENTED-SOURCE-PATHS-001.json) e [auditoria](domain/CH02-ORIENTED-PATHS-AUDIT-001.md) transcrevem **quatro percursos abertos**, com três comandos de origem cada e duas curvas pendentes por cadeia:
+- uma peça/frente `6 → 7 → 8 → 11 → 9`;
+- uma peça/costas `13 → 14 → 16 → 18 → 17`;
+- duas peças/frente `6 → 7 → 8 → 15 → 13`;
+- duas peças/costas `17 → 19 → 21 → 25 → 24`.
+
+Os comandos de trecho inferior de entreperna são percorridos em **sentido inverso do registro do livro** apenas para estabelecer continuidade topológica nominal; isto não espelha geometrias nem reinterpreta curvas. O total mapeado é **12 referências de comandos** entre os 16 originais, incluindo as oito curvas ainda sem spline aprovada. Os outros quatro traços não são forçados a entrar em contorno.
+
+**Três camadas:** `SOURCE_CONSTRUCTION` guarda comandos/identidade/orientação; `pendingOperations` preserva o espelhamento de uma peça como `DOCUMENTED_NOT_EXECUTED`; `INDUSTRIAL_PERIMETER` contém quatro registros `NOT_YET_DEFINED`, `approvedEdgeIds=[]`. Todas as quatro exceções de `no seam allowance` continuam sem `edgeIds` e com `offsetAllowed=false`. A linha 0–2 da composição permanece referência interna não classificada.
+
+**QA:** [QA-TOPOLOGY-RESEARCH-001](qa/QA-TOPOLOGY-RESEARCH-001.md) e `prototype/web-app/src/topologyResearch.test.ts` cobrem sucesso das quatro cadeias, inversões, lacunas, fonte não pertencente ao método, IDs duplicados, promoção ilícita de papel industrial, offset indevido e fixture genérica de outra família. Validação da branch confirmada: [Web CI #38492894696](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38492894696), **13/13 novos testes de topologia e 170/170 testes Vitest totais PASS**, `tsc --noEmit` e build Vite PASS. A verificação é de estrutura e gates, não de geometria pronta.
+
+**Limites:** a conectividade comprovada é **combinatória, entre IDs da fonte**, não uma curva medida, tangenciada ou conformada. Não há contorno completo, espelhamento executado, função de corte aprovada, costura líquida, offset, SeamPair, piques, SVG/PDF de corte ou toile. Gate B PILOT-001 **NO-GO**; comercial **NO-GO**. O piloto da camisa e a arquitetura integral dos 14 capítulos permanecem preservados.
+
+**Próxima etapa justificada:** auditar os **trechos ausentes** dos perímetros na figura (cintura, lateral, barra, composição final), documentando evidência por ligação e escopo de exceção. Só após essa reconciliação e curvas revisadas por modelista poderá existir um perímetro geométrico provisório para testes de fabricação.
+
+
+---
+
+## 47. Aplicativo CH02 agora usa dados calculados a partir da fonte — baseline 1.29 DRAFT
+
+**Problema de integração resolvido:** até a baseline 1.28, apesar de haver interpretador paramétrico real, registros de traçados documentados, topologia própria e prova isolada de integração FreeSewing, o aplicativo inicial apresentava principalmente curvas e grupos de desenho sintéticos. O novo workspace [CH02-RESEARCH-WORKSPACE-001](architecture/CH02-RESEARCH-WORKSPACE-001.md) conecta esses módulos já desenvolvidos a uma interface de uso real para **pesquisa de construção**, não para produção industrial.
+
+**Fluxo de usuário implementado na branch:** a partir de App.tsx abre-se Ch02ResearchLab.tsx. São selecionáveis os métodos ONE_PIECE / TWO_PIECE e variantes BASIC / EASY; o usuário altera quadril, profundidade de gancho e entreperna em centímetros, convertidos para milímetros no motor. O adaptador ch02ResearchViewModel.ts executa draftFlatTrouserSectionsResearch (programa original de construção), resolveCh02BookLineCommands (somente comandos do livro) e inspectResearchTopology (cadeias abertas); portanto **não reescreve as fórmulas** do capítulo 2 nem infere traços da dependência de pontos.
+
+**Resultado gráfico:** pontos e rótulos calculados para frente/costas e somente as retas documentadas em SVG diagnóstico; as curvas aguardando definição são mostradas por referências, sem desenhar Béziers arbitrárias. O painel permite selecionar traços, ler ID/página e comprimento das retas. É possível alternar a visibilidade dos grupos, mas nunca fechar o contorno de corte por suposição. Os exemplos de medidas publicados não são valores universais. O SVG **não** equivale a exportação 1:1.
+
+**Fronteira técnica de código aberto:** o workspace React usa o kernel **próprio** em TypeScript, não incorpora FreeSewing ao pacote principal nem declara a POC com FreeSewing.Part como API aprovada para produção. O adaptador isolado em prototype/integration-spike permanece testado e poderá ser promovido módulo a módulo depois de licenças e limites documentados. Esta etapa evidencia evolução funcional **do aplicativo**, não apenas pesquisa bibliográfica.
+
+**QA confirmado:** [Web CI #38542973698](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38542973698) confirma **182/182 testes unitários PASS**, incluindo 12 novos casos no `ch02ResearchViewModel.test.ts`; TypeScript e Vite build também passam. Nesta continuação, foram adicionados quatro casos E2E CH02; o Playwright Chromium executou **10/10 E2E PASS**, exercitando métodos, variantes, medidas, visibilidade, inspeção e layout móvel. Revisão visual das capturas em 1440×1000 e 390×844 não observou overflow horizontal. `vite`/`vitest` foram atualizados para patches correntes; o `npm audit` do app web passou a reportar zero vulnerabilidades. Evidência e limites em [QA-CH02-RESEARCH-WORKSPACE-001](qa/QA-CH02-RESEARCH-WORKSPACE-001.md). Isso valida interação/renderização e bloqueios, **não** substitui revisão de modelista, desenho industrial, escala física ou prova de costura.
+
+**Gates e riscos preservados:** linhas de costura/corte, oito curvas CH02, margens de 10 mm já incluídas com exceções regionais, composição/espelhamento, impressão e toile permanecem bloqueados ou parciais. O desenho não é comercializável. PILOT-001 — Flat Shirt Core continua o piloto formal e suas regras ainda requerem fechamento próprio; o aplicativo foi preparado para adaptar a camada de pesquisa a outras famílias sem instalar dependências proprietárias ou abandonar o formato universal.
+
+**Próximo passo de produto:** obter revisão de modelista para as decisões abertas do PILOT-001 e, só depois, aplicar a interface de pesquisa a dados de camisa aprovados. A validação visual deste workspace CH02 foi concluída, mas não substitui decisão de domínio, impressão calibrada, teste de montagem/toile nem publicação de um serviço de produção. O Gate B e o estado comercial permanecem `NO-GO`.
