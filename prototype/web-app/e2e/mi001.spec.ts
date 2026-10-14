@@ -123,7 +123,7 @@ test('MI-001 prints source-SHA A4 pages and fillable physical form without promo
  expect(body).toContain('/T (measuredSquareWidth25Mm)');
  expect(body).toContain('/T (measuredSquareHeight25Mm)');
  expect(body).toContain('Scale: NOT_RUN');
- await expect(page.getByText(/Escala física:/)).toContainText('NOT_RUN');
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('NOT_RUN');
 });
 
 
