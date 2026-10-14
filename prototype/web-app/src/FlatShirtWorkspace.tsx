@@ -1,3 +1,4 @@
+import './mi001.css';
 import {useMemo,useRef,useState} from 'react';
 import type {ChangeEvent} from 'react';
 import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
