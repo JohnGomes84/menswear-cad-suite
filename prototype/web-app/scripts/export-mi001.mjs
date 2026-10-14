@@ -8,11 +8,12 @@ import {execFileSync} from 'node:child_process';
 const temp=await mkdtemp(join(tmpdir(),'menswear-mi001-'));
 try{
  const source=join(temp,'entry.ts'),target=join(temp,'entry.mjs');
- await writeFile(source,`export {createShirtProject,serializeShirtProject,changeShirtMeasurement} from ${JSON.stringify(resolve('src/flatShirtProject.ts'))};\nexport {exportShirtSvg,exportShirtPdf,exportCalibrationPdf,exportShirtTiledA4Pdf,exportPhysicalCalibrationProtocolPdf,paginateFlatShirtA4,A4_PRINT} from ${JSON.stringify(resolve('src/flatShirtExport.ts'))};\nexport {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg} from ${JSON.stringify(resolve('src/flatShirtSeamDiagnostic.ts'))};\n`);
+ await writeFile(source,`export {createShirtProject,serializeShirtProject,changeShirtMeasurement,createOwnerApprovedCalibrationProject} from ${JSON.stringify(resolve('src/flatShirtProject.ts'))};\nexport {exportShirtSvg,exportShirtPdf,exportCalibrationPdf,exportShirtTiledA4Pdf,exportPhysicalCalibrationProtocolPdf,paginateFlatShirtA4,A4_PRINT} from ${JSON.stringify(resolve('src/flatShirtExport.ts'))};\nexport {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg} from ${JSON.stringify(resolve('src/flatShirtSeamDiagnostic.ts'))};\n`);
  await build({entryPoints:[source],outfile:target,bundle:true,platform:'node',format:'esm',logLevel:'silent'});
  const x=await import(pathToFileURL(target).href);
  const project=x.createShirtProject();
  const regenerated=x.changeShirtMeasurement(project,'chest',1120);
+ const approvedCalibration=x.createOwnerApprovedCalibrationProject();
  const dir=resolve('mi001-artifacts');await mkdir(dir,{recursive:true});
  const sha=process.env.MI001_COMMIT_SHA || execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
  const printMeta={commitSha:sha,generatedAtISO:new Date().toISOString()};
@@ -33,6 +34,8 @@ try{
  const files=[
   ['flat-shirt-core-initial.draft.json',x.serializeShirtProject(project)],
   ['flat-shirt-core-chest112.draft.json',x.serializeShirtProject(regenerated)],
+  ['flat-shirt-core-owner-calibrated.draft.json',x.serializeShirtProject(approvedCalibration)],
+  ['mi001-physical-calibration-evidence.json',JSON.stringify({projectId:approvedCalibration.projectId,method:approvedCalibration.method,release:approvedCalibration.release,evidence:approvedCalibration.calibrationEvidence},null,2)+'\n'],
   ['flat-shirt-core-diagnostic-1to1.svg',x.exportShirtSvg(regenerated)],
   ['flat-shirt-core-diagnostic-1to1.pdf',x.exportShirtPdf(regenerated)],
   ['calibracao-a4-100percent.pdf',x.exportCalibrationPdf()],
@@ -44,7 +47,7 @@ try{
   ['cava-manga-chest112.diagnostic.json',JSON.stringify(x.compareShirtArmholesToHalfSleeve(regenerated),null,2)+'\n'],
   ['cava-manga-chest100.overlay.svg',x.exportCavaMangaOverlaySvg(project)],
   ['cava-manga-chest112.overlay.svg',x.exportCavaMangaOverlaySvg(regenerated)],
-  ['mi001-status.json',JSON.stringify({format:'MI001-report/0.1.0',method:regenerated.method,pieces:regenerated.pieces.map(p=>({id:p.id,points:p.points.length,edges:p.edges.length})),projectRevision:regenerated.revision,cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'},null,2)+'\n']
+  ['mi001-status.json',JSON.stringify({format:'MI001-report/0.1.0',method:regenerated.method,pieces:regenerated.pieces.map(p=>({id:p.id,points:p.points.length,edges:p.edges.length})),projectRevision:regenerated.revision,cutReady:false,scalePhysical:approvedCalibration.release.scalePhysical,scaleScope:'ONE_REPORTED_PHYSICAL_PRINT_ONLY',physicalEvidenceId:approvedCalibration.calibrationEvidence.id,unverifiedNextPrintStatus:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'},null,2)+'\n']
  ];
  for(const [name,data] of files){await writeFile(join(dir,name),data);console.log('MI001 GENERATED',name,(await readFile(join(dir,name))).length);}
 }finally{await rm(temp,{recursive:true,force:true});}
