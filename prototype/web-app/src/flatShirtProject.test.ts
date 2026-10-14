@@ -1,11 +1,12 @@
 import {describe,it,expect} from 'vitest';
 import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,serializeShirtProject,parseShirtProject,validateShirtProject,evidenceFingerprint} from './flatShirtProject';
 import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf} from './flatShirtExport';
+import {cubicPoint,cubicDerivative,cubicLength} from './geometry';
 const same=(a:unknown,b:unknown)=>expect(a).toEqual(b);
 describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=>{
  it('creates exactly 3 experimental pieces with stable IDs and independent provenance dimensions',()=>{
   const p=createShirtProject();expect(p.pieces.map(x=>x.id)).toEqual(['FRONT','BACK','SLEEVE']);
-  expect(p.method).toMatchObject({id:'ALD-FLAT-SHIRT-CORE',version:'research-0.1.1'});
+  expect(p.method).toMatchObject({id:'ALD-FLAT-SHIRT-CORE',version:'research-0.1.2'});
   expect(p.pieces.every(x=>x.status==='EXPERIMENTAL_CONTOUR_ONLY')).toBe(true);
   expect(p.pieces.every(x=>x.edges.every(e=>e.origin&&e.solution&&e.role&&e.review&&e.source&&e.dependsOn))).toBe(true);
   expect(p.pieces.some(x=>x.edges.some(e=>e.kind==='CUBIC_BEZIER'&&e.origin==='TECHNICAL_DECISION'))).toBe(true);
@@ -100,14 +101,51 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(x).toContain('25 x 25');expect(x).toContain('NOT_RUN');
  });
 
- it('checks documented 7.5mm at sleeve reference 5 and versioned provisional curvature',()=>{
-  const p=createShirtProject();const pts=Object.fromEntries(p.pieces[2].points.map(x=>[x.id,x.positionMm]));
-  const linear=(pts['SLEEVE:3'].y*0.8+pts['SLEEVE:0'].y*0.2);
-  expect(pts['SLEEVE:5'].y-linear).toBeCloseTo(-7.5,7);
-  const cap=p.pieces[2].edges.find(e=>e.from==='SLEEVE:8'&&e.to==='SLEEVE:7');
-  expect(cap?.solution).toBe('SLEEVE_HEAD_INTERPOLATION@1.0.1');
-  expect(p.decisions.find(x=>x.id==='SLEEVE_HEAD_INTERPOLATION')?.version).toBe('1.0.1');
-  expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.1.0'}}))).toThrow(/migra/);
+ it('separates source fifths on the diagonal from the proposed sleeve-head contour',()=>{
+  const p=createShirtProject(),s=p.pieces[2];
+  const pts=Object.fromEntries(s.points.map(q=>[q.id,q.positionMm]));
+  const a=pts['SLEEVE:3'],b=pts['SLEEVE:0'];
+  // Expected drafting proportions are independent of the generation helper.
+  for(const [id,fraction] of [['5',.2],['6',.4],['7',.6],['8',.8]] as const){
+   const actual=pts['SLEEVE:'+id];
+   expect(actual.x).toBeCloseTo(a.x+(b.x-a.x)*fraction,9);
+   expect(actual.y).toBeCloseTo(a.y+(b.y-a.y)*fraction,9);
+  }
+  expect(pts['SLEEVE:HEAD_HOLLOW_5'].y-pts['SLEEVE:5'].y).toBeCloseTo(7.5,9);
+  const midpoint=(pts['SLEEVE:7'].y+pts['SLEEVE:8'].y)/2;
+  expect(pts['SLEEVE:HEAD_RAISE_78'].x).toBeCloseTo((pts['SLEEVE:7'].x+pts['SLEEVE:8'].x)/2,9);
+  expect(pts['SLEEVE:HEAD_RAISE_78'].y-midpoint).toBeCloseTo(-15,9);
+  expect(p.decisions.find(d=>d.id==='SLEEVE_HEAD_INTERPOLATION')?.version).toBe('1.0.2');
+  expect(s.edges.filter(e=>e.solution==='SLEEVE_HEAD_INTERPOLATION@1.0.2')).toHaveLength(4);
+  expect(s.edges.some(e=>e.solution==='SOURCE_DIAGONAL_0_3'&&e.role==='CONSTRUCTION')).toBe(true);
+ });
+ it('has smooth C1 tangent direction across provisional head knots with no spike above tip 0',()=>{
+  const s=createShirtProject().pieces[2],p=Object.fromEntries(s.points.map(x=>[x.id,x.positionMm]));
+  const cap=s.edges.filter(e=>e.solution==='SLEEVE_HEAD_INTERPOLATION@1.0.2');
+  expect(cap.map(e=>e.from)).toEqual(['SLEEVE:0','SLEEVE:HEAD_RAISE_78','SLEEVE:6','SLEEVE:HEAD_HOLLOW_5']);
+  for(const edge of cap){
+   const controls=[p[edge.from],...edge.controlsMm!,p[edge.to]] as const;
+   for(let k=0;k<=100;k++){
+    const sample=cubicPoint(controls,k/100);
+    expect(sample.y).toBeGreaterThanOrEqual(-1e-7);
+    expect(sample.x).toBeLessThanOrEqual(1e-7);
+    expect(sample.x).toBeGreaterThanOrEqual(p['SLEEVE:3'].x-1e-7);
+   }
+   expect(cubicLength(controls)).toBeGreaterThan(0);
+  }
+  for(let i=0;i<cap.length-1;i++){
+   const e=cap[i],next=cap[i+1];
+   const exit=cubicDerivative([p[e.from],...e.controlsMm!,p[e.to]],1);
+   const enter=cubicDerivative([p[next.from],...next.controlsMm!,p[next.to]],0);
+   const cross=exit.x*enter.y-exit.y*enter.x;
+   expect(Math.abs(cross)/(Math.hypot(exit.x,exit.y)*Math.hypot(enter.x,enter.y))).toBeLessThan(1e-10);
+   expect(exit.x*enter.x+exit.y*enter.y).toBeGreaterThan(0);
+  }
+ });
+ it('does not silently reinterpret old version or rely on arbitrary 7–8 control bump',()=>{
+  const p=createShirtProject();
+  expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.1.1'}}))).toThrow(/migra/);
+  expect(p.pieces[2].points.find(x=>x.id==='SLEEVE:5')?.positionMm.y).toBeCloseTo(75.7333333333,5);
  });
  it('rejects clipping and piece overlap in diagnostic PDF and SVG exports',()=>{
   const original=createShirtProject();expect(exportShirtPdf(original).length).toBeGreaterThan(1000);
