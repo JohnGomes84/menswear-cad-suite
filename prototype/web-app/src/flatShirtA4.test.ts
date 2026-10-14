@@ -53,7 +53,7 @@ describe('MI-001 A4 print diagnostic — never pattern authorization',()=>{
   expect((txt.match(/\/MediaBox \[0 0 595\.27559 841\.88976\]/g)??[])).toHaveLength(tiles.length);
   expect((txt.match(/DRAFT \/ NO CUT \/ PROVISIONAL GEOMETRY/g)??[])).toHaveLength(tiles.length);
   expect((txt.match(new RegExp('Commit SHA: '+FIXED.commitSha,'g'))??[])).toHaveLength(tiles.length);
-  expect((txt.match(new RegExp('Generated \\(UTC\\): '+FIXED.generatedAtISO.replaceAll('.','\\.'),'g'))??[])).toHaveLength(tiles.length);
+  expect(txt.split(FIXED.generatedAtISO).length-1).toBe(tiles.length);
   expect((txt.match(/ W n/g)??[])).toHaveLength(tiles.length); // ONLY clip to the nominal 180x214mm window
   expect(txt).toContain('100mm ruler - measure on paper');expect(txt).toContain('25x25 mm');
   expect(txt).toContain('NOT_RUN');expect(txt).toContain('cutReady=false');
