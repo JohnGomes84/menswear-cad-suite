@@ -211,7 +211,7 @@ function makeMultipagePdf(draws:readonly string[]):Uint8Array{
  });
  return writer.finish();
 }
-const fmtMm=(v:number)=>n(v).toString();
+const fmtMm=(v:number)=>exact(v).toString();
 function a4TileDraw(project:ShirtProject,page:TiledPage,total:number,meta:PrintA4Metadata):string{
  const A=A4_PRINT,H=A.pageHeightMm,piece=project.pieces.find(p=>p.id===page.piece)!;
  let d='0.48 w\n';
