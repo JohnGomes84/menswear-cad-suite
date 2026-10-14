@@ -5,7 +5,9 @@
   "type": "module",
   "description": "Isolated source-first vertical integration proof, diagnostic only",
   "scripts": {
+    "pretest": "node scripts/prepare-research.mjs",
     "test": "node --test tests/*.test.mjs",
+    "predemo": "node scripts/prepare-research.mjs",
     "demo": "node demo.mjs"
   },
   "dependencies": {
