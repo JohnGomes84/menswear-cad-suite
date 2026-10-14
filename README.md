@@ -19,7 +19,7 @@ Entregas técnicas limitadas não alteram as regras de modelagem nem autorizam p
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
-- Fundação experimental do web app: a baseline 1.29 passou **182/182 unitários, 10/10 E2E Chromium e build** na CI do PR #57; a branch APP-004/#49 passou localmente **184/184 unitários, 21/21 E2E Chromium e build**, aguardando CI remoto
+- Fundação experimental do web app: a baseline 1.29 passou **182/182 unitários, 10/10 E2E Chromium e build** na CI do PR #57; a branch [APP-004/PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) passou localmente **184/184 unitários, 21/21 E2E Chromium e build**, aguardando CI remoto
 - Código de produção / implementação web funcional de molde real: **bloqueados**
 - `npm audit` do pacote web: **0 achados conhecidos** após patches Vite 7.3.7 / Vitest 5.0.4; spike FreeSewing: **10 achados (9 altos, 1 moderado), ISOLATED / NO_RELEASE**
 - Saídas iniciais previstas: SVG e PDF

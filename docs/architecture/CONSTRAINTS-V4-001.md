@@ -1,7 +1,7 @@
 # CONSTRAINTS-V4-001 — Persistência reativa de constraints dirigidas (laboratório)
 
 **Formato:** `0.4.0` **experimental**, incompatível com `0.3.0` sem migração explícita.  
-**Status:** motor e interface experimental implementados; validação local completa, CI do PR APP-004 pendente.
+**Status:** motor e interface experimental implementados; validação local completa, CI do [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) pendente.
 **Objetivo:** memorizar constraints e recalculá-las quando o ponto **de origem** mudar, sem confundir esse alcance com um solver paramétrico industrial.
 
 ## Documentos e duas geometrias

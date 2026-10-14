@@ -15,7 +15,7 @@
 
 ## Snapshot atual
 
-- Baseline integrada: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS na CI do PR #57. A branch APP-004 acrescenta validação local limpa de **184/184 unitários**, **21/21 E2E Chromium** e build PASS; aguarda CI remoto antes de integrar.
+- Baseline integrada: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS na CI do PR #57. A branch do [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) acrescenta validação local limpa de **184/184 unitários**, **21/21 E2E Chromium** e build PASS; aguarda CI remoto antes de integrar.
 - **Gate A:** `IN_REVIEW`, requer revisão geométrica independente e escala física documentada. **Gate B:** `NO-GO`, depende de parecer de modelista para Issues #1–#5 via Issue #26. Issues #1–#5, #7 e #26 permanecem abertas.
 - Não há molde de camisa validado, impressão calibrada, toile aprovada ou serviço de produção publicado. A interface CH02 expõe somente pesquisa da construção flat de calça, com corte/exportação bloqueados.
 - [PR #58](https://github.com/JohnGomes84/menswear-cad-suite/pull/58) foi mesclado em 14/10/2026 (commit `1d65c8c`); integrou manutenção de reprodutibilidade/auditoria, sem mudar regras de modelagem nem os estados de Gate A/B.
@@ -149,7 +149,7 @@ O diagrama da página 34 do livro foi inspecionado visualmente, permitindo orien
 
 ## Contrato 0.4 de constraints dirigidas persistentes
 
-O motor `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões; a mudança de origem reavalia o destino. O PR da Issue #49 acrescenta `SceneLabV4` isolado: o laboratório 0.3 permanece, a migração exige confirmação, regras podem ser criadas/editadas/removidas e os conflitos são expostos sem commit parcial. Validação local: **184/184 unitários**, **18/18 E2E Chromium** e build PASS; CI remoto ainda pendente. Solver simultâneo, adição/remoção de entidades no documento 0.4 e regras de vestuário continuam fora do escopo.
+O motor `constrainedSceneV4.ts` separa drivers e coordenadas resolvidas, grava regras dirigidas com eventos e reconstrói undo/redo entre sessões; a mudança de origem reavalia o destino. O [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) da Issue #49 acrescenta `SceneLabV4` isolado: o laboratório 0.3 permanece, migração/rebase exigem confirmação, regras podem ser criadas/editadas/removidas e conflitos são expostos sem commit parcial. Validação local: **184/184 unitários**, **21/21 E2E Chromium** e build PASS; CI remoto ainda pendente. Solver simultâneo, adição/remoção de entidades no documento 0.4 e regras de vestuário continuam fora do escopo.
 
 
 ## Interpretador fundamentado no passo a passo do livro — 13/10/2026

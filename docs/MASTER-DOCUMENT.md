@@ -2,7 +2,7 @@
 
 **Versão da baseline:** 1.29 DRAFT — integrada à `main`; APP-004/Issue #49 é candidato de próxima entrega, ainda não integrado
 **Data:** 14/10/2026
-**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e workspace CH02 de pesquisa. A branch `feature/app-004-persistent-constraint-ui` acrescenta interface isolada para constraints persistentes 0.4; validação local limpa: 184/184 testes, 21/21 E2E Chromium e build PASS; CI remoto pendente. Esta entrega é software genérico/sintético, não altera método de vestuário. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
+**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e workspace CH02 de pesquisa. A branch `feature/app-004-persistent-constraint-ui` está no [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60), que acrescenta interface isolada para constraints persistentes 0.4; validação local limpa: 184/184 testes, 21/21 E2E Chromium e build PASS; CI remoto pendente no head `03f08e5`. Esta entrega é software genérico/sintético, não altera método de vestuário. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -915,7 +915,7 @@ Os comandos de trecho inferior de entreperna são percorridos em **sentido inver
 
 ## 48. Interface experimental de constraints persistentes 0.4 — APP-004 em validação
 
-A branch `feature/app-004-persistent-constraint-ui`, derivada da `main` pós-PR #58 (`1d65c8c`), liga o contrato experimental `ConstrainedSceneV4` a um modo independente no laboratório web. O modo 0.3 continua disponível e inalterado; a entrada no 0.4 e a conversão 0.3→0.4 exigem confirmação explícita. Isso fecha uma lacuna de interação do editor sintético, não um bloqueio de modelagem de vestuário.
+A branch `feature/app-004-persistent-constraint-ui`, derivada da `main` pós-PR #58 (`1d65c8c`), está em revisão no [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) e liga o contrato experimental `ConstrainedSceneV4` a um modo independente no laboratório web. O modo 0.3 continua disponível e inalterado; a entrada no 0.4 e a conversão 0.3→0.4 exigem confirmação explícita. Isso fecha uma lacuna de interação do editor sintético, não um bloqueio de modelagem de vestuário.
 
 A tela `SceneLabV4` permite criar, editar e remover constraints dirigidas `COINCIDENT`, `HORIZONTAL`, `VERTICAL` e `DISTANCE` em mm; selecionar entidades/pontos de origem e destino; visualizar IDs e distinguir posições driver/autoriais de posições resolvidas; salvar/abrir JSON versionado 0.4.0; e desfazer/refazer inclusive após reabertura. Mover uma origem válida recalcula o destino. Os conflitos `DUPLICATE_TARGET`, `CYCLIC_DEPENDENCY` e `UNDETERMINED_DIRECTION` são apresentados sem commit parcial. `PLAYWRIGHT_PORT` selecionável evita que E2E reutilize um preview pertencente a outro worktree.
 
