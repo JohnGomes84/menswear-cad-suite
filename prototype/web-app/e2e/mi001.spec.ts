@@ -60,12 +60,12 @@ test('MI-001 keeps diagnostic workspace usable but rejects clipped PDF and persi
 
 test('MI-001 displays undefined cava/head verdict and exports traceable same-mm overlay',async({page})=>{
  await page.goto('/');await page.getByRole('button',{name:/Flat Shirt Core — projeto experimental/}).click();
- await expect(page.getByRole('heading',{name:/Cava × meia cabeça · INDEFINIDA/})).toBeVisible();
+ await expect(page.getByRole('heading',{name:/Cava × meia cabeça · INDEFINITE/})).toBeVisible();
  await expect(page.getByTestId('mi001-cava-comparison')).toContainText('295.319 mm');
  await expect(page.getByTestId('mi001-excedente-total')).toContainText('21.574 mm');
  const [svg]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Comparação cava–manga SVG'}).click()]);
  const content=await readFile(await svg.path(),'utf8');
- expect(content).toContain('width="910mm"');expect(content).toContain('INDEFINIDA');
+ expect(content).toContain('width="910mm"');expect(content).toContain('INDEFINITE');
  expect(content).toContain('data-geometric-excess-mm="21.574"');
  expect(content).toContain('EXCEDENTE geométrico');
  expect(content).toContain('data-edges="FRONT:E04 FRONT:E03"');
@@ -74,7 +74,7 @@ test('MI-001 displays undefined cava/head verdict and exports traceable same-mm 
  await page.getByRole('spinbutton',{name:'Tórax'}).blur();
  await expect(page.getByTestId('mi001-cava-comparison')).toContainText('302.599 mm');
  await expect(page.getByTestId('mi001-excedente-total')).toContainText('6.415 mm');
- await expect(page.getByRole('heading',{name:/INDEFINIDA/})).toBeVisible();
+ await expect(page.getByRole('heading',{name:/INDEFINITE/})).toBeVisible();
 });
 
 test('MI-001 shows all edge industrial-role classifications and downloads provenance JSON',async({page})=>{
