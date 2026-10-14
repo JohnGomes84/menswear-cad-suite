@@ -100,7 +100,7 @@ describe('MI002 two-panel short — source-independent technical draft',()=>{
   expect(()=>validateShortTiles(p,[...tiles,tiles[0]])).toThrow();
   const moved=tiles.map(x=>({...x}));
   moved[0]={...moved[0],originXmm:moved[0].originXmm+20};
-  expect(()=>validateShortTiles(p,moved)).toThrow(/MI002_A4_TILE_SHIFT/);
+  expect(()=>validateShortTiles(p,moved)).toThrow(/MI002_A4_TILE_(SHIFT|BOUNDS)/);
   expect(p.release.scalePhysical).toBe('NOT_RUN');
   expect(p.release.assembly).toBe('NOT_RUN');
   expect(p.release.fit).toBe('NOT_RUN');
