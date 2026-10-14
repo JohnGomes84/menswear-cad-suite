@@ -84,7 +84,8 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
     <div className="mi001-scroll">{selected.edges.map(e=><div key={e.id} className="mi001-edge"><strong>{e.id}</strong> · {e.kind}<small>{e.origin} / {e.role}</small><small>{e.solution}</small><small>{e.review.state} · {e.source}</small></div>)}</div>
     <h3>Cava × meia cabeça · {cavityDiagnostic.verdict}</h3>
     <p data-testid="mi001-cava-comparison">Frente: <strong>{cavityDiagnostic.front.totalMm.toFixed(3)} mm</strong> | Costas: <strong>{cavityDiagnostic.back.totalMm.toFixed(3)} mm</strong> | Meia cabeça: <strong>{cavityDiagnostic.halfSleeveHead.totalMm.toFixed(3)} mm</strong></p>
-    <p>Diferença meia cabeça − frente: <strong>{cavityDiagnostic.differences.halfHeadMinusFrontMm.toFixed(3)} mm</strong>. Sem piques, SeamPair, folga ou correspondência de costuras aprovados. Frente e costas usam curvas diagnósticas coincidentes.</p>
+    <p data-testid="mi001-excedente-total"><strong>Excedente geométrico total: {cavityDiagnostic.geometricExcess.excessTotalMm.toFixed(3)} mm</strong> = cabeça hipotética espelhada ({cavityDiagnostic.geometricExcess.headTotalHypothesisMm.toFixed(3)} mm) − cavas ({cavityDiagnostic.geometricExcess.armscyeTotalMm.toFixed(3)} mm).</p>
+    <p>Por metade: frente +{cavityDiagnostic.geometricExcess.excessFrontHalfMm.toFixed(3)} mm; costas +{cavityDiagnostic.geometricExcess.excessBackHalfMm.toFixed(3)} mm. <strong>Não é folga aprovada:</strong> linha de costura NÃO IDENTIFICADA; piques, zonas e alvo/tolerância indefinidos. Frente e costas usam curvas coincidentes.</p>
     <h3>Decisões técnicas versionadas</h3>
     <div className="mi001-scroll">{project.decisions.map(d=><p key={d.id}><strong>{d.id}@{d.version}</strong><small> · {d.status}</small><br/><small>{d.description}</small></p>)}</div>
     <h3>Gate e provas</h3>
