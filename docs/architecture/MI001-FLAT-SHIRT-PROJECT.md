@@ -212,3 +212,30 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 **Artefatos gerados pela CI:** `flat-shirt-core-a4-100percent.pdf`, `mi001-protocolo-fisico-preenchivel.pdf`, `mi001-a4-page-map.json` (tabela de páginas e marcas), `mi001-a4-instrucoes-impressao.txt`; permanecem o PDF nominal de plotter e a folha A4 original. Testes unitários, navegador e verificação de estrutura PDF no SHA final integram a evidência digital; nenhuma prova física é realizada automaticamente.
 
 **Próxima decisão — NÃO executar sem instrução:** optar pela correspondência cava–manga, margens, `PatternPiece`, validação da impressão a partir das medições, ou outra prioridade do titular, cada uma com pré-requisitos e riscos específicos.
+
+## Registro de observação física do titular — calibração relatada, sem métricas (14/10/2026)
+
+**Origem da informação:** declaração direta do titular nesta conversa em 14/10/2026: **"O CUBO DE ESCALA ESTÁ EXATO E PRECISO"**. O titular havia informado que a impressão foi realizada. Esta declaração é **evidência qualitativa relatada**, não medição numérica disponibilizada ao projeto nem parecer laboratorial. Não está demonstrado se o "cubo de escala" corresponde à régua impressa de 100 mm, ao quadrado A4 de 25 mm ou a outro objeto; não atribuir suas dimensões sem identificação.
+
+**Vinculação digital (referência, não prova de que foi exatamente esse o arquivo impresso):**
+- Projeto de exemplo `flat-shirt-core-experimental-001`, revisão `1`; método `ALD-FLAT-SHIRT-CORE@research-0.1.2`.
+- PDF paginado e protocolo gerados no commit `4be146a39f2c9e4d5e40f847d52db62d98b41b7e`, geração digital UTC `2026-10-14T16:35:59.413Z`; artefatos `flat-shirt-core-a4-100percent.pdf`, `mi001-protocolo-fisico-preenchivel.pdf`, `mi001-a4-page-map.json`. **Arquivo e revisão efetivamente utilizados na impressão ainda não comprovados**, assim como data real, impressora, driver, papel e responsável.
+- Escala selecionada **100% / tamanho real** conforme relato do titular, sem comprovante de configuração.
+
+| Grandeza de referência | Valor nominal obtido do artefato digital | Valor real informado | Desvio absoluto | Desvio relativo |
+|---|---:|---|---|---|
+| Régua de calibração | 100 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Quadrado de calibração — largura | 25 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Quadrado de calibração — altura | 25 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Frente — largura entre extremos do conjunto de pontos do exemplo | 345 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Frente — altura entre extremos do conjunto de pontos do exemplo | 730 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Costas — largura entre extremos do conjunto de pontos do exemplo | 345 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Costas — altura entre extremos do conjunto de pontos do exemplo | 730 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Manga — distância reta dos pontos 0→2 do exemplo | 630 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+| Manga — diagonal reta dos pontos 3→0 do exemplo | 298,686155 mm | NÃO INFORMADO | INDETERMINADO | INDETERMINADO |
+
+**Definições métricas:** `desvioAbsolutoMm = observadoMm − nominalMm` (sinal preservado; módulo para magnitude); `desvioPercentual = 100 × (observadoMm − nominalMm) / nominalMm`. Estas operações **não foram executadas sobre dados físicos**, pois nenhum valor observado em mm foi apresentado. Os limites nominais das peças são a caixa dos pontos do projeto de exemplo, não medidas de linha de costura nem de corte.
+
+**Estado da evidência:** `PRINTING_REPORTED_BY_OWNER`, `SCALE_CUBE_EXACT_SELF_REPORTED_UNQUANTIFIED`; conferência quantitativa `PENDING_PHYSICAL_MEASUREMENTS`; critérios de aceitação `PENDING_OWNER_DECISION`. **Estado canônico do projeto `scalePhysical=NOT_RUN` permanece inalterado** até dados mensuráveis e decisão explícita do titular; `cutReady=false`, `assembly=NOT_RUN`, `fit=NOT_RUN`; linha de costura `NOT_IDENTIFIED` e encaixe cava–manga `INDEFINITE`. A declaração positiva sobre o cubo não é evidência de que o molde montado foi conferido dimensionalmente e não autoriza alterações no método.
+
+**Próxima entrada aguardada — sem nova frente de trabalho:** identificação e dimensões nominais/reais do objeto chamado "cubo de escala", mais valores físicos das referências da folha e do molde se o titular desejar sua avaliação; critério de aceitação definido pelo titular. Não presumir `PASSED_WITH_EVIDENCE`, `FAILED_WITH_EVIDENCE` ou promoção automática.
