@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
-import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg,ARMHOLE_CHAIN,HALF_SLEEVE_HEAD_CHAIN} from './flatShirtSeamDiagnostic';
+import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg,classifyFlatShirtEdges,ARMHOLE_CHAIN,HALF_SLEEVE_HEAD_CHAIN} from './flatShirtSeamDiagnostic';
 import {exportShirtSvg,exportShirtPdf} from './flatShirtExport';
 
 // Numeric references integrated independently using SciPy quad with absolute eps 1e-11,
@@ -105,4 +105,60 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect(r.reason).toMatch(/SeamPair/);
   expect(r.front.totalMm).toBe(r.back.totalMm);
  });
+ it('classifies all 22 existing edges without inferring a stitch or fold line',()=>{
+  const p=createShirtProject(),before=serializeShirtProject(p);
+  const roles=classifyFlatShirtEdges(p);
+  expect(roles).toHaveLength(22);
+  expect(roles.map(x=>x.edgeId)).toEqual(p.pieces.flatMap(x=>x.edges.map(e=>e.id)));
+  expect(roles.filter(x=>x.classification==='CONSTRUCTION_LINE').map(x=>x.edgeId))
+   .toEqual(['FRONT:E07','BACK:E07','SLEEVE:E05','SLEEVE:E08']);
+  expect(roles.filter(x=>x.classification==='UNCLASSIFIED')).toHaveLength(18);
+  expect(roles.every(x=>x.classification!=='SEAM_LINE'&&x.classification!=='FOLD_LINE')).toBe(true);
+  expect(roles.every(x=>x.stitchLineConfirmed===false&&x.roleRevision==='DRAFT')).toBe(true);
+  expect(roles.find(x=>x.edgeId==='SLEEVE:E08')).toMatchObject({
+   previousRole:'CONSTRUCTION',classification:'CONSTRUCTION_LINE',classificationOrigin:'SOURCE_EXPLICIT',
+   sourceLocation:'PDF p.36; fig. p.38'
+  });
+  expect(roles.find(x=>x.edgeId==='FRONT:E07')).toMatchObject({
+   previousRole:'UNCLASSIFIED',classification:'CONSTRUCTION_LINE',classificationOrigin:'SOURCE_INFERRED'
+  });
+  for(const id of ['FRONT:E03','FRONT:E04','BACK:E03','BACK:E04',
+   'SLEEVE:E01','SLEEVE:E02','SLEEVE:E03','SLEEVE:E04']){
+   expect(roles.find(x=>x.edgeId===id)).toMatchObject({
+    classification:'UNCLASSIFIED',classificationOrigin:'PENDING_REVIEW',stitchLineConfirmed:false
+   });
+  }
+  expect(serializeShirtProject(p)).toBe(before);
+  expect(p.method.version).toBe('research-0.1.2');
+ });
+ it('exposes edge classification in diagnostic JSON but leaves original stitchLineStatus and lengths untouched',()=>{
+  const p=createShirtProject();
+  const before=compareShirtArmholesToHalfSleeve(p);
+  const snapshot=serializeShirtProject(p);
+  const classified=classifyFlatShirtEdges(p);
+  const next=compareShirtArmholesToHalfSleeve(p);
+  expect(next.edgeClassifications).toEqual(classified);
+  expect(next.geometricExcess.stitchLineStatus).toBe('NOT_IDENTIFIED');
+  expect(next.front.totalMm).toBeCloseTo(EXPECTED_100.arm,7);
+  expect(next.halfSleeveHead.totalMm).toBeCloseTo(EXPECTED_100.half,7);
+  expect(next.geometricExcess.excessTotalMm).toBeCloseTo(EXPECTED_100.fullHypothesisDelta,7);
+  expect(next.front.segments).toEqual(before.front.segments);
+  expect(next.back.segments).toEqual(before.back.segments);
+  expect(next.halfSleeveHead.segments).toEqual(before.halfSleeveHead.segments);
+  expect(next.release.cutReady).toBe(false);
+  expect(JSON.parse(JSON.stringify(next)).edgeClassifications).toHaveLength(22);
+  expect(serializeShirtProject(p)).toBe(snapshot);
+ });
+ it('embeds all classification origins and prior roles in the existing SVG without moving geometry',()=>{
+  const p=createShirtProject();
+  const svg=exportShirtSvg(p);
+  expect((svg.match(/data-line-class=/g)??[])).toHaveLength(22);
+  expect((svg.match(/data-class-origin=/g)??[])).toHaveLength(22);
+  expect(svg).toContain('data-line-class="CONSTRUCTION_LINE" data-class-origin="SOURCE_EXPLICIT"');
+  expect(svg).toContain('data-line-class="UNCLASSIFIED" data-class-origin="PENDING_REVIEW"');
+  expect(svg).toContain('0 SEAM_LINE');
+  expect(svg).toContain('cutReady=false');
+  expect(p.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
+ });
+
 });
