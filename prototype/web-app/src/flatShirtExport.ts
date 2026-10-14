@@ -20,8 +20,35 @@ function segments(piece:ShirtPiece){
  const tr=(p:{x:number;y:number})=>({x:p.x+offset.x,y:p.y+offset.y});
  return piece.edges.map(edge=>({edge,from:tr(byId(piece,edge.from)),to:tr(byId(piece,edge.to)),controls:edge.controlsMm?.map(tr)}));
 }
-export function exportShirtSvg(raw:ShirtProject):string{
+/**
+ * Conservative full-page proof. Cubic Bézier stays within its control-point hull.
+ * Fail closed rather than crop a valid-size garment into a misleading nominal PDF.
+ */
+export function assertNominalSheetFits(project:ShirtProject):void{
+ const p=validateShirtProject(project);
+ const boxes=p.pieces.map(piece=>{
+  const segmentsForPiece=segments(piece);
+  const all=segmentsForPiece.flatMap(({from,to,controls})=>[from,to,...(controls??[])]);
+  if(!all.length)throw new Error('Sem geometria diagnóstica para '+piece.id);
+  const x0=Math.min(...all.map(x=>x.x)),x1=Math.max(...all.map(x=>x.x));
+  const y0=Math.min(...all.map(x=>x.y)),y1=Math.max(...all.map(x=>x.y));
+  if(x0<10||y0<50||x1>SHEET.widthMm-10||y1>SHEET.heightMm-12)
+   throw new RangeError('EXPORT_PAGE_OVERFLOW: '+piece.id+' ultrapassa 1200 x 850 mm; não é permitido cortar nem redimensionar silenciosamente');
+  // The printed calibration zone must remain free of any garment geometry.
+  if(x0<1100&&x1>980&&y0<839&&y1>780)
+   throw new RangeError('EXPORT_CALIBRATION_OVERLAP: '+piece.id+' ocupa região de calibração');
+  return {id:piece.id,x0,x1,y0,y1};
+ });
+ for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
+  const a=boxes[i],b=boxes[j];
+  if(a.x0<b.x1&&a.x1>b.x0&&a.y0<b.y1&&a.y1>b.y0)
+   throw new RangeError('EXPORT_PIECE_OVERLAP: '+a.id+' e '+b.id+' ocupam a mesma área na folha');
+ }
+}
+
+export function exportShirtSvg(raw:ShirtProject,enforcePaperBounds=true):string{
  const project=validateShirtProject(raw), water='DRAFT / NO CUT / GEOMETRIA EXPERIMENTAL';
+ if(enforcePaperBounds)assertNominalSheetFits(project);
  const tags=project.pieces.map(piece=>{
    const items=segments(piece).map(({edge,from,to,controls})=>{
      const d=`M ${n(from.x)} ${n(from.y)} ${controls?`C ${n(controls[0].x)} ${n(controls[0].y)} ${n(controls[1].x)} ${n(controls[1].y)} ${n(to.x)} ${n(to.y)}`:`L ${n(to.x)} ${n(to.y)}`}`;
@@ -62,6 +89,7 @@ const rect=(x:number,y:number,w:number,h:number,H:number)=>`${xy(x,y+h,H)} ${n(w
 const txt=(v:string,x:number,y:number,sizePt:number,H:number)=>`BT /F1 ${n(sizePt)} Tf ${xy(x,y,H)} Td (${pdfEsc(v)}) Tj ET\n`;
 export function exportShirtPdf(raw:ShirtProject):Uint8Array{
  const p=validateShirtProject(raw),H=SHEET.heightMm;
+ assertNominalSheetFits(p);
  let stream=`0.6 w\n`+txt('DRAFT / NO CUT / EXPERIMENTAL GEOMETRY',25,17,25,H)+txt(`Flat Shirt Core ${p.projectId} r${p.revision} | Method ${p.method.version} | 1:1 nominal mm | physical NOT_RUN`,25,29,12,H);
  for(const piece of p.pieces){
   stream+=txt(piece.id+' - PROVISIONAL',placement[piece.id].x,45,12,H);
