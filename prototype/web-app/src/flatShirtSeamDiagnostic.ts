@@ -14,13 +14,13 @@ import type {Vec2} from './domain';
  * industrial function. "1 cm allowance included" (PDF p35) does not tell us
  * which draft stroke is the stitch line. No inferred seam or fold is allowed.
  */
-export type LineClass='SEAM_LINE'|'CONSTRUCTION_LINE'|'FOLD_LINE'|'MARK'|'UNCLASSIFIED';
-export type ClassificationOrigin='SOURCE_EXPLICIT'|'SOURCE_INFERRED'|'TECHNICAL_DECISION'|'PENDING_REVIEW';
+export type LineClass='CONSTRUCTION_LINE'|'UNCLASSIFIED';
+export type ClassificationOrigin='SOURCE_EXPLICIT'|'SOURCE_INFERRED'|'TECHNICAL_DECISION'|'PENDING_OWNER_DECISION';
 export type EdgeClassification={
  edgeId:string;from:string;to:string;previousRole:ShirtEdge['role'];
  classification:LineClass;classificationOrigin:ClassificationOrigin;
  sourceLocation:string;sourceEvidence:string;justification:string;
- solution:string;geometryOrigin:ShirtEdge['origin'];roleRevision:'DRAFT';stitchLineConfirmed:false;
+ solution:string;geometryOrigin:ShirtEdge['origin'];roleRevision:'DRAFT';decisionState:'PENDING_OWNER_DECISION';stitchLineConfirmed:false;
 };
 type LineClassificationSpec={
  id:string;from:string;to:string;classification:LineClass;
@@ -28,7 +28,7 @@ type LineClassificationSpec={
  sourceEvidence:string;justification:string;
 };
 const uncertain=(id:string,from:string,to:string,sourceLocation:string,sourceEvidence:string,justification:string):LineClassificationSpec=>({
- id,from,to,classification:'UNCLASSIFIED',classificationOrigin:'PENDING_REVIEW',
+ id,from,to,classification:'UNCLASSIFIED',classificationOrigin:'PENDING_OWNER_DECISION',
  sourceLocation,sourceEvidence,justification
 });
 const construction=(id:string,from:string,to:string,origin:'SOURCE_EXPLICIT'|'SOURCE_INFERRED',sourceLocation:string,sourceEvidence:string,justification:string):LineClassificationSpec=>({
@@ -69,13 +69,13 @@ export function classifyFlatShirtEdges(raw:ShirtProject):EdgeClassification[]{
   const spec=map.get(e.id);
   if(!spec||e.from!==e.id.split(':')[0]+':'+spec.from||e.to!==e.id.split(':')[0]+':'+spec.to)
    throw new Error('LINE_CLASSIFICATION_EDGE_CONTRACT_CHANGED '+e.id);
-  if(spec.classification==='SEAM_LINE'||spec.classification==='FOLD_LINE')
-   throw new Error('LINE_CLASSIFICATION_REQUIRES_INDEPENDENT_SOURCE_EVIDENCE '+e.id);
+  if(spec.classification!=='CONSTRUCTION_LINE'&&spec.classification!=='UNCLASSIFIED')
+   throw new Error('LINE_CLASSIFICATION_FORBIDDEN_PROMOTION '+e.id);
   return {edgeId:e.id,from:e.from,to:e.to,previousRole:e.role,
    classification:spec.classification,classificationOrigin:spec.classificationOrigin,
    sourceLocation:spec.sourceLocation,sourceEvidence:spec.sourceEvidence,
    justification:spec.justification,solution:e.solution,geometryOrigin:e.origin,
-   roleRevision:'DRAFT' as const,stitchLineConfirmed:false as const};
+   roleRevision:'DRAFT' as const,decisionState:'PENDING_OWNER_DECISION' as const,stitchLineConfirmed:false as const};
  });
 }
 
