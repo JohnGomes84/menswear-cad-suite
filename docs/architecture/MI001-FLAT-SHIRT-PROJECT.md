@@ -78,3 +78,47 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 **Comparação independente de geometria — mesmas medidas de tórax 100 cm:** a integração numérica das curvas por SciPy `quad`, independente de `cubicLength` da aplicação, mede a cabeça representada (meia manga) em **301,435991567 mm antes** e **295,318778093 mm depois**. O comprimento da diagonal base permanece **291,327859211 mm**; frente e costas (17→12 e 12→5) somam **284,531833366 mm cada**, sem alteração. Assim, a diferença numérica da cabeça candidata para uma cava experimental é **+10,786945 mm** no caso atual; **isso não é facilidade aprovada**. Duplicar a meia cabeça por espelhamento para comparar com as duas cavas é hipótese geométrica (`2×295,318778093 - 2×284,531833366 = 21,573889454 mm`), não `SeamPair` confirmado. Os trechos, papéis e resultados estão identificados no artefato CI `sleeve-cap-numeric-diagnostic.json`.
 
 **Limite remanescente:** o livro não define derivadas Bézier, nem condições industriais de junção da cava com a cabeça, posicionamento dos piques e facilidade. A proposta cumpre os deslocamentos quantificados e respeita a construção de pontos, mas não está aprovada por modelista; a comparação visual com a figura é qualitativa, não calibração dimensional da imagem digitalizada.
+
+
+## Diagnóstico rastreável cava–manga — MI-001 (mesmo método, sem alteração de curvas)
+
+**Escopo:** módulo de leitura `src/flatShirtSeamDiagnostic.ts`. Consome exclusivamente o projeto já validado `ALD-FLAT-SHIRT-CORE@research-0.1.2` e `geometry.ts:cubicLength/reverseCubic`. Não altera o `DraftProgram`, a curva, os controles, a versão do método, as margens nem `release`. Não cria `SeamPair`.
+
+**Segmentos com orientação precisa (costurados? NÃO; `role=UNCLASSIFIED`):**
+
+| Cadeia | Ordem medida | Origem da instrução | Solução geométrica |
+|---|---|---|---|
+| Cava frente | `FRONT:E04` 5→12; `FRONT:E03` 12→17 | Aldrich PDF p.36: curva passando por 17, 12 e 5 | `ARMHOLE_INTERPOLATION@1.0.0` candidata |
+| Cava costas | `BACK:E04` 5→12; `BACK:E03` 12→17 | Mesmo diagrama comum (PDF pp.35–36/38) | Mesma interpolação provisória da frente |
+| Meia cabeça manga | `SLEEVE:E04` 3→HEAD_HOLLOW_5; `E03` →6; `E02` →HEAD_RAISE_78; `E01` →0 | Aldrich PDF p.36: diagonal 0–3 em quintos, rebaixo 7,5 mm em 5, elevação 15 mm entre 7–8 | `SLEEVE_HEAD_INTERPOLATION@1.0.2` candidata |
+
+**Excluídos:** `SLEEVE:E05` (diagonal de construção 3–0), `SLEEVE:E06–E08` (junção, fechamento e linha central), qualquer margem, hem e `FRONT/BACK:E02` (linha 10–17 do ombro). A seleção é fixa e verifica IDs, extremos, solução, papel e continuidade. **Mudança no contrato de qualquer aresta produz erro explícito, não migração automática.**
+
+**Referência 100 cm de tórax, mm; resultados conferíveis por quadratura independente:**
+
+| Elemento | Comprimento |
+|---|---:|
+| Frente E04 (5→12) | 168,819410 |
+| Frente E03 (12→17) | 115,712424 |
+| Frente total | 284,531833 |
+| Costas total | 284,531833 (geometria coincidente) |
+| Manga E04 (3→HOLLOW5) | 56,539425 |
+| Manga E03 (HOLLOW5→6) | 61,173752 |
+| Manga E02 (6→RAISE78) | 93,481419 |
+| Manga E01 (RAISE78→0) | 84,124181 |
+| Meia cabeça total | 295,318778 |
+| Meia cabeça menos cada cava | **+10,786945** |
+| Duas meias cabeças espelhadas (hipótese) menos ambas cavas | **+21,573889** |
+
+**Referência 112 cm de tórax (após regeneração):** cada cava diagnóstica **299,390863 mm**, meia cabeça **302,598574 mm**, diferença **+3,207712 mm**. A diferença muda com a medida; não é parâmetro de folga definido pelo livro. Essas curvas, mas não as quantidades da diagonal e dos deslocamentos, são decisões técnicas.
+
+**Meia manga versus manga completa:** o projeto implementa a meia manga mostrada pela linha central 0→2 (`SLEEVE:E08`). Refletir esse traçado e dobrar seu comprimento é uma **hipótese geométrica candidata**, ainda sem alocação da metade dianteira ou traseira, nem piques, folga, ou semântica de linha de costura. O SVG cadastra coincidência do ponto de origem `SLEEVE:3` com `FRONT/BACK:5` por **translação e rotação rígidas**, nunca escalonamento; `SLEEVE:0` e `FRONT/BACK:17` permanecem separados visualmente porque as cordas têm comprimentos diferentes. A ordem/sentido é explicitada. Cada possível coincidência é marcada como registro **não aprovado**, jamais como pique.
+
+**Rastreabilidade das relações:**
+- `SOURCE_DERIVED`: identidade dos pontos 17,12,5 e instruções de diagonal/quintos/deslocamentos p.36/38, sem assumir controles curvos.
+- `GEOMETRY_CALCULATION`: integração do comprimento de arco em mm e diferença algébrica, preservando precisão numérica.
+- `TECHNICAL_DECISION_PENDING`: Béziers das duas cavas, Bézier da manga, identidade das curvas frente/costas, espelhamento da meia manga, correspondência entre extremidades, montagem e eventual tolerância/folga.
+
+**Veredito único: `INDEFINIDA`.** A geometria é computável, porém nenhum `SeamPair` define qual trecho da manga corresponde a qual cava. Os dois arcos do corpo são idênticos pelo mesmo algoritmo provisório, e a meia cabeça não discrimina lados frontal/dorsal. O acréscimo de 30 mm à diagonal 0–3 contra a corda corporal 5–17 provém da construção; os excedentes de comprimento calculados não têm folga especificada/validada. Portanto não há evidência para concluir coerência de montagem nem erro de proporção industrial. **Menor próxima ação:** revisão de modelista para classificar a correspondência frontal/posterior da meia cabeça (e os trechos de cava) conforme o diagrama, antes de qualquer ajuste de curva. Essa revisão deve poder concluir `INSUFFICIENT_EVIDENCE`, sem inventar ponto, folga ou pique.
+
+**Evidências geradas no mesmo workflow digital:** `cava-manga-chest100.diagnostic.json`, `cava-manga-chest112.diagnostic.json` e correspondentes `*.overlay.svg` com unidades físicas mm, registro não deformado e legenda de bloqueios. O inspector do workspace possui resumo de comprimentos e botão para baixar a sobreposição do projeto corrente. Testes de referência numérica independentes e E2E garantem regeneração, roundtrip e invariantes `cutReady=false`, `scalePhysical/assembly/fit=NOT_RUN`. Nenhuma prova de impressão física foi executada.
