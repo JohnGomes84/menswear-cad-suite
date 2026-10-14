@@ -942,3 +942,13 @@ O head revisado do PR `21fed8c6727b29d44ea3a6bac57c157104790dfe` tem CI de web e
 **Próximo incremento delimitado:** impressão A4 paginada e registro físico de escala, em paralelo ao diagnóstico de comprimentos provisórios cava/manga (sem forçar igualdade nem aceitar montagem).
 
 **Retenção para revisão:** em 14/10/2026 o titular reportou erro visível na cabeça da manga; o PR #62 foi classificado **BLOCKED** e a revisão 0.1.2 implementou uma correção técnica restrita, sujeita a QA numérico/visual e parecer profissional. Mesmo após testes verdes, **não** declarar aprovação do método ou prontidão de integração automaticamente.
+
+## Decisão posterior do titular — prioridade MI-002 (14/10/2026)
+
+**Sem reescrever o histórico MI-001:** PR #62 é fundação técnica em Draft, sem merge e com pendências industriais; o trabalho da camisa está PAUSADO pelo titular. A calibração de referências daquela sessão específica foi autorizada pelo titular, sem transferibilidade ao novo short. O MI-002 tem `scalePhysical=NOT_RUN`.
+
+**Nova prioridade:** `MI-002 — Short de elástico simples (samba-canção)`; PR #63 dependente da fundação técnica no branch de PR #62, também DRAFT e sem merge. Requisitos do titular: duas peças FRONT/BACK, oito medidas (cm na interface, mm no projeto), guia de elástico, barra reta, ganchos candidatos, sem bolso/braguilha e sem margem, piques, folga, linhas industriais de costura/corte nem aprovação de caimento. JSON, diagnóstico, SVG e PDF A4 100% com registros de alinhamento.
+
+**Nova decisão sobre a fonte:** por instrução expressa do titular em 14/10/2026, **Aldrich não é a fonte de método para MI-002**. Este incremento parte do briefing do titular; toda proporção não explicitamente definida é `TECHNICAL_DECISION / PENDING_OWNER_DECISION`. O FreeSewing Editor é referência de desenho de interface e fluxo; nenhuma fórmula de FreeSewing, Aldrich ou outra obra recebe atribuição fictícia. Integração/propriedade/licenças de métodos externos não são implicitamente assumidas. A especificação técnica versionada fica em `docs/architecture/MI002-ELASTIC-BOXER-PROJECT.md`, sem nova cadeia de documentos repetitivos.
+
+**Gates MI-002:** `cutReady=false`, `scalePhysical=NOT_RUN`, `assembly=NOT_RUN`, `fit=NOT_RUN`; nenhuma decisão industrial é promovida pela CI. Critérios de aceitação para modelagem industrial e merge continuam exclusivamente com o titular.
