@@ -8,6 +8,8 @@ on:
       - "prototype/web-app/src/flatTrouserBackResearch.ts"
       - "prototype/web-app/src/draftingInterpreter.ts"
       - "prototype/web-app/src/garmentSemantics.ts"
+      - "prototype/web-app/src/ch02BookLineCommands.ts"
+      - "docs/domain/CH02-SOURCE-LINES-001.json"
       - "prototype/web-app/src/aldCh02AllowancePolicy.ts"
       - ".github/workflows/integration-spike.yml"
   pull_request:
@@ -46,6 +48,10 @@ jobs:
             prototype/web-app/src/garmentSemantics.ts \
             --bundle --platform=node --format=esm \
             --outfile=prototype/integration-spike/generated/garmentSemantics.mjs
+          prototype/web-app/node_modules/.bin/esbuild \
+            prototype/web-app/src/ch02BookLineCommands.ts \
+            --bundle --platform=node --format=esm \
+            --outfile=prototype/integration-spike/generated/ch02BookLines.mjs
       - name: Execute vertical integration contract tests
         run: npm test --prefix prototype/integration-spike
       - name: Generate annotated research-only SVG and diagnostics
@@ -57,6 +63,8 @@ jobs:
           test -s prototype/integration-spike/out/ch02-construction-components.json
           test -s prototype/integration-spike/out/synthetic-annotation-api-proof.json
           test -s prototype/integration-spike/out/ch02-semantic-contract.json
+          test -s prototype/integration-spike/out/ch02-book-command-geometry.json
+          test -s prototype/integration-spike/out/ch02-book-command-lines.svg
           grep -q 'NÃO CORTAR' prototype/integration-spike/out/ch02-guides.svg
           grep -q 'PARTIAL_CONSTRUCTION_GUIDES_ONLY' prototype/integration-spike/out/ch02-diagnostics.json
           grep -q 'CONSTRUCTION_GROUP_NOT_GARMENT_PIECE' prototype/integration-spike/out/ch02-construction-components.json
@@ -64,6 +72,8 @@ jobs:
           grep -q '"CUT_READY": false' prototype/integration-spike/out/ch02-construction-components.json
           grep -q 'PASS_RESEARCH_TRACE_ONLY' prototype/integration-spike/out/ch02-semantic-contract.json
           grep -q '"cutReady": false' prototype/integration-spike/out/ch02-semantic-contract.json
+          grep -q 'SOURCE_CURVE_REQUIREMENTS_PENDING' prototype/integration-spike/out/ch02-book-command-geometry.json
+          grep -q 'NÃO CORTAR' prototype/integration-spike/out/ch02-book-command-lines.svg
       - name: Publish research diagnostics as CI artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -74,5 +84,7 @@ jobs:
             prototype/integration-spike/out/ch02-construction-components.json
             prototype/integration-spike/out/synthetic-annotation-api-proof.json
             prototype/integration-spike/out/ch02-semantic-contract.json
+            prototype/integration-spike/out/ch02-book-command-geometry.json
+            prototype/integration-spike/out/ch02-book-command-lines.svg
           if-no-files-found: error
           retention-days: 7
