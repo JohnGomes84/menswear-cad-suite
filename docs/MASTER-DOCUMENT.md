@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.28 DRAFT — contrato universal de topologia em pesquisa e cadeias orientadas CH02
+**Versão da baseline:** 1.29 DRAFT — interface CH02 ligada ao interpretador paramétrico e ao registro de origem, com 182 testes aprovados
 **Data:** 13/10/2026  
-**Status:** além da auditoria documental CH02 (16 comandos, 4 entrepernas candidatas), a pesquisa passou a incluir contrato universal `topology-research/0.1.0`, validador determinístico e quatro cadeias orientadas de três comandos: gancho → entreperna superior → segmento inferior invertido. Oito curvas permanecem pendentes. Todas as quatro regiões de exceção de margem seguem não mapeadas, espelhamento não executado, nenhum perímetro industrial/corte aprovado. Checagem TypeScript de núcleo e execução local de fixture concluídas. Web CI de branch #38492894696: 170/170 testes Vitest PASS (incluindo 13 de topologia) e `tsc --noEmit` + Vite build PASS. Histórico anterior: 157/157 web + build e 34/34 integração PASS (baseline 1.26). 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO e comercial NO-GO.
+**Status:** aplicativo CAD web experimental com editor sintético, motor de construção Aldrich CH02, laboratório isolado de FreeSewing e agora área visível de pesquisa CH02: medidas editáveis, método uma/duas peças, variantes BASIC/EASY, pontos calculados e retas explicitamente prescritas exibidas, curvas pendentes sem spline, inspetor por fonte e bloqueios de corte. Baseline 1.29 na branch PR #57; CI web #38542973698: 182/182 testes PASS (12 novos), TypeScript e Vite build PASS. Contratos e provas existentes permanecem válidos; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL, demais 53 métodos TOC_ONLY. PILOT-001 Flat Shirt Core permanece formal; Gate APP experimental, A IN_REVIEW, B NO-GO, comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -888,3 +888,22 @@ Os comandos de trecho inferior de entreperna são percorridos em **sentido inver
 **Limites:** a conectividade comprovada é **combinatória, entre IDs da fonte**, não uma curva medida, tangenciada ou conformada. Não há contorno completo, espelhamento executado, função de corte aprovada, costura líquida, offset, SeamPair, piques, SVG/PDF de corte ou toile. Gate B PILOT-001 **NO-GO**; comercial **NO-GO**. O piloto da camisa e a arquitetura integral dos 14 capítulos permanecem preservados.
 
 **Próxima etapa justificada:** auditar os **trechos ausentes** dos perímetros na figura (cintura, lateral, barra, composição final), documentando evidência por ligação e escopo de exceção. Só após essa reconciliação e curvas revisadas por modelista poderá existir um perímetro geométrico provisório para testes de fabricação.
+
+
+---
+
+## 47. Aplicativo CH02 agora usa dados calculados a partir da fonte — baseline 1.29 DRAFT
+
+**Problema de integração resolvido:** até a baseline 1.28, apesar de haver interpretador paramétrico real, registros de traçados documentados, topologia própria e prova isolada de integração FreeSewing, o aplicativo inicial apresentava principalmente curvas e grupos de desenho sintéticos. O novo workspace [CH02-RESEARCH-WORKSPACE-001](architecture/CH02-RESEARCH-WORKSPACE-001.md) conecta esses módulos já desenvolvidos a uma interface de uso real para **pesquisa de construção**, não para produção industrial.
+
+**Fluxo de usuário implementado na branch:** a partir de App.tsx abre-se Ch02ResearchLab.tsx. São selecionáveis os métodos ONE_PIECE / TWO_PIECE e variantes BASIC / EASY; o usuário altera quadril, profundidade de gancho e entreperna em centímetros, convertidos para milímetros no motor. O adaptador ch02ResearchViewModel.ts executa draftFlatTrouserSectionsResearch (programa original de construção), resolveCh02BookLineCommands (somente comandos do livro) e inspectResearchTopology (cadeias abertas); portanto **não reescreve as fórmulas** do capítulo 2 nem infere traços da dependência de pontos.
+
+**Resultado gráfico:** pontos e rótulos calculados para frente/costas e somente as retas documentadas em SVG diagnóstico; as curvas aguardando definição são mostradas por referências, sem desenhar Béziers arbitrárias. O painel permite selecionar traços, ler ID/página e comprimento das retas. É possível alternar a visibilidade dos grupos, mas nunca fechar o contorno de corte por suposição. Os exemplos de medidas publicados não são valores universais. O SVG **não** equivale a exportação 1:1.
+
+**Fronteira técnica de código aberto:** o workspace React usa o kernel **próprio** em TypeScript, não incorpora FreeSewing ao pacote principal nem declara a POC com FreeSewing.Part como API aprovada para produção. O adaptador isolado em prototype/integration-spike permanece testado e poderá ser promovido módulo a módulo depois de licenças e limites documentados. Esta etapa evidencia evolução funcional **do aplicativo**, não apenas pesquisa bibliográfica.
+
+**QA confirmado:** [Web CI #38542973698](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38542973698) **182/182 testes PASS**, incluindo 12 novos testes no ch02ResearchViewModel.test.ts cobrindo dois métodos, cálculo por medidas, variantes, identidade da fonte, sete/nove comandos, curvas pendentes e entradas inválidas. TypeScript e Vite build PASS. Relatório [QA-CH02-RESEARCH-WORKSPACE-001](qa/QA-CH02-RESEARCH-WORKSPACE-001.md). Esses testes validam a integração e os bloqueios, **não** substituem aferição visual por navegador, desenho industrial, escala física ou prova de costura.
+
+**Gates e riscos preservados:** linhas de costura/corte, oito curvas CH02, margens de 10 mm já incluídas com exceções regionais, composição/espelhamento, impressão e toile permanecem bloqueados ou parciais. O desenho não é comercializável. PILOT-001 — Flat Shirt Core continua o piloto formal e suas regras ainda requerem fechamento próprio; o aplicativo foi preparado para adaptar a camada de pesquisa a outras famílias sem instalar dependências proprietárias ou abandonar o formato universal.
+
+**Próximo passo de produto:** conferir visualmente o workspace em navegador e aprimorar navegação/seleção sem reabrir fórmulas auditadas; em paralelo, aplicar a mesma interface parametrizada a um bloco de camisa do piloto quando suas instruções e arestas estiverem suficientemente revisadas para mostrar fontes e guias sem transformar pesquisa em moldes industriais.
