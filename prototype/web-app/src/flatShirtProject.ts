@@ -2,7 +2,7 @@
  * Uses the existing source-traced interpreter. All invented interpolation/closure
  * is versioned as a TECHNICAL_DECISION, never a textual instruction of Aldrich.
  */
-import { executeDraftProgram, measure, mm, minus, plus, span, times } from './draftingInterpreter';
+import { executeDraftProgram, measure, mm, minus, plus, times } from './draftingInterpreter';
 import type { DraftInstruction, DraftProgram, SourceTrace, ScalarExpr } from './draftingInterpreter';
 import type { Vec2 } from './domain';
 
@@ -16,7 +16,7 @@ export type MeasureSet=Record<ShirtMeasureKey,Measurement>;
 export type EdgeOrigin='SOURCE_LINE'|'DERIVED_LINE'|'TECHNICAL_DECISION';
 export type EdgeRole='CONSTRUCTION'|'SEAM'|'CUT'|'FOLD'|'MARK'|'UNCLASSIFIED';
 export type Review={state:'RESEARCH'|'DRAFT'|'GEOMETRY_REVIEWED';evidence:string[];reviewer?:string};
-export type ShirtPoint={id:string;positionMm:Vec2;dependsOn:string[];origin:EdgeOrigin;source:string};
+export type ShirtPoint={id:string;positionMm:Vec2;dependsOn:string[];origin:'SOURCE_INSTRUCTION'|'DERIVED_CONSTRUCTION'|'TECHNICAL_DECISION';solution:string;source:string;role:'CONSTRUCTION'|'UNCLASSIFIED';review:Review};
 export type ShirtEdge={id:string;from:string;to:string;kind:'LINE'|'CUBIC_BEZIER';controlsMm?:[Vec2,Vec2];origin:EdgeOrigin;solution:string;source:string;role:EdgeRole;review:Review;dependsOn:string[]};
 export type ShirtPiece={id:'FRONT'|'BACK'|'SLEEVE';points:ShirtPoint[];edges:ShirtEdge[];status:'EXPERIMENTAL_CONTOUR_ONLY'};
 export type TechDecision={id:string;version:string;status:'PROVISIONAL';description:string;sourceBasis:string};
@@ -27,6 +27,7 @@ const decisionList:TechDecision[]=[
  {id:'NECK_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Choose editable cubic Bezier handles for the front and back neckline.',sourceBasis:'PDF p35-36 order neck curve, no handle coordinates'},
  {id:'ARMHOLE_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Two cubic segments pass through points 17,12,5. Handles remain technical proposals.',sourceBasis:'PDF p36 armhole through 17,12,5'},
  {id:'SLEEVE_HEAD_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Smooth piecewise cubic across fifths with hollow at 5 and rise between 7-8.',sourceBasis:'PDF p36 and diagram p38; interpolation/offset direction need review'},
+ {id:'SLEEVE_DIAGONAL_PROJECTION',version:'1.0.0',status:'PROVISIONAL',description:'Derive horizontal offset of sleeve point 3 from 0-3 diagonal and the sleeve cap height by Pythagoras.',sourceBasis:'PDF p36 defines 0-3 length and 0-1 cap rise; p38 positions 3 on level 1'},
  {id:'CLOSURE_EXPERIMENT',version:'1.0.0',status:'PROVISIONAL',description:'Connect side, hem and centre into closed diagnostic polygons; industrial edge roles not assigned.',sourceBasis:'PDF p38 diagram, centre and no-hem callouts; not a cut boundary'}
 ];
 const researchReview=():Review=>({state:'DRAFT',evidence:[]});
@@ -77,7 +78,7 @@ const sleeveProgram=():DraftProgram=>{
  return {programId:id,purpose:'RESEARCH_ONLY',unit:'mm',sourceBook:book,instructions:ins};
 };
 const cp=(a:Vec2,b:Vec2,t:number):Vec2=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
-const pnt=(id:string,positionMm:Vec2,origin:EdgeOrigin,source:string,dependsOn:string[]):ShirtPoint=>({id,positionMm:{...positionMm},origin,source,dependsOn});
+const pnt=(id:string,positionMm:Vec2,origin:ShirtPoint['origin'],source:string,dependsOn:string[],solution:string):ShirtPoint=>({id,positionMm:{...positionMm},origin,source,solution,role:'CONSTRUCTION',review:researchReview(),dependsOn});
 function generate(measurements:MeasureSet):ShirtPiece[]{
  checkMeasures(measurements);
  const m=Object.fromEntries(SHIRT_KEYS.map(k=>[k,measurements[k].valueMm]));
@@ -97,9 +98,9 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
   const step=(kind==='BODY'?bodyProgram():sleeveProgram()).instructions.find(x=>x.pointId===id);
   const ms=step?.op==='OFFSET'?measureRefs(step.lengthMm):[];
   if(kind==='SLEEVE'&&id==='3')ms.push('chest','scye_depth','neck_size','half_back','BODY:5','BODY:17');
-  return [...new Set([...(t?.usedPoints.map(x=>kind+':'+x)??[]),...ms])];
+  return [...new Set([...(t?.usedPoints.map(x=>kind+':'+x)??[]),...ms.filter(x=>x!=='sleeve_horizontal_0_3')])];
  };
- const bodyPoints=(kind:'FRONT'|'BACK')=>[...body.trace.map(t=>pnt(kind+':'+t.pointId,t.positionMm,'SOURCE_LINE',`Aldrich5-PDF${t.source.pdfPage}: ${t.source.instruction}`,sourceDeps(t.pointId,'BODY').map(x=>x.replace('BODY:',kind+':'))))];
+ const bodyPoints=(kind:'FRONT'|'BACK')=>[...body.trace.map(t=>pnt(kind+':'+t.pointId,t.positionMm,'SOURCE_INSTRUCTION',`Aldrich5-PDF${t.source.pdfPage}: ${t.source.instruction}`,sourceDeps(t.pointId,'BODY').map(x=>x.replace('BODY:',kind+':')),'BODY_INTERPRETER@research-0.1.0'))];
  const mkEdges=(piece:'FRONT'|'BACK'|'SLEEVE')=>{const edges:ShirtEdge[]=[];let n=0;
   const e=(from:string,to:string,origin:EdgeOrigin,solution:string,source:string,role:EdgeRole,dependsOn:string[],controlsMm?:[Vec2,Vec2])=>{edges.push({id:`${piece}:E${String(++n).padStart(2,'0')}`,from:`${piece}:${from}`,to:`${piece}:${to}`,kind:controlsMm?'CUBIC_BEZIER':'LINE',...(controlsMm?{controlsMm}:{}),origin,solution,source,role,review:researchReview(),dependsOn})};
   if(piece==='SLEEVE')return {edges,e};
@@ -115,11 +116,11 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
  };
  const front:ShirtPiece={id:'FRONT',points:bodyPoints('FRONT'),edges:mkEdges('FRONT').edges,status:'EXPERIMENTAL_CONTOUR_ONLY'};
  const back:ShirtPiece={id:'BACK',points:bodyPoints('BACK'),edges:mkEdges('BACK').edges,status:'EXPERIMENTAL_CONTOUR_ONLY'};
- const spoints=[...sleeve.trace.map(t=>pnt('SLEEVE:'+t.pointId,t.positionMm,'SOURCE_LINE',`Aldrich5-PDF36: ${t.source.instruction}`,sourceDeps(t.pointId,'SLEEVE')))];
+ const spoints=[...sleeve.trace.map(t=>pnt('SLEEVE:'+t.pointId,t.positionMm,'SOURCE_INSTRUCTION',`Aldrich5-PDF36: ${t.source.instruction}`,sourceDeps(t.pointId,'SLEEVE'),t.pointId==='3'?'SLEEVE_DIAGONAL_PROJECTION@1.0.0':'SLEEVE_INTERPRETER@research-0.1.0'))];
  // Source requests fifth divisions, but the interpreter has no generic interpolation
  // operator. Record interpolation explicitly as TECHNICAL_DECISION, never as source formula.
  const adj=[0,-15,-6,-7.5,-7.5,0];
- for(let i=1;i<=4;i++){const at=cp(s['3'],s['0'],i/5);at.y+=adj[i];spoints.push(pnt('SLEEVE:'+String(i+4),at,'TECHNICAL_DECISION','Aldrich5 PDF p36: fifth points; sleeve head offsets provisional',['SLEEVE:0','SLEEVE:3','SLEEVE_HEAD_INTERPOLATION']));}
+ for(let i=1;i<=4;i++){const at=cp(s['3'],s['0'],i/5);at.y+=adj[i];spoints.push(pnt('SLEEVE:'+String(i+4),at,'TECHNICAL_DECISION','Aldrich5 PDF p36: fifth points; sleeve head offsets provisional',['SLEEVE:0','SLEEVE:3','SLEEVE_HEAD_INTERPOLATION'],'SLEEVE_HEAD_INTERPOLATION@1.0.0'));}
  const coords=Object.fromEntries(spoints.map(p=>[p.id.split(':')[1],p.positionMm]));
  const sl=mkEdges('SLEEVE');const ids=['0','8','7','6','5','3'];
  for(let i=0;i<ids.length-1;i++){
