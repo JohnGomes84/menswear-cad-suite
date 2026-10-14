@@ -50,7 +50,7 @@ describe('MI-001 A4 print diagnostic — never pattern authorization',()=>{
   expect(bytes.length).toBeGreaterThan(8000);
   expect(txt.startsWith('%PDF-1.4')).toBe(true);
   expect(txt).toContain('/Count '+tiles.length);
-  expect((txt.match(/\/MediaBox \[0 0 595\.27559 841\.88976\]/g)??[]).toHaveLength(tiles.length);
+  expect((txt.match(/\/MediaBox \[0 0 595\.27559 841\.88976\]/g)??[])).toHaveLength(tiles.length);
   expect((txt.match(/DRAFT \/ NO CUT \/ PROVISIONAL GEOMETRY/g)??[])).toHaveLength(tiles.length);
   expect((txt.match(new RegExp('Commit SHA: '+FIXED.commitSha,'g'))??[])).toHaveLength(tiles.length);
   expect((txt.match(new RegExp('Generated \\(UTC\\): '+FIXED.generatedAtISO.replaceAll('.','\\.'),'g'))??[])).toHaveLength(tiles.length);
