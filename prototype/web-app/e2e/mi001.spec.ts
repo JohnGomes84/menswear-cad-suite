@@ -95,3 +95,33 @@ test('MI-001 shows all edge industrial-role classifications and downloads proven
  expect(diagnostic.edgeClassifications.filter((x:{classification:string})=>x.classification==='SEAM_LINE')).toHaveLength(0);
  expect(diagnostic.release.cutReady).toBe(false);
 });
+
+
+test('MI-001 prints source-SHA A4 pages and fillable physical form without promoting scale',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:/Flat Shirt Core — projeto experimental/}).click();
+ const [layout]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Mapa A4 de páginas e alinhamento JSON'}).click()]);
+ const map=JSON.parse(await readFile(await layout.path(),'utf8'));
+ expect(map.method.version).toBe('research-0.1.2');
+ expect(map.pages.length).toBeGreaterThan(10);
+ expect(map.pages.map((x:{piece:string})=>x.piece)).toContain('SLEEVE');
+ expect(map.pages[0].neighbors.right).not.toBeNull();
+ expect(map.metadata.commitSha).toMatch(/^[a-f0-9]{40}$/);
+ expect(map.release.scalePhysical).toBe('NOT_RUN');
+ const [paged]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Exportar molde diagnóstico A4 paginado 100%'}).click()]);
+ const pdf=await readFile(await paged.path());
+ expect(pdf.subarray(0,8).toString()).toMatch(/^%PDF-1/);
+ const content=pdf.toString('utf8');
+ expect(content).toContain('DRAFT / NO CUT / PROVISIONAL GEOMETRY');
+ expect(content).toContain('Commit SHA: '+map.metadata.commitSha);
+ expect(content).toContain('/Count '+map.pages.length);
+ expect(content).toContain('100mm ruler - measure on paper');
+ expect(content).toContain('25x25 mm');
+ const [form]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Protocolo físico preenchível'}).click()]);
+ const bytes=await readFile(await form.path()),body=bytes.toString('utf8');
+ expect(body).toContain('/AcroForm');
+ expect(body).toContain('/T (measuredRuler100Mm)');
+ expect(body).toContain('/T (measuredSquareWidth25Mm)');
+ expect(body).toContain('/T (measuredSquareHeight25Mm)');
+ expect(body).toContain('Scale: NOT_RUN');
+ await expect(page.getByText(/Escala física:/)).toContainText('NOT_RUN');
+});
