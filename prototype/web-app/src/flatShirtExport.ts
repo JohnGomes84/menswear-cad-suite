@@ -122,3 +122,185 @@ export function exportCalibrationPdf():Uint8Array{
  content+=txt('Scale NOT_RUN | Assembly NOT_RUN | Fit NOT_RUN | cutReady=false',20,281,9,H);
  return makePdf(210,H,content);
 }
+
+/** A4 tiled diagnostic output on the exact existing garment coordinates.
+ * Tile overlap is a paper registration mechanism, not a garment allowance.
+ * This module never transforms or recomputes a pattern curve. */
+export type PrintA4Metadata={commitSha:string;generatedAtISO:string};
+export const A4_PRINT={pageWidthMm:210,pageHeightMm:297,frameXmm:15,frameYmm:36,frameWidthMm:180,frameHeightMm:214,overlapMm:10,strideXmm:170,strideYmm:204,paddingMm:5} as const;
+export type TiledPage={index:number;piece:ShirtPiece['id'];row:number;col:number;rows:number;cols:number;originXmm:number;originYmm:number;worldRightMm:number;worldBottomMm:number;neighbors:{left:number|null;right:number|null;up:number|null;down:number|null}};
+const exact=(v:number)=>Number(v.toFixed(6));
+export function assertPrintA4Metadata(meta:PrintA4Metadata):void{
+ if(!meta||!(/^[0-9a-f]{40}$/i).test(meta.commitSha))throw new Error('A4_COMMIT_SHA_REQUIRED: valid 40-digit source commit SHA');
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(meta.generatedAtISO)||!Number.isFinite(Date.parse(meta.generatedAtISO)))
+  throw new Error('A4_GENERATED_AT_REQUIRED: valid ISO UTC generation date');
+}
+const bounded=(piece:ShirtPiece)=>{
+ const all=piece.edges.flatMap(e=>{
+  const from=byId(piece,e.from),to=byId(piece,e.to);
+  return [from,to,...(e.controlsMm??[])];
+ });
+ if(!all.length||all.some(pt=>!Number.isFinite(pt.x)||!Number.isFinite(pt.y)))throw new Error('A4_INVALID_GEOMETRY '+piece.id);
+ const xs=all.map(pt=>pt.x),ys=all.map(pt=>pt.y);
+ return {x0:Math.min(...xs)-A4_PRINT.paddingMm,x1:Math.max(...xs)+A4_PRINT.paddingMm,
+  y0:Math.min(...ys)-A4_PRINT.paddingMm,y1:Math.max(...ys)+A4_PRINT.paddingMm};
+};
+export function assertTiledPageLayout(pages:readonly TiledPage[],project:ShirtProject):void{
+ const seen=new Set<string>();const keys=new Set(pages.map(p=>p.index));
+ if(keys.size!==pages.length||!pages.length)throw new Error('A4_DUPLICATE_OR_MISSING_PAGE');
+ for(const page of pages){
+  const key=page.piece+'/'+page.row+'/'+page.col;
+  if(seen.has(key)||!Number.isFinite(page.originXmm)||!Number.isFinite(page.originYmm)||
+   page.index<1||page.row<0||page.col<0||page.row>=page.rows||page.col>=page.cols||
+   page.worldRightMm!==exact(page.originXmm+A4_PRINT.frameWidthMm)||
+   page.worldBottomMm!==exact(page.originYmm+A4_PRINT.frameHeightMm))
+   throw new Error('A4_DUPLICATE_OR_INVALID_TILE '+key);
+  seen.add(key);
+ }
+ for(let i=0;i<pages.length;i++)for(let j=i+1;j<pages.length;j++){
+  const a=pages[i],b=pages[j];if(a.piece!==b.piece)continue;
+  const ox=Math.max(0,Math.min(a.worldRightMm,b.worldRightMm)-Math.max(a.originXmm,b.originXmm));
+  const oy=Math.max(0,Math.min(a.worldBottomMm,b.worldBottomMm)-Math.max(a.originYmm,b.originYmm));
+  if(ox>A4_PRINT.overlapMm+1e-5&&oy>A4_PRINT.overlapMm+1e-5)throw new Error('A4_UNEXPECTED_TILE_OVERLAP '+a.index+'/'+b.index);
+ }
+ for(const piece of project.pieces){
+  const own=pages.filter(p=>p.piece===piece.id);
+  if(!own.length)throw new Error('A4_MISSING_PIECE '+piece.id);
+  const {x0,x1,y0,y1}=bounded(piece);
+  const cols=own[0].cols,rows=own[0].rows;
+  if(own.length!==rows*cols)throw new Error('A4_TILE_GAP '+piece.id);
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){
+   const p=own.find(p=>p.row===row&&p.col===col);
+   if(!p||p.rows!==rows||p.cols!==cols||Math.abs(p.originXmm-(x0+col*A4_PRINT.strideXmm))>1e-5||
+    Math.abs(p.originYmm-(y0+row*A4_PRINT.strideYmm))>1e-5)
+    throw new Error('A4_TILE_GAP_OR_SHIFT '+piece.id+'/'+row+'/'+col);
+  }
+  const last=own.find(p=>p.row===rows-1&&p.col===cols-1)!;
+  if(own[0].originXmm>x0+1e-5||own[0].originYmm>y0+1e-5||last.worldRightMm<x1-1e-5||last.worldBottomMm<y1-1e-5)
+   throw new Error('A4_GEOMETRY_NOT_COVERED '+piece.id);
+ }
+}
+export function paginateFlatShirtA4(raw:ShirtProject):TiledPage[]{
+ const project=validateShirtProject(raw);
+ // A piece is never co-printed with another piece. The only overlap allowed
+ // is the exactly 10mm registration strip between adjacent tiles of THAT piece.
+ const pending:{piece:TiledPage['piece'];row:number;col:number;rows:number;cols:number;originXmm:number;originYmm:number}[]=[];
+ for(const piece of project.pieces){
+  const b=bounded(piece),cols=Math.max(1,Math.ceil((b.x1-b.x0-A4_PRINT.overlapMm)/A4_PRINT.strideXmm));
+  const rows=Math.max(1,Math.ceil((b.y1-b.y0-A4_PRINT.overlapMm)/A4_PRINT.strideYmm));
+  if(rows*cols>200||pending.length+rows*cols>200)throw new RangeError('A4_TOO_MANY_PAGES: diagnostic output exceeds 200 pages');
+  for(let row=0;row<rows;row++)for(let col=0;col<cols;col++)pending.push({piece:piece.id,row,col,rows,cols,
+   originXmm:exact(b.x0+col*A4_PRINT.strideXmm),originYmm:exact(b.y0+row*A4_PRINT.strideYmm)});
+ }
+ const indexMap=new Map(pending.map((p,i)=>[p.piece+'/'+p.row+'/'+p.col,i+1]));
+ const neighbor=(piece:string,row:number,col:number):number|null=>indexMap.get(piece+'/'+row+'/'+col)??null;
+ const pages=pending.map((p,i):TiledPage=>({...p,index:i+1,worldRightMm:exact(p.originXmm+A4_PRINT.frameWidthMm),
+  worldBottomMm:exact(p.originYmm+A4_PRINT.frameHeightMm),neighbors:{left:neighbor(p.piece,p.row,p.col-1),right:neighbor(p.piece,p.row,p.col+1),up:neighbor(p.piece,p.row-1,p.col),down:neighbor(p.piece,p.row+1,p.col)}}));
+ assertTiledPageLayout(pages,project);return pages;
+}
+function makeMultipagePdf(draws:readonly string[]):Uint8Array{
+ if(!draws.length)throw new Error('A4_NO_PAGES');
+ const writer=new PdfBuilder();
+ writer.add('<< /Type /Catalog /Pages 2 0 R >>');
+ writer.add(`<< /Type /Pages /Kids [${draws.map((_,i)=>`${4+2*i} 0 R`).join(' ')}] /Count ${draws.length} >>`);
+ writer.add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+ draws.forEach((draw,i)=>{
+  const contentId=5+2*i;
+  writer.add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${n(210*PT)} ${n(297*PT)}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentId} 0 R >>`);
+  writer.add(`<< /Length ${new TextEncoder().encode(draw).length} >>\nstream\n${draw}\nendstream`);
+ });
+ return writer.finish();
+}
+const fmtMm=(v:number)=>n(v).toString();
+function a4TileDraw(project:ShirtProject,page:TiledPage,total:number,meta:PrintA4Metadata):string{
+ const A=A4_PRINT,H=A.pageHeightMm,piece=project.pieces.find(p=>p.id===page.piece)!;
+ let d='0.48 w\n';
+ d+=txt(`PAGE ${page.index}/${total} | ${page.piece} | C${page.col+1}/${page.cols} R${page.row+1}/${page.rows} | DRAFT / NO CUT / PROVISIONAL GEOMETRY`,11,10,9,H);
+ d+=txt(`Project: ${project.projectId} | Method: ${project.method.id} @ ${project.method.version}`,11,17,8,H);
+ d+=txt(`Commit SHA: ${meta.commitSha}`,11,24,7,H);
+ d+=txt(`Generated (UTC): ${meta.generatedAtISO}  |  1:1  /  100%  /  mm`,11,30,8,H);
+ // Frame and calibration are on the physical page, OUTSIDE the clipped motif.
+ d+='0.65 G\n'+rect(A.frameXmm,A.frameYmm,A.frameWidthMm,A.frameHeightMm,H)+'0 G\n';
+ d+=`q\n${xy(A.frameXmm,A.frameYmm+A.frameHeightMm,H)} ${n(A.frameWidthMm*PT)} ${n(A.frameHeightMm*PT)} re W n\n`;
+ const tr=(pt:{x:number;y:number})=>({x:A.frameXmm+pt.x-page.originXmm,y:A.frameYmm+pt.y-page.originYmm});
+ // One native mm remains exactly 72/25.4 PDF points. The clipping window does
+ // not scale or omit the part of an edge that continues on an adjacent page.
+ for(const edge of piece.edges){
+  const a=tr(byId(piece,edge.from)),b=tr(byId(piece,edge.to));
+  d+=edge.origin==='TECHNICAL_DECISION'?'[7 4] 0 d\n':'[] 0 d\n';
+  if(edge.controlsMm){const p1=tr(edge.controlsMm[0]),p2=tr(edge.controlsMm[1]);
+   d+=`${xy(a.x,a.y,H)} m ${xy(p1.x,p1.y,H)} ${xy(p2.x,p2.y,H)} ${xy(b.x,b.y,H)} c S\n`;
+  }else d+=line(a.x,a.y,b.x,b.y,H);
+ }
+ d+='Q\n[] 0 d\n';
+ // Registration crosshairs in the *shared* 10mm strip. Equal world coordinates
+ // appear on two adjacent sheets, at local 175mm / 5mm (or 209mm / 5mm).
+ const mark=(x:number,y:number)=>{d+='0.45 G\n'+line(x-2,y,x+2,y,H)+line(x,y-2,x,y+2,H)+'0 G\n';};
+ const around=(label:string,v:number,nbr:number|null,x:number,y:number)=>{
+  if(nbr===null)return;
+  mark(x,y);
+  d+=txt(`${label} p${nbr} ${fmtMm(v)}mm`,label==='RIGHT'?125:label==='LEFT'?16:label==='DOWN'?89:16,
+   label==='DOWN'?259:label==='UP'?259:label==='RIGHT'?265:272,6,H);
+ };
+ around('LEFT',page.originXmm+5,page.neighbors.left,20,60);
+ around('RIGHT',page.originXmm+175,page.neighbors.right,190,60);
+ around('UP',page.originYmm+5,page.neighbors.up,65,41);
+ around('DOWN',page.originYmm+209,page.neighbors.down,65,245);
+ // Full rectangle coordinates and connection metadata cannot be placed
+ // in the geometry frame, where they would cover the actual pattern.
+ d+=txt(`Tile X=[${fmtMm(page.originXmm)}, ${fmtMm(page.worldRightMm)}] mm  Y=[${fmtMm(page.originYmm)}, ${fmtMm(page.worldBottomMm)}] mm`,11,263,7,H);
+ d+=txt('Adjacent tile alignment strip: 10mm overlap. Connect matching world-coordinate crosses.',11,269,7,H);
+ d+=txt(`L:${page.neighbors.left??'-'} R:${page.neighbors.right??'-'} U:${page.neighbors.up??'-'} D:${page.neighbors.down??'-'}   |  scalePhysical=NOT_RUN   cutReady=false`,11,275,7,H);
+ // Calibration is printed on EVERY sheet, in its own reserved footer.
+ d+=line(20,290,120,290,H)+line(20,288.5,20,291.5,H)+line(120,288.5,120,291.5,H);
+ d+=txt('100mm ruler - measure on paper',20,286,7,H);
+ d+=rect(167,268,25,25,H)+txt('25x25 mm',166,265,6,H);
+ return d;
+}
+export function exportShirtTiledA4Pdf(raw:ShirtProject,meta:PrintA4Metadata):Uint8Array{
+ assertPrintA4Metadata(meta);const p=validateShirtProject(raw),tiles=paginateFlatShirtA4(p);
+ return makeMultipagePdf(tiles.map(t=>a4TileDraw(p,t,tiles.length,meta)));
+}
+
+/** Editable AcroForm: observations do NOT change the original project status. */
+export type PhysicalFieldName='printer'|'driverConfiguration'|'paper'|'selectedScale'|'printDate'|'responsible'|'measuredRuler100Mm'|'measuredSquareWidth25Mm'|'measuredSquareHeight25Mm'|'observations'|'evidenceReference';
+export const PHYSICAL_FORM_FIELDS:readonly PhysicalFieldName[]=['printer','driverConfiguration','paper','selectedScale','printDate','responsible','measuredRuler100Mm','measuredSquareWidth25Mm','measuredSquareHeight25Mm','observations','evidenceReference'];
+export function exportPhysicalCalibrationProtocolPdf(raw:ShirtProject,meta:PrintA4Metadata):Uint8Array{
+ assertPrintA4Metadata(meta);const p=validateShirtProject(raw),H=297;
+ const writer=new PdfBuilder();
+ // PDF object positions: Catalog(1), Pages(2), Page(3), Font(4), Stream(5),
+ // AcroForm(6), then 11 PDF text widgets (7..17).
+ const indexes=PHYSICAL_FORM_FIELDS.map((_,i)=>7+i);
+ writer.add('<< /Type /Catalog /Pages 2 0 R /AcroForm 6 0 R >>');
+ writer.add('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+ writer.add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${n(210*PT)} ${n(297*PT)}] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R /Annots [${indexes.map(i=>`${i} 0 R`).join(' ')}] >>`);
+ writer.add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+ let d=txt('MI-001 | PHYSICAL PRINT CALIBRATION | DRAFT / NO CUT',11,14,13,H);
+ d+=txt(`Project ${p.projectId} | ${p.method.id}@${p.method.version}`,11,22,8,H);
+ d+=txt(`SHA ${meta.commitSha}`,11,29,7,H);
+ d+=txt(`Generated UTC ${meta.generatedAtISO} | cutReady=false`,11,35,8,H);
+ d+=txt('DO NOT MARK AS VALIDATED UNTIL REAL PAPER MEASUREMENTS ARE SUPPLIED.',11,43,9,H);
+ d+=txt('Scale: NOT_RUN     Assembly: NOT_RUN     Fit: NOT_RUN',11,50,8,H);
+ d+=line(11,55,199,55,H);
+ const descriptors:[PhysicalFieldName,string,number][]=[
+  ['printer','Printer / model',64,10],['driverConfiguration','Driver / settings',82,10],
+  ['paper','Paper type / size',100,10],['selectedScale','Selected print scale (use 100%)',118,10],
+  ['printDate','Actual print date',136,10],['responsible','Measured by',154,10],
+  ['measuredRuler100Mm','Observed 100mm ruler (mm)',172,10],
+  ['measuredSquareWidth25Mm','Observed square width (mm)',190,10],
+  ['measuredSquareHeight25Mm','Observed square height (mm)',208,10],
+  ['observations','Observations',226,10],['evidenceReference','Evidence reference / file',244,10]
+ ];
+ for(const [,label,y] of descriptors)d+=txt(label,11,y,9,H);
+ d+=txt('This form records observations only. It cannot approve physical scale, method, assembly or fit.',11,267,8,H);
+ d+=txt('Return the filled PDF with actual measurements for independent review.',11,276,8,H);
+ d+=txt('Status: PENDING_OWNER_DECISION / PHYSICALLY_VALIDATED = NOT_RUN',11,286,8,H);
+ writer.add(`<< /Length ${new TextEncoder().encode(d).length} >>\nstream\n${d}\nendstream`);
+ writer.add(`<< /Fields [${indexes.map(i=>`${i} 0 R`).join(' ')}] /DR << /Font << /F1 4 0 R >> >> /DA (/F1 10 Tf 0 g) /NeedAppearances true >>`);
+ for(const [id,,y] of descriptors){
+  const top=(y+1)*PT,bottom=(y+12)*PT;
+  const rectTop=n(297*PT-top),rectBottom=n(297*PT-bottom);
+  writer.add(`<< /Type /Annot /Subtype /Widget /FT /Tx /T (${pdfEsc(id)}) /V () /F 4 /Ff 0 /P 3 0 R /Rect [${n(78*PT)} ${rectBottom} ${n(199*PT)} ${rectTop}] /BS << /W 0.5 /S /S >> /MK << /BG [1 1 1] >> /DA (/F1 10 Tf 0 g) >>`);
+ }
+ return writer.finish();
+}
