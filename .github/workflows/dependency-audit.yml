@@ -1,0 +1,66 @@
+name: Dependency Audit (experimental labs)
+
+on:
+  pull_request:
+    paths:
+      - "prototype/web-app/package*.json"
+      - "prototype/integration-spike/package*.json"
+      - "prototype/integration-spike/scripts/**"
+      - ".github/workflows/dependency-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-pinned:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install from current lockfiles
+        run: |
+          npm ci --prefix prototype/web-app --no-audit --no-fund
+          npm ci --prefix prototype/integration-spike --ignore-scripts --no-audit --no-fund
+      - name: Record npm advisories (do not silently claim security PASS)
+        shell: bash
+        run: |
+          mkdir -p security-audit
+          npm audit --prefix prototype/web-app --json > security-audit/web-app.json || echo "::warning::npm audit web-app found advisories or encountered a scan error"
+          npm audit --prefix prototype/integration-spike --json > security-audit/integration-spike.json || echo "::warning::npm audit integration-spike found advisories or encountered a scan error"
+          node --input-type=module <<'NODE'
+          import {readFileSync,writeFileSync} from "node:fs";
+          const rows=[];
+          for(const name of ["web-app","integration-spike"]){
+            const data=JSON.parse(readFileSync("security-audit/"+name+".json","utf8"));
+            if(!data.metadata?.vulnerabilities){
+              console.error("npm audit response missing expected vulnerability metadata",name);
+              process.exitCode=1;
+              continue;
+            }
+            const vulnerabilities=data.metadata.vulnerabilities;
+            const count=vulnerabilities.total;
+            const candidates=Object.entries(data.vulnerabilities??{}).map(([name,record])=>({
+              name,severity:record.severity,isDirect:record.isDirect,fixAvailable:record.fixAvailable
+            }));
+            rows.push({scope:name,counts:vulnerabilities,candidates});
+            console.log(name,JSON.stringify(vulnerabilities),"fixablePackages",candidates.filter(x=>x.fixAvailable).length);
+            if(count>0)console.log("::warning::"+name+": "+count+" npm advisories; release security gate remains blocked");
+          }
+          writeFileSync("security-audit/summary.json",JSON.stringify({
+            status:"RESEARCH_ONLY_SECURITY_REVIEW_REQUIRED",
+            noAutomaticDependencyUpgrade:true,
+            scopes:rows
+          },null,2)+"\n");
+          NODE
+      - name: Upload advisory inventory for remediation review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-research-dependency-audit
+          path: security-audit/
+          if-no-files-found: error
+          retention-days: 14
