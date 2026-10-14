@@ -125,3 +125,34 @@ test('MI-001 prints source-SHA A4 pages and fillable physical form without promo
  expect(body).toContain('Scale: NOT_RUN');
  await expect(page.getByText(/Escala física:/)).toContainText('NOT_RUN');
 });
+
+
+test('MI-001 owner-approved physical reference calibration is scoped, saved, imported and invalidated on changed measures',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:/Flat Shirt Core — projeto experimental/}).click();
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('NOT_RUN');
+ await page.getByRole('button',{name:'Abrir registro físico aprovado · impressão de referência'}).click();
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('PASSED_WITH_EVIDENCE');
+ await expect(page.getByTestId('mi001-owner-calibration')).toContainText('100 / 100 mm');
+ await expect(page.getByTestId('mi001-owner-calibration')).toContainText('25 / 25 mm');
+ await expect(page.getByTestId('mi001-owner-calibration')).toContainText('não identificada');
+ await expect(page.getByRole('heading',{name:/Cava × meia cabeça · INDEFINITE/})).toBeVisible();
+ const [saved]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Salvar projeto'}).click()]);
+ const data=await readFile(await saved.path(),'utf8'),project=JSON.parse(data);
+ expect(project.calibrationEvidence.decisionState).toBe('APPROVED_BY_OWNER');
+ expect(project.calibrationEvidence.readings.ruler100.observedMm).toBe(100);
+ expect(project.calibrationEvidence.readings.squareWidth25.observedMm).toBe(25);
+ expect(project.calibrationEvidence.readings.squareHeight25.deviationPercent).toBe(0);
+ expect(project.calibrationEvidence.scope.printer).toBeNull();
+ expect(project.release).toEqual({cutReady:false,scalePhysical:'PASSED_WITH_EVIDENCE',assembly:'NOT_RUN',fit:'NOT_RUN'});
+ expect(project.method.version).toBe('research-0.1.2');
+ expect(project.pieces.every((x:{edges:{role:string}[]})=>x.edges.every(e=>!['CUT','SEAM','FOLD'].includes(e.role)))).toBe(true);
+ await page.getByRole('button',{name:'Reiniciar exemplo'}).click();
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('NOT_RUN');
+ await page.locator('input[type=file]').setInputFiles({name:'owner-calibration.draft.json',mimeType:'application/json',buffer:Buffer.from(data)});
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('PASSED_WITH_EVIDENCE');
+ await page.getByRole('spinbutton',{name:'Tórax'}).fill('115');
+ await page.getByRole('spinbutton',{name:'Tórax'}).blur();
+ await expect(page.getByTestId('mi001-scale-physical')).toContainText('NOT_RUN');
+ await expect(page.getByTestId('mi001-owner-calibration')).toHaveCount(0);
+ await expect(page.getByText('cutReady:',{exact:false})).toBeVisible();
+});
