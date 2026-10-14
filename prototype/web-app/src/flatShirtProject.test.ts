@@ -5,7 +5,7 @@ const same=(a:unknown,b:unknown)=>expect(a).toEqual(b);
 describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=>{
  it('creates exactly 3 experimental pieces with stable IDs and independent provenance dimensions',()=>{
   const p=createShirtProject();expect(p.pieces.map(x=>x.id)).toEqual(['FRONT','BACK','SLEEVE']);
-  expect(p.method).toMatchObject({id:'ALD-FLAT-SHIRT-CORE',version:'research-0.1.0'});
+  expect(p.method).toMatchObject({id:'ALD-FLAT-SHIRT-CORE',version:'research-0.1.1'});
   expect(p.pieces.every(x=>x.status==='EXPERIMENTAL_CONTOUR_ONLY')).toBe(true);
   expect(p.pieces.every(x=>x.edges.every(e=>e.origin&&e.solution&&e.role&&e.review&&e.source&&e.dependsOn))).toBe(true);
   expect(p.pieces.some(x=>x.edges.some(e=>e.kind==='CUBIC_BEZIER'&&e.origin==='TECHNICAL_DECISION'))).toBe(true);
@@ -81,6 +81,26 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(x).toContain('/MediaBox [0 0 595.27559 841.88976]');
   expect(x).toContain('25 x 25');expect(x).toContain('NOT_RUN');
  });
+
+ it('checks documented 7.5mm at sleeve reference 5 and versioned provisional curvature',()=>{
+  const p=createShirtProject();const pts=Object.fromEntries(p.pieces[2].points.map(x=>[x.id,x.positionMm]));
+  const linear=(pts['SLEEVE:3'].y*0.8+pts['SLEEVE:0'].y*0.2);
+  expect(pts['SLEEVE:5'].y-linear).toBeCloseTo(-7.5,7);
+  const cap=p.pieces[2].edges.find(e=>e.from==='SLEEVE:7'&&e.to==='SLEEVE:8');
+  expect(cap?.solution).toBe('SLEEVE_HEAD_INTERPOLATION@1.0.1');
+  expect(p.decisions.find(x=>x.id==='SLEEVE_HEAD_INTERPOLATION')?.version).toBe('1.0.1');
+  expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.1.0'}}))).toThrow(/migra/);
+ });
+ it('rejects clipping and piece overlap in diagnostic PDF and SVG exports',()=>{
+  const original=createShirtProject();expect(exportShirtPdf(original).length).toBeGreaterThan(1000);
+  const tooLong=changeShirtMeasurement(original,'garment_length',1800);
+  expect(()=>exportShirtSvg(tooLong)).toThrow(/EXPORT_PAGE_OVERFLOW/);
+  expect(()=>exportShirtPdf(tooLong)).toThrow(/EXPORT_PAGE_OVERFLOW/);
+  expect(exportShirtSvg(tooLong,false)).toContain('NO CUT'); // viewport remains diagnostic, no false export
+  const tooWide=changeShirtMeasurement(original,'chest',1600);
+  expect(()=>exportShirtPdf(tooWide)).toThrow(/EXPORT_PIECE_OVERLAP/);
+ });
+
  it('maintains individual measure origins and reports provisional status in every piece',()=>{
   const p=createShirtProject();expect(SHIRT_KEYS).toHaveLength(8);
   expect(p.measurements.garment_length.origin).toBe('USER_INPUT');
