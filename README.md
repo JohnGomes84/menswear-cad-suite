@@ -4,6 +4,14 @@
 
 Suíte CAD paramétrica web para modelagem masculina, com editor avançado e suporte a uso sob medida, ateliê, modelistas e confecções.
 
+## Prioridade operacional (14/10/2026)
+
+**Congelamento de expansão experimental:** não desenvolver novas funcionalidades no laboratório CH02, FreeSewing ou editor até revisão explícita de prioridade. Trabalho posterior à baseline 1.26 na [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) permanece **Draft / não integrado à main** e não deve ser somado ao estado da main.
+
+**Marco crítico = [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26):** parecer profissional com evidência sobre as pendências do bloco da camisa (#1–#5). Sem decisão formal, **Gate B NO-GO**. [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7) mantém **Gate A IN_REVIEW** até revisão geométrica/QA, referência independente e escala física. O pacote de revisão já está em `docs/domain/MODELING-REVIEW-PACKET-001.md`.
+
+Manutenção técnica do spike não altera as regras de modelagem nem autoriza produção. Informações de `npm audit` devem ser verificadas com a CI específica; integração externa permanece isolada e release de segurança pendente.
+
 ## Estado atual
 
 - Documento Mestre: **baseline 1.26 DRAFT**
