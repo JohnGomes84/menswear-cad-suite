@@ -5,9 +5,10 @@
 import { executeDraftProgram, measure, mm, minus, plus, times } from './draftingInterpreter';
 import type { DraftInstruction, DraftProgram, SourceTrace, ScalarExpr } from './draftingInterpreter';
 import type { Vec2 } from './domain';
+import { reverseCubic } from './geometry';
 
 export const SHIRT_METHOD='ALD-FLAT-SHIRT-CORE' as const;
-export const SHIRT_VERSION='research-0.1.1' as const;
+export const SHIRT_VERSION='research-0.1.2' as const;
 export const SHIRT_FORMAT='menswear-garment-project/0.1.0' as const;
 export type ShirtMeasureKey='chest'|'scye_depth'|'back_neck_to_waist'|'neck_size'|'half_back'|'garment_length'|'one_piece_sleeve_length'|'close_wrist';
 export const SHIRT_KEYS: readonly ShirtMeasureKey[]=['chest','scye_depth','back_neck_to_waist','neck_size','half_back','garment_length','one_piece_sleeve_length','close_wrist'];
@@ -26,7 +27,7 @@ const decisionList:TechDecision[]=[
  {id:'BODY_SPLIT',version:'1.0.0',status:'PROVISIONAL',description:'Treat the common body block as two independent front/back diagnostic shapes, retaining different neck curves.',sourceBasis:'PDF p38 common body schematic; separation not uniquely specified'},
  {id:'NECK_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Choose editable cubic Bezier handles for the front and back neckline.',sourceBasis:'PDF p35-36 order neck curve, no handle coordinates'},
  {id:'ARMHOLE_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Two cubic segments pass through points 17,12,5. Handles remain technical proposals.',sourceBasis:'PDF p36 armhole through 17,12,5'},
- {id:'SLEEVE_HEAD_INTERPOLATION',version:'1.0.1',status:'PROVISIONAL',description:'Versioned cubic proposal: 7.5mm at section 5, raised interpolation between 7 and 8. Chosen direction and tangencies require review.',sourceBasis:'PDF p36 and diagram p38; interpolation/offset direction need review'},
+ {id:'SLEEVE_HEAD_INTERPOLATION',version:'1.0.2',status:'PROVISIONAL',description:'Source marks 5,6,7,8 on diagonal 0–3, not on the contour. Separate cubic-Hermite diagnostic curve passes 7.5mm inside at section 5, through reference 6, and 15mm outside at t=0.7 between 7 and 8. Slopes/end tangents are technical and subject to review.',sourceBasis:'Aldrich 5th ed. PDF p36 instructions plus p38 source figure; fixed positions and direction extracted from diagram; slope field and Bézier controls not defined in book'},
  {id:'SLEEVE_DIAGONAL_PROJECTION',version:'1.0.0',status:'PROVISIONAL',description:'Derive horizontal offset of sleeve point 3 from 0-3 diagonal and the sleeve cap height by Pythagoras.',sourceBasis:'PDF p36 defines 0-3 length and 0-1 cap rise; p38 positions 3 on level 1'},
  {id:'CLOSURE_EXPERIMENT',version:'1.0.0',status:'PROVISIONAL',description:'Connect side, hem and centre into closed diagnostic polygons; industrial edge roles not assigned.',sourceBasis:'PDF p38 diagram, centre and no-hem callouts; not a cut boundary'}
 ];
@@ -117,22 +118,61 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
  const front:ShirtPiece={id:'FRONT',points:bodyPoints('FRONT'),edges:mkEdges('FRONT').edges,status:'EXPERIMENTAL_CONTOUR_ONLY'};
  const back:ShirtPiece={id:'BACK',points:bodyPoints('BACK'),edges:mkEdges('BACK').edges,status:'EXPERIMENTAL_CONTOUR_ONLY'};
  const spoints=[...sleeve.trace.map(t=>pnt('SLEEVE:'+t.pointId,t.positionMm,'SOURCE_INSTRUCTION',`Aldrich5-PDF36: ${t.source.instruction}`,sourceDeps(t.pointId,'SLEEVE'),t.pointId==='3'?'SLEEVE_DIAGONAL_PROJECTION@1.0.0':'SLEEVE_INTERPRETER@research-0.1.0'))];
- // Source requests fifth divisions, but the interpreter has no generic interpolation
- // operator. Record interpolation explicitly as TECHNICAL_DECISION, never as source formula.
- // Technical proposal: 7.5mm displacement at reference 5, not a source-defined cubic.
- const adj=[0,-7.5,-6,-7.5,-7.5,0];
- for(let i=1;i<=4;i++){const at=cp(s['3'],s['0'],i/5);at.y+=adj[i];spoints.push(pnt('SLEEVE:'+String(i+4),at,'TECHNICAL_DECISION','Aldrich5 PDF p36: fifth points; sleeve head offsets provisional',['SLEEVE:0','SLEEVE:3','SLEEVE_HEAD_INTERPOLATION'],'SLEEVE_HEAD_INTERPOLATION@1.0.1'));}
- const coords=Object.fromEntries(spoints.map(p=>[p.id.split(':')[1],p.positionMm]));
- const sl=mkEdges('SLEEVE');const ids=['0','8','7','6','5','3'];
- for(let i=0;i<ids.length-1;i++){
-  const a=coords[ids[i]],b2=coords[ids[i+1]];
-  // Local smoothness is a visual proposal, not an Aldrich tangent prescription.
-  const prev=coords[ids[Math.max(0,i-1)]],next=coords[ids[Math.min(ids.length-1,i+2)]];
-  const c1={x:a.x+(b2.x-prev.x)/6,y:a.y+(b2.y-prev.y)/6};
-  const c2={x:b2.x-(next.x-a.x)/6,y:b2.y-(next.y-a.y)/6};
-  if(ids[i]==='8'&&ids[i+1]==='7'){c1.y-=20;c2.y-=20;} // 15mm at cubic midpoint relative to unmodified segment
-  sl.e(ids[i],ids[i+1],'TECHNICAL_DECISION','SLEEVE_HEAD_INTERPOLATION@1.0.1','Aldrich5 PDF p36: sleeve head follows fifths; cubic controls proposed','UNCLASSIFIED',['one_piece_sleeve_length','close_wrist','scye_depth','chest','half_back','SLEEVE_HEAD_INTERPOLATION'],[c1,c2]);
+ // Source points 5–8 are subdivisions of the STRAIGHT 0–3 diagonal, not
+ // Bezier interpolation knots. Keep them on the unaltered reference chord.
+ for(let i=1;i<=4;i++){
+  spoints.push(pnt('SLEEVE:'+String(i+4),cp(s['3'],s['0'],i/5),
+   'SOURCE_INSTRUCTION','Aldrich5 PDF p36 and p38: divide diagonal 0–3 into five equal sections',
+   ['SLEEVE:0','SLEEVE:3'],'SOURCE_DIAGONAL_FIFTHS'));
  }
+ // Source: hollow contour 7.5mm at reference 5, raise 15mm BETWEEN 7 and 8.
+ // Digitally, 3→0 is left-to-right and y increases downwards. The derived
+ // contour anchors are separate from construction points 5–8.
+ const chord=(t:number)=>cp(s['3'],s['0'],t);
+ const hollow5={...chord(.2),y:chord(.2).y+7.5};
+ const raised78={...chord(.7),y:chord(.7).y-15};
+ spoints.push(pnt('SLEEVE:HEAD_HOLLOW_5',hollow5,'TECHNICAL_DECISION',
+  'Aldrich5 PDF p36: 7.5mm hollow at 5; sign oriented by p38 diagram',
+  ['SLEEVE:3','SLEEVE:0','SLEEVE:5','SLEEVE_HEAD_INTERPOLATION'],
+  'SLEEVE_HEAD_INTERPOLATION@1.0.2'));
+ spoints.push(pnt('SLEEVE:HEAD_RAISE_78',raised78,'TECHNICAL_DECISION',
+  'Aldrich5 PDF p36: raise curve 15mm between points 7 and 8; middle is interpolation decision',
+  ['SLEEVE:3','SLEEVE:0','SLEEVE:7','SLEEVE:8','SLEEVE_HEAD_INTERPOLATION'],
+  'SLEEVE_HEAD_INTERPOLATION@1.0.2'));
+ const sl=mkEdges('SLEEVE');
+ // Re-use the existing geometry kernel's reversible cubic representation.
+ // C1 continuity is imposed by the same tangent vector at both sides of
+ // each knot. Choosing these tangent magnitudes is a VERSIONED PROPOSAL,
+ // not an Aldrich drafting rule.
+ const rise=s['3'].y-s['0'].y;
+ const run=s['0'].x-s['3'].x;
+ const knots=[
+  {id:'3',t:0,offset:0,offsetSlope:rise},
+  {id:'HEAD_HOLLOW_5',t:.2,offset:7.5,offsetSlope:0},
+  {id:'6',t:.4,offset:0,offsetSlope:-45},
+  {id:'HEAD_RAISE_78',t:.7,offset:-15,offsetSlope:0},
+  {id:'0',t:1,offset:0,offsetSlope:rise}
+ ];
+ const knotPoint=(k:typeof knots[number]):Vec2=>{
+  if(k.id==='HEAD_HOLLOW_5')return hollow5;
+  if(k.id==='HEAD_RAISE_78')return raised78;
+  return chord(k.t);
+ };
+ for(let i=knots.length-2;i>=0;i--){
+  const start=knots[i],end=knots[i+1],delta=(end.t-start.t)/3;
+  const p0=knotPoint(start),p3=knotPoint(end);
+  const c1={x:p0.x+run*delta,y:p0.y+(-rise+start.offsetSlope)*delta};
+  const c2={x:p3.x-run*delta,y:p3.y-(-rise+end.offsetSlope)*delta};
+  const reversed=reverseCubic([p0,c1,c2,p3]);
+  sl.e(end.id,start.id,'TECHNICAL_DECISION','SLEEVE_HEAD_INTERPOLATION@1.0.2',
+   'Aldrich5 PDF p36+p38: 7.5mm hollow at 5, 15mm rise between 7 and 8. C1 slopes are independent technical proposal.',
+   'UNCLASSIFIED',['chest','half_back','scye_depth','SLEEVE_DIAGONAL_PROJECTION','SLEEVE_HEAD_INTERPOLATION'],
+   [reversed[1],reversed[2]]);
+ }
+ // Expose the untouched construction chord: industrial role is not inferred.
+ sl.e('3','0','DERIVED_LINE','SOURCE_DIAGONAL_0_3',
+  'Aldrich5 PDF p36: 0–3 is a diagonal length; p38 shows five markers on it',
+  'CONSTRUCTION',['chest','scye_depth','half_back','SLEEVE_DIAGONAL_PROJECTION']);
  sl.e('3','4','SOURCE_LINE','JOIN_3_4','Aldrich5 PDF p36: join 3-4','UNCLASSIFIED',['close_wrist','one_piece_sleeve_length','chest']);
  sl.e('4','2','TECHNICAL_DECISION','CLOSURE_EXPERIMENT@1.0.0','Aldrich5 PDF p38: no hem allowance','UNCLASSIFIED',['close_wrist','CLOSURE_EXPERIMENT']);
  sl.e('2','0','DERIVED_LINE','SLEEVE_CENTRE_GUIDE','Aldrich5 PDF p38: centre line, no seam allowance','CONSTRUCTION',['one_piece_sleeve_length']);
