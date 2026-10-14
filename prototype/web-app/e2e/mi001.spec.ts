@@ -76,3 +76,22 @@ test('MI-001 displays undefined cava/head verdict and exports traceable same-mm 
  await expect(page.getByTestId('mi001-excedente-total')).toContainText('6.415 mm');
  await expect(page.getByRole('heading',{name:/INDEFINIDA/})).toBeVisible();
 });
+
+test('MI-001 shows all edge industrial-role classifications and downloads provenance JSON',async({page})=>{
+ await page.goto('/');
+ await page.getByRole('button',{name:/Flat Shirt Core — projeto experimental/}).click();
+ await expect(page.getByTestId('mi001-classification-count')).toContainText('Arestas: 22');
+ await expect(page.getByTestId('mi001-classification-count')).toContainText('indefinidas: 18');
+ await expect(page.getByTestId('mi001-line-FRONT:E07')).toContainText('CONSTRUCTION_LINE | SOURCE_INFERRED');
+ await expect(page.getByTestId('mi001-line-FRONT:E03')).toContainText('UNCLASSIFIED | PENDING_REVIEW');
+ await page.getByRole('button',{name:/SLEEVE ·/}).click();
+ await expect(page.getByTestId('mi001-line-SLEEVE:E08')).toContainText('CONSTRUCTION_LINE | SOURCE_EXPLICIT');
+ await expect(page.getByTestId('mi001-line-SLEEVE:E01')).toContainText('UNCLASSIFIED | PENDING_REVIEW');
+ const [file]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/Classificação das 22 arestas/}).click()]);
+ const diagnostic=JSON.parse(await readFile(await file.path(),'utf8'));
+ expect(diagnostic.edgeClassifications).toHaveLength(22);
+ expect(diagnostic.geometricExcess.stitchLineStatus).toBe('NOT_IDENTIFIED');
+ expect(diagnostic.geometricExcess.excessTotalMm).toBeCloseTo(21.5738894536,4);
+ expect(diagnostic.edgeClassifications.filter((x:{classification:string})=>x.classification==='SEAM_LINE')).toHaveLength(0);
+ expect(diagnostic.release.cutReady).toBe(false);
+});
