@@ -1,0 +1,189 @@
+{
+  "schema": "ch02-industrial-topology-audit/0.1.0",
+  "source": {
+    "work": "Metric Pattern Cutting for Menswear",
+    "edition": 5,
+    "chapter": 2,
+    "textPdfPages": [
+      31,
+      32,
+      33
+    ],
+    "diagramPdfPage": 34
+  },
+  "phase": "DOCUMENTARY_REVIEW_ONLY",
+  "methodId": "ALD-CH02-01",
+  "status": "TEXT_FUNCTION_REVIEWED_DIAGRAM_SCOPE_PARTIAL",
+  "separationPolicy": {
+    "textCommandNotEqualToIndustrialEdge": true,
+    "dependencyConnectorNotEqualToSourceStroke": true,
+    "semanticRolePromoted": false,
+    "curvesApproved": false,
+    "closedBoundaryApproved": false,
+    "automaticOffsetAllowed": false
+  },
+  "explicitIndustrialFunctionCandidates": [
+    {
+      "id": "ONE_PIECE:FRONT:INSEAM",
+      "method": "ONE_PIECE",
+      "section": "FRONT",
+      "industrialFunction": "INSIDE_LEG_SEAM_TEXT_EXPLICIT",
+      "sourceTextPdfPage": 32,
+      "sourceDiagramPdfPage": 34,
+      "upperCommandId": "ALD-CH02-1P-FRONT_UPPER_INSEAM",
+      "lowerCommandId": "ALD-CH02-1P-FRONT_LOWER_INSEAM",
+      "evidence": "TEXT_EXPLICIT_FUNCTION_AND_SOURCE_COMMANDS",
+      "geometryStatus": "UPPER_CURVE_PENDING_LOWER_STRAIGHT_AVAILABLE",
+      "semanticEntityStatus": "CANDIDATE_ONLY_NOT_SEAM_LINE",
+      "remaining": "Confirm oriented path, endpoint continuity, diagram correspondence, assembly pairing, seam versus cut mapping, allowance boundaries and trueing"
+    },
+    {
+      "id": "ONE_PIECE:BACK:INSEAM",
+      "method": "ONE_PIECE",
+      "section": "BACK",
+      "industrialFunction": "INSIDE_LEG_SEAM_TEXT_EXPLICIT",
+      "sourceTextPdfPage": 32,
+      "sourceDiagramPdfPage": 34,
+      "upperCommandId": "ALD-CH02-1P-BACK_UPPER_INSEAM",
+      "lowerCommandId": "ALD-CH02-1P-BACK_LOWER_INSEAM",
+      "evidence": "TEXT_EXPLICIT_FUNCTION_AND_SOURCE_COMMANDS",
+      "geometryStatus": "UPPER_CURVE_PENDING_LOWER_STRAIGHT_AVAILABLE",
+      "semanticEntityStatus": "CANDIDATE_ONLY_NOT_SEAM_LINE",
+      "remaining": "Confirm oriented path, endpoint continuity, diagram correspondence, assembly pairing, seam versus cut mapping, allowance boundaries and trueing"
+    },
+    {
+      "id": "TWO_PIECE:FRONT:INSEAM",
+      "method": "TWO_PIECE",
+      "section": "FRONT",
+      "industrialFunction": "INSIDE_LEG_SEAM_TEXT_EXPLICIT",
+      "sourceTextPdfPage": 33,
+      "sourceDiagramPdfPage": 34,
+      "upperCommandId": "ALD-CH02-2P-FRONT_UPPER_INSEAM",
+      "lowerCommandId": "ALD-CH02-2P-FRONT_LOWER_INSEAM",
+      "evidence": "TEXT_EXPLICIT_FUNCTION_AND_SOURCE_COMMANDS",
+      "geometryStatus": "UPPER_CURVE_PENDING_LOWER_STRAIGHT_AVAILABLE",
+      "semanticEntityStatus": "CANDIDATE_ONLY_NOT_SEAM_LINE",
+      "remaining": "Confirm oriented path, endpoint continuity, diagram correspondence, assembly pairing, seam versus cut mapping, allowance boundaries and trueing"
+    },
+    {
+      "id": "TWO_PIECE:BACK:INSEAM",
+      "method": "TWO_PIECE",
+      "section": "BACK",
+      "industrialFunction": "INSIDE_LEG_SEAM_TEXT_EXPLICIT",
+      "sourceTextPdfPage": 33,
+      "sourceDiagramPdfPage": 34,
+      "upperCommandId": "ALD-CH02-2P-BACK_UPPER_INSEAM",
+      "lowerCommandId": "ALD-CH02-2P-BACK_LOWER_INSEAM",
+      "evidence": "TEXT_EXPLICIT_FUNCTION_AND_SOURCE_COMMANDS",
+      "geometryStatus": "UPPER_CURVE_PENDING_LOWER_STRAIGHT_AVAILABLE",
+      "semanticEntityStatus": "CANDIDATE_ONLY_NOT_SEAM_LINE",
+      "remaining": "Confirm oriented path, endpoint continuity, diagram correspondence, assembly pairing, seam versus cut mapping, allowance boundaries and trueing"
+    }
+  ],
+  "otherSourceObservations": [
+    {
+      "id": "ONE_PIECE:FRONT_BACK_TRACE",
+      "method": "ONE_PIECE",
+      "sourceTextPdfPages": [
+        32,
+        33
+      ],
+      "sourceDiagramPdfPage": 34,
+      "observation": "Back traced as heavy line; front traced as dotted line; front then mirrored and lateral boundaries aligned",
+      "status": "SOURCE_OPERATION_DOCUMENTED_NOT_EXECUTED",
+      "industrialRole": "UNASSIGNED"
+    },
+    {
+      "id": "ONE_PIECE:FINAL_INTERNAL_CENTER",
+      "method": "ONE_PIECE",
+      "sourceDiagramPdfPage": 34,
+      "observation": "Completed example depicts a central 0-to-2 interior reference separating back/front regions",
+      "status": "DIAGRAM_OBSERVED_TOPOLOGY_NOT_NORMALIZED",
+      "industrialRole": "UNASSIGNED_NOT_AUTOMATIC_CUT_OR_FOLD"
+    },
+    {
+      "id": "TWO_PIECE:FRONT_BACK_OUTLINES",
+      "method": "TWO_PIECE",
+      "sourceDiagramPdfPage": 34,
+      "observation": "Front and back are differentiated by dotted and continuous marks in a shared construction diagram",
+      "status": "DIAGRAM_OBSERVED_TOPOLOGY_NOT_NORMALIZED",
+      "industrialRole": "UNASSIGNED"
+    },
+    {
+      "id": "TWO_PIECE:FRONT_LEG_GUIDE",
+      "method": "TWO_PIECE",
+      "sourceTextPdfPage": 33,
+      "commandId": "ALD-CH02-2P-FRONT_LEG_GUIDE",
+      "observation": "Text commands a 1-to-12 joining line and locates knee reference 14; function is not declared as a physical seam",
+      "status": "TEXT_REVIEWED_NOT_SEAM"
+    },
+    {
+      "id": "TWO_PIECE:BACK_LEG_GUIDE",
+      "method": "TWO_PIECE",
+      "sourceTextPdfPage": 33,
+      "commandId": "ALD-CH02-2P-BACK_LEG_GUIDE",
+      "observation": "Text commands an 18-to-22 joining line and locates knee reference 23; function is not declared as a physical seam",
+      "status": "TEXT_REVIEWED_NOT_SEAM"
+    }
+  ],
+  "allowanceExceptions": [
+    {
+      "id": "ONE_PIECE:UPPER_WAIST",
+      "sourcePdfPage": 34,
+      "observation": "NO_SEAM_ALLOWANCE_SOURCE_LABEL",
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED",
+      "edgeIds": [],
+      "offsetAllowed": false
+    },
+    {
+      "id": "ONE_PIECE:LOWER_HEM",
+      "sourcePdfPage": 34,
+      "observation": "NO_SEAM_ALLOWANCE_SOURCE_LABEL",
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED",
+      "edgeIds": [],
+      "offsetAllowed": false
+    },
+    {
+      "id": "TWO_PIECE:UPPER_WAIST",
+      "sourcePdfPage": 34,
+      "observation": "NO_SEAM_ALLOWANCE_SOURCE_LABEL",
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED",
+      "edgeIds": [],
+      "offsetAllowed": false
+    },
+    {
+      "id": "TWO_PIECE:LOWER_HEM",
+      "sourcePdfPage": 34,
+      "observation": "NO_SEAM_ALLOWANCE_SOURCE_LABEL",
+      "scope": "REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED",
+      "edgeIds": [],
+      "offsetAllowed": false
+    }
+  ],
+  "bookAllowance": {
+    "sourcePdfPage": 31,
+    "nominalIncludedMm": 10,
+    "isAlreadyIncluded": true,
+    "additionalAutomaticOffsetMm": 0,
+    "edgeMapStatus": "NOT_YET_DEFINED"
+  },
+  "gates": {
+    "sourceCommands": "REVIEWED",
+    "industrialEdgeTopology": "NOT_YET_DEFINED",
+    "seamPair": "NOT_RUN",
+    "curveGeometry": "NOT_RUN",
+    "sourceExceptionToEdge": "NOT_YET_DEFINED",
+    "physicalFit": "NOT_RUN",
+    "printScale": "NOT_RUN",
+    "pilot001": "NO_GO",
+    "commercial": "NO_GO"
+  },
+  "acceptanceBeforeIndustrialPromotion": [
+    "Trace full front/back perimeter against original diagram for both construction families and variants",
+    "Identify seam and cut line separately per oriented source-supported segment; preserve reference IDs and evidence",
+    "Resolve exact endpoints of all four no-seam-allowance label regions without duplicating included allowances",
+    "Approve curves and ensure nondegenerate, continuous, non-self-intersecting oriented boundaries",
+    "Validate ONE_PIECE mirror/side-alignment assembly on transformed geometry without classifying interior guides as cut edges",
+    "Reconcile seam partners, notches, grainlines, trueing, measured export scale and physical toile with qualified reviewer"
+  ]
+}
