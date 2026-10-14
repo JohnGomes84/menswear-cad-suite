@@ -2,7 +2,7 @@
  * No implicit ease, margins, stitch/cut classification, or fit approval.
  * Core points are executed by the shared metric drafting interpreter.
  */
-import {interpretDraft} from './draftingInterpreter';
+import {executeDraftProgram as interpretDraft} from './draftingInterpreter';
 import type {DraftProgram,DraftInstruction,SourceTrace} from './draftingInterpreter';
 import {cubicLength} from './geometry';
 import type {Vec2} from './domain';
