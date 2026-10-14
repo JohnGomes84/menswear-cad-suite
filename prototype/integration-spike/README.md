@@ -23,20 +23,13 @@ Da raiz do repositório:
 ```bash
 npm ci --prefix prototype/web-app
 npm ci --prefix prototype/integration-spike --ignore-scripts
-mkdir -p prototype/integration-spike/generated
-prototype/web-app/node_modules/.bin/esbuild \
-  prototype/web-app/src/flatTrouserBackResearch.ts \
-  --bundle --platform=node --format=esm \
-  --outfile=prototype/integration-spike/generated/aldch02.mjs
-prototype/web-app/node_modules/.bin/esbuild \
-  prototype/web-app/src/ch02BookLineCommands.ts \
-  --bundle --platform=node --format=esm \
-  --outfile=prototype/integration-spike/generated/ch02BookLines.mjs
 npm test --prefix prototype/integration-spike
 npm run demo --prefix prototype/integration-spike
 ```
 
-A CI repete os comandos em Node 22 e executa **34 testes**: 9 da integração inicial, 2 do lockfile/licença, 10 FreeSewing Part/anotações, 5 de contrato semântico e 8 de traços explícitos do livro; publica **sete arquivos** separados, todos de pesquisa.
+**Correção operacional:** os comandos `npm test` e `npm run demo` agora geram automaticamente os três módulos ESM do interpretador original (`aldch02.mjs`, `garmentSemantics.mjs`, `ch02BookLines.mjs`) por meio do script `pretest/predemo`. Ainda é obrigatório instalar a toolchain do web app para dispor de `esbuild`; uma mensagem explícita informa quando essa instalação está ausente. Arquivos `generated/` não devem ser versionados.
+
+A CI usa Node 22 e executa **34 testes** (baseline 1.26), publicando sete arquivos de pesquisa. A correção do roteiro não muda regras de modelagem, método, curvas, API externa ou status de corte. Os testes de segurança/supply chain devem ser verificados separadamente; a existência de CI verde não resolve vulnerabilidades de pacotes.
 
 ## Por que a POC é isolada
 

@@ -1,10 +1,26 @@
 # Project Status — Menswear CAD Suite
 
-**Data:** 13/10/2026  
+**Data:** 14/10/2026
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
-**Baseline corrente:** 1.26 DRAFT — registro de comandos de desenho do CH02 e teste vetorial com FreeSewing
+**Baseline corrente:** 1.29 DRAFT — workspace paramétrico de pesquisa CH02 integrado à `main` (PR #57)
 
-## Situação executiva
+## Prioridade congelada — 14/10/2026
+
+- **Ordem obrigatória:** revisão de modelagem documentada das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26), sem inventar parecer; revisão independente e decisão formal do Gate A via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7); só então golden case e POC do bloco de camisa.
+- **Métrica de progresso:** número de decisões formalmente aprovadas/corrigidas com evidências, e bloqueios efetivamente fechados. Testes de pesquisa, documentação, PRs e versões não constituem aprovação de modelagem.
+- **Status atual:** Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
+- **Integração concluída:** [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclado em 14/10/2026 (commit `8f1e1d80`); a baseline 1.29 está na `main`. O workspace CH02 é de pesquisa, não gera molde de camisa ou saída de corte.
+- **Freeze de expansão:** não ampliar laboratório de calças, FreeSewing ou editor sem resolver bloqueios de domínio/QA. Manutenção de higiene de testes, documentação e dependências pode ocorrer em PR separado sem modificar método/fixture de vestuário.
+- **Segurança:** `npm audit` do web app passou a **0 achados conhecidos** após `vite@7.3.7` e `vitest@5.0.4`. O spike FreeSewing reporta **10 achados (9 altos, 1 moderado)** e continua isolado/NO_RELEASE. O PR #58 propõe auditoria reproduzível; workflow verde não significa vulnerabilidade zero.
+
+## Snapshot atual
+
+- Testes atuais do web app: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS; quatro checks GitHub do PR #57 passaram antes do merge. Foram inspecionadas capturas desktop 1440×1000 e móvel 390×844, sem overflow horizontal observado.
+- **Gate A:** `IN_REVIEW`, requer revisão geométrica independente e escala física documentada. **Gate B:** `NO-GO`, depende de parecer de modelista para Issues #1–#5 via Issue #26. Issues #1–#5, #7 e #26 permanecem abertas.
+- Não há molde de camisa validado, impressão calibrada, toile aprovada ou serviço de produção publicado. A interface CH02 expõe somente pesquisa da construção flat de calça, com corte/exportação bloqueados.
+- PR #58 registra manutenção de reprodutibilidade/auditoria; seu estado deve ser conferido no GitHub, mas seu escopo não muda regras de modelagem nem os estados de Gate A/B.
+
+## Histórico de gates — snapshot anterior à baseline 1.29
 
 O projeto possui base suficiente para continuar a engenharia controlada. A POC geométrica sintética foi incorporada à `main` e registra 27/27 testes aprovados em CI para mecanismos genéricos. Isso não valida o molde real.
 
@@ -41,7 +57,7 @@ A prioridade não é ampliar pesquisa genérica. A prioridade é:
 3. congelar contratos mínimos de `SeamEdge`, `SeamPair`, curvas, margens e formato;
 4. só então abrir a POC geométrica específica do `PILOT-001`.
 
-Frontend, autenticação, banco, editor final, gradação, DXF, nesting e 3D permanecem fora da execução atual.
+Frontend de produção, autenticação, banco, editor final, gradação, DXF, nesting e 3D permanecem fora da execução atual; o shell experimental citado no snapshot atual não equivale a esses componentes de produto.
 
 ## Governança
 

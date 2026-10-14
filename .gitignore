@@ -16,6 +16,8 @@ build/
 # Browser E2E artifacts (screenshots, traces, reports)
 **/test-results/
 **/playwright-report/
+playwright/.cache/
+blob-report/
 
 # Generated files from the isolated FreeSewing research spike
 prototype/integration-spike/generated/
