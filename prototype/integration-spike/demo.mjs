@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { createDiagnosticDraft } from "./src/pipeline.mjs";
+import { createBookCommandGeometry } from "./src/bookCommandBridge.mjs";
 import {
   createCh02SemanticResearch, assessSemanticRelease
 } from "./generated/garmentSemantics.mjs";
@@ -18,6 +19,7 @@ const semantics=createCh02SemanticResearch(example.method,{
  ...example.measurementsMm,variant:example.variant
 });
 const semanticGate=assessSemanticRelease(semantics);
+const bookCommands=createBookCommandGeometry(example.method,example.variant,example.measurementsMm);
 
 await mkdir(new URL("./out/",import.meta.url),{recursive:true});
 await Promise.all([
@@ -33,7 +35,11 @@ await Promise.all([
  writeFile(new URL("./out/synthetic-annotation-api-proof.json",import.meta.url),
   JSON.stringify(annotations,null,2)+"\n","utf8"),
  writeFile(new URL("./out/ch02-semantic-contract.json",import.meta.url),
-  JSON.stringify({project:semantics,validation:semanticGate},null,2)+"\n","utf8")
+  JSON.stringify({project:semantics,validation:semanticGate},null,2)+"\n","utf8"),
+ writeFile(new URL("./out/ch02-book-command-geometry.json",import.meta.url),
+  JSON.stringify({...bookCommands,svg:undefined},null,2)+"\n","utf8"),
+ writeFile(new URL("./out/ch02-book-command-lines.svg",import.meta.url),
+  bookCommands.svg,"utf8")
 ]);
 console.log(JSON.stringify({
  state:result.diagnostics.state,
@@ -43,10 +49,13 @@ console.log(JSON.stringify({
  nativePartRoles:parts.parts.map(p=>p.semanticRole),
  syntheticAnnotations:annotations.executedApis,
  semanticContract:semanticGate.state,semanticCutReady:semanticGate.cutReady,
+ verifiedSourceStraightCommands:bookCommands.straights.length,
+ unresolvedSourceCurveCommands:bookCommands.curvesPending.length,
  blockedOperations:result.blockedOperations,
  output:[
   "out/ch02-guides.svg","out/ch02-diagnostics.json",
   "out/ch02-construction-components.json","out/synthetic-annotation-api-proof.json",
-  "out/ch02-semantic-contract.json"
+  "out/ch02-semantic-contract.json",
+  "out/ch02-book-command-geometry.json","out/ch02-book-command-lines.svg"
  ]
 },null,2));
