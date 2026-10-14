@@ -21,7 +21,7 @@ export type ShirtEdge={id:string;from:string;to:string;kind:'LINE'|'CUBIC_BEZIER
 export type ShirtPiece={id:'FRONT'|'BACK'|'SLEEVE';points:ShirtPoint[];edges:ShirtEdge[];status:'EXPERIMENTAL_CONTOUR_ONLY'};
 export type TechDecision={id:string;version:string;status:'PROVISIONAL';description:string;sourceBasis:string};
 export type Evidence={id:string;state:'PENDING'|'REVIEWED'|'STALE';evidenceRef:string|null;dependsOn:{measurements:ShirtMeasureKey[];decisions:string[];exportConfig:boolean};evaluatedRevision:number|null;basisFingerprint:string|null};
-export type ShirtProject={format:typeof SHIRT_FORMAT;projectId:string;method:{id:typeof SHIRT_METHOD;version:typeof SHIRT_VERSION;book:'Aldrich5';pdfPages:number[]};unit:'mm';measurements:MeasureSet;decisions:TechDecision[];revision:number;pieces:ShirtPiece[];evidence:Evidence[];release:{cutReady:false;scalePhysical:'NOT_RUN';assembly:'NOT_RUN';fit:'NOT_RUN'};};
+export type ShirtProject={format:typeof SHIRT_FORMAT;purpose:'SOURCE_DRAFT_DIAGNOSTIC_ONLY';warning:'DRAFT_NO_CUT_PROVISIONAL_GEOMETRY';projectId:string;method:{id:typeof SHIRT_METHOD;version:typeof SHIRT_VERSION;book:'Aldrich5';pdfPages:number[]};unit:'mm';measurements:MeasureSet;decisions:TechDecision[];revision:number;pieces:ShirtPiece[];evidence:Evidence[];release:{cutReady:false;scalePhysical:'NOT_RUN';assembly:'NOT_RUN';fit:'NOT_RUN'};};
 const decisionList:TechDecision[]=[
  {id:'BODY_SPLIT',version:'1.0.0',status:'PROVISIONAL',description:'Treat the common body block as two independent front/back diagnostic shapes, retaining different neck curves.',sourceBasis:'PDF p38 common body schematic; separation not uniquely specified'},
  {id:'NECK_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Choose editable cubic Bezier handles for the front and back neckline.',sourceBasis:'PDF p35-36 order neck curve, no handle coordinates'},
@@ -146,7 +146,7 @@ export const exampleShirtMeasurements=():MeasureSet=>{
 export function createShirtProject(measurements=exampleShirtMeasurements(),projectId='flat-shirt-core-experimental-001'):ShirtProject{
  if(!/^[a-z0-9][a-z0-9-]{1,79}$/.test(projectId))throw new Error('ID do projeto inválido');
  const ms=clone(measurements);checkMeasures(ms);
- return {format:SHIRT_FORMAT,projectId,method:{id:SHIRT_METHOD,version:SHIRT_VERSION,book:'Aldrich5',pdfPages:[35,36,38]},unit:'mm',measurements:ms,decisions:clone(decisionList),revision:0,pieces:generate(ms),evidence:evidenceInit(),release:{cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'}};
+ return {format:SHIRT_FORMAT,purpose:'SOURCE_DRAFT_DIAGNOSTIC_ONLY',warning:'DRAFT_NO_CUT_PROVISIONAL_GEOMETRY',projectId,method:{id:SHIRT_METHOD,version:SHIRT_VERSION,book:'Aldrich5',pdfPages:[35,36,38]},unit:'mm',measurements:ms,decisions:clone(decisionList),revision:0,pieces:generate(ms),evidence:evidenceInit(),release:{cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'}};
 }
 const equals=(a:unknown,b:unknown):boolean=>JSON.stringify(a)===JSON.stringify(b);
 /** Evidence scope is bound to the actual source inputs and technical-decision versions,
@@ -161,6 +161,7 @@ export function validateShirtProject(raw:unknown):ShirtProject{
  if(!raw||typeof raw!=='object')throw new Error('Projeto não é objeto');
  const p=raw as ShirtProject;
  if(p.format!==SHIRT_FORMAT||p.method?.id!==SHIRT_METHOD||p.method.version!==SHIRT_VERSION||p.method.book!=='Aldrich5'||!equals(p.method.pdfPages,[35,36,38]))throw new Error('Versão de método incompatível: requer migração explícita; original não alterado');
+ if(p.purpose!=='SOURCE_DRAFT_DIAGNOSTIC_ONLY'||p.warning!=='DRAFT_NO_CUT_PROVISIONAL_GEOMETRY')throw new Error('Projeto deve preservar aviso DRAFT/NO-CUT');
  if(p.unit!=='mm'||p.release?.cutReady!==false||p.release.scalePhysical!=='NOT_RUN'||p.release.assembly!=='NOT_RUN'||p.release.fit!=='NOT_RUN')throw new Error('Estado de release proibido');
  if(!Number.isSafeInteger(p.revision)||p.revision<0||!equals(p.decisions,decisionList)||!/^[a-z0-9][a-z0-9-]{1,79}$/.test(p.projectId))throw new Error('Decisões, identidade ou revisão incompatíveis');
  checkMeasures(p.measurements);
