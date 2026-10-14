@@ -11,6 +11,7 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(p.pieces.some(x=>x.edges.some(e=>e.kind==='CUBIC_BEZIER'&&e.origin==='TECHNICAL_DECISION'))).toBe(true);
   expect(p.pieces.some(x=>x.edges.some(e=>e.origin==='SOURCE_LINE'))).toBe(true);
   expect(p.pieces.every(x=>x.edges.every(e=>e.role!=='CUT'&&e.role!=='SEAM'))).toBe(true);
+  expect(p.pieces.every(x=>x.points.every(v=>v.origin&&v.source&&v.solution&&v.role&&v.review&&v.dependsOn))).toBe(true);
   expect(p.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
  });
  it('uses original interpreter for body and sleeve deterministic geometric relations',()=>{
