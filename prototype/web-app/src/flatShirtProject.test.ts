@@ -49,7 +49,7 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   const p=createShirtProject();
   expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.2.0'}}))).toThrow(/migra/);
   expect(()=>validateShirtProject({...p,release:{...p.release,cutReady:true}})).toThrow();
-  expect(()=>validateShirtProject({...p,warning:'APPROVED'}})).toThrow(/DRAFT\/NO-CUT/);
+  expect(()=>validateShirtProject({...p,warning:'APPROVED'})).toThrow(/DRAFT\/NO-CUT/);
   const bad=structuredClone(p);bad.pieces[0].points[0].positionMm.x+=1;
   expect(()=>validateShirtProject(bad)).toThrow(/reproduz/);
   expect(()=>validateShirtProject({...p,decisions:[...p.decisions,{...p.decisions[0],id:'EXTRA'}]})).toThrow();
