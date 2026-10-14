@@ -2,7 +2,7 @@
 
 **Papel:** primeira integração vertical de pesquisa na aplicação web existente. **Não é novo laboratório**. Integra o interpretador `draftingInterpreter.ts`, o kernel Bézier de `geometry.ts` (modelo de curvas compatível), o shell React existente e saída SVG/PDF derivada de pontos/arestas, sem duplicar fórmulas na interface.
 
-**Origem:** Aldrich, *Metric Pattern Cutting for Menswear*, 5.ª ed., PDF pp. 35–36 (texto) e p. 38 (figuras), usando somente descrições técnicas originais. `ALD-FLAT-SHIRT-CORE@research-0.1.1` é versão de regras de pesquisa e **não** versão aprovada de método do livro. Os valores exemplares de torso/cava/pescoço etc. são citados da fonte, enquanto o comprimento da camisa é uma escolha explícita de estilo (700 mm nesta fixture).
+**Origem:** Aldrich, *Metric Pattern Cutting for Menswear*, 5.ª ed., PDF pp. 35–36 (texto) e p. 38 (figuras), usando somente descrições técnicas originais. `ALD-FLAT-SHIRT-CORE@research-0.1.2` é versão de regras de pesquisa e **não** versão aprovada de método do livro. Os valores exemplares de torso/cava/pescoço etc. são citados da fonte, enquanto o comprimento da camisa é uma escolha explícita de estilo (700 mm nesta fixture).
 
 ## Execução
 
@@ -28,7 +28,7 @@ Na interface inicial, selecione **Flat Shirt Core — projeto experimental**, al
 1. `BODY_SPLIT@1.0.0`: o diagrama único de corpo p. 38 é representado por duas projeções, frente e costas, com decotes diferentes. Separação não confere shape industrial.
 2. `NECK_INTERPOLATION@1.0.0`: controles de cúbicas para decotes não impressos no livro.
 3. `ARMHOLE_INTERPOLATION@1.0.0`: cúbicas passando por pontos 17,12,5, com tangências/handles técnicos.
-4. `SLEEVE_HEAD_INTERPOLATION@1.0.1`: proposta revisada com 7,5 mm de deslocamento no ponto 5 e elevação candidata de 15 mm no meio do trecho orientado 8→7. A fonte determina grandezas mas não controles matemáticos; sinal/direção/tangências continuam sob revisão. Versão anterior 1.0.0 não é reinterpretada silenciosamente.
+4. `SLEEVE_HEAD_INTERPOLATION@1.0.2`: CORREÇÃO do erro observado no PR #62. Os pontos **5, 6, 7 e 8 são as quatro divisões da diagonal reta 0–3** no texto p.36 e diagrama p.38, não pontos sobre a curva. Mantêm-se sobre essa linha de construção. Uma curva diagnóstica separada utiliza âncora 7,5 mm abaixo da reta no ponto 5 (rebaixo, conforme diagrama), cruza a reta no ponto 6 (interpretação visual), eleva-se 15 mm sobre a reta em t=0,7 entre pontos 7 e 8 e termina no ponto 0. As derivadas Hermite/C1 e Béziers são **decisão técnica versionada**, não regra literal. Versões anteriores 1.0.0 e 1.0.1 não são reinterpretadas silenciosamente.
 5. `SLEEVE_DIAGONAL_PROJECTION@1.0.0`: decomposição da diagonal 0–3 em componente horizontal usando a altura 0–1; não é um novo traço textual da fonte.
 6. `CLOSURE_EXPERIMENT@1.0.0`: fechamento diagnóstico das três figuras; não há papel industrial atribuído a essa linha.
 
@@ -60,9 +60,19 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 ## Revisão do diff na preparação para integrar
 
 - **Fórmulas textuais:** verificados os pontos 0–18 do corpo com fixture de medidas médias da p.35/36; comprimento de camisa 700 mm permanece escolha de estilo, não valor atribuído à obra. Manga 0–1, 0–2, 0–3 diagonal e 2–4 vinculadas ao livro; projeção horizontal e Béziers ficam separados como decisão técnica.
-- **Retificação versionada da manga:** deslocamento de 7,5 mm em ponto 5 é proposta de geometria derivada; elevar a seção orientada 8→7 é uma decisão de controles, não equivalência entre comprimento de costura e diagonal. Incrementou método de `research-0.1.0` para `research-0.1.1`, sem migração implícita de JSON anterior.
+- **Retificação versionada da manga:** deslocamento de 7,5 mm em ponto 5 é proposta de geometria derivada; elevar a seção orientada 8→7 é uma decisão de controles, não equivalência entre comprimento de costura e diagonal. Incrementou método de `research-0.1.0` para `research-0.1.2`, sem migração implícita de JSON anterior.
 - **Unidades e exportação:** medidas corporais persistem mm, entrada cm; SVG `width/height` mm e PDF `MediaBox` em pt pela relação `72/25.4`. Exportador recusa peça fora da página 1200×850, bbox sobreposta ou região de calibração ocupada (`EXPORT_PAGE_OVERFLOW`, `EXPORT_PIECE_OVERLAP`, `EXPORT_CALIBRATION_OVERLAP`). Não autoajusta escala ou recorta silenciosamente.
 - **Persistência / revisão:** validação reexecuta método fixado e compara entidades; formato e decisões diferentes falham; revisão, proveniência, decisões provisórias e avisos NO-CUT acompanham JSON. Alterações de medidas são atômicas e evidências declaradas dependentes são marcadas `STALE`. A reprodução não certifica aprovação de caimento.
 - **Próxima verificação independente:** profissional de modelagem deve revisar sinal, tangências e papel industrial das curvas, linha central, costura da cava/manga, piques e margens (#1–#5/#26). Não há assinatura ou aceite profissional simulado.
 
 **Status do Gate:** APP autorização restrita confirmada; A `IN_REVIEW`, B `NO-GO`, impressão física/montagem/caimento `NOT_RUN`. **Não** imprimir para corte.
+
+## Correção localizada de geometria da manga — revisão no mesmo PR #62
+
+**Causa reproduzida no código 0.1.1:** no antigo bloco `const adj=[0,-7.5,-6,-7.5,-7.5,0]`, deslocavam-se os próprios pontos 5–8 de referência para forçar a forma da curva; o trecho orientado 8→7 ainda movia somente os seus dois controles `c1.y-=20; c2.y-=20`, destruindo a tangente compartilhada e produzindo uma saliência. No diagrama p.38, 5–8 são marcadores na diagonal 0–3, e a curva é independente desses marcadores. Isso não é um problema da biblioteca Bézier nem justifica substituição pelo método FreeSewing Brian/Simon.
+
+**Reutilização e alteração mínima:** preserva o `draftingInterpreter.ts` para a diagonal, o `geometry.ts` existente para `reverseCubic` e `cubicLength`, o formato de projeto e a exportação. Pontos fonte 5–8 são agora interpolações exatas em 20%, 40%, 60% e 80% do segmento 3→0. Novas âncoras **derivadas/provisórias** `HEAD_HOLLOW_5` (+7,5 mm em y de tela) e `HEAD_RAISE_78` (−15 mm em y de tela no meio 7/8) estabelecem condições mensuráveis. Uma curva Hermite em quatro seções, convertida em cúbicas Bézier e revertida por `reverseCubic`, usa tangentes compartilhadas em seus nós. O cruzamento em 6 e as inclinações são escolhas técnicas explícitas a rever, não instruções atribuídas à fonte.
+
+**Contrato/revisão:** método `research-0.1.2`, decisão `SLEEVE_HEAD_INTERPOLATION@1.0.2`; rejeitar JSON antigo sem migração. Frente/costas e fórmulas de medidas continuam inalteradas; `cutReady=false`, escala física, montagem e caimento `NOT_RUN`; nenhuma aresta de manga aprovada como costura/corte. Comparações de comprimento da curva versus 17→12→5 da frente/costas servem exclusivamente ao diagnóstico geométrico: não pressupõem margens iguais, montagem ou folga.
+
+**Limite remanescente:** o livro não define derivadas Bézier, nem condições industriais de junção da cava com a cabeça, posicionamento dos piques e facilidade. A proposta cumpre os deslocamentos quantificados e respeita a construção de pontos, mas não está aprovada por modelista; a comparação visual com a figura é qualitativa, não calibração dimensional da imagem digitalizada.
