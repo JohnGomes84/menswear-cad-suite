@@ -12,3 +12,9 @@ dist/
 build/
 .tmp/
 *.log
+
+# Playwright execution reports and captures (all packages)
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
