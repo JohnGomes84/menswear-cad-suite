@@ -3,7 +3,7 @@ import {useMemo,useRef,useState} from 'react';
 import type {ChangeEvent} from 'react';
 import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
 import type {ShirtProject,ShirtMeasureKey} from './flatShirtProject';
-import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf} from './flatShirtExport';
+import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf,exportShirtTiledA4Pdf,exportPhysicalCalibrationProtocolPdf,paginateFlatShirtA4} from './flatShirtExport';
 import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg} from './flatShirtSeamDiagnostic';
 const labels:Record<ShirtMeasureKey,string>={chest:'Tórax',scye_depth:'Profundidade de cava',back_neck_to_waist:'Nuca à cintura',neck_size:'Pescoço',half_back:'Meia-costas',garment_length:'Comprimento da camisa',one_piece_sleeve_length:'Manga uma folha',close_wrist:'Punho justo'};
 function saveFile(data:string|Uint8Array,mime:string,name:string){
@@ -23,6 +23,21 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
   try{
    const data=kind==='SVG'?exportShirtSvg(project):exportShirtPdf(project);
    saveFile(data,kind==='SVG'?'image/svg+xml':'application/pdf',kind==='SVG'?'flat-shirt-core-diagnostic-1to1.svg':'flat-shirt-core-diagnostic-1to1.pdf');
+   setError('');
+  }catch(err){setError(err instanceof Error?err.message:String(err));}
+ }
+ function a4Export(kind:'PAGES'|'PROTOCOL'|'MAP'){
+  try{
+   const meta={commitSha:import.meta.env.VITE_COMMIT_SHA??'',generatedAtISO:new Date().toISOString()};
+   if(kind==='MAP'){
+    // Same source commit and pagination as the PDF, no geometry computation.
+    const data={projectId:project.projectId,method:project.method,metadata:meta,scale:'1:1',unit:'mm',
+      release:project.release,pages:paginateFlatShirtA4(project)};
+    saveFile(JSON.stringify(data,null,2)+'\n','application/json','mi001-a4-page-map.json');
+   }else{
+    const pdf=kind==='PAGES'?exportShirtTiledA4Pdf(project,meta):exportPhysicalCalibrationProtocolPdf(project,meta);
+    saveFile(pdf,'application/pdf',kind==='PAGES'?'flat-shirt-core-a4-100percent.pdf':'mi001-protocolo-fisico-preenchivel.pdf');
+   }
    setError('');
   }catch(err){setError(err instanceof Error?err.message:String(err));}
  }
@@ -68,10 +83,13 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
      <button onClick={()=>diagnosticExport('SVG')}>Exportar SVG nominal 1:1</button>
      <button onClick={()=>diagnosticExport('PDF')}>Exportar PDF nominal 1:1</button>
      <button onClick={()=>saveFile(exportCalibrationPdf(),'application/pdf','calibracao-a4-100percent.pdf')}>Ficha A4 de calibração</button>
+     <button onClick={()=>a4Export('PAGES')}>Exportar molde diagnóstico A4 paginado 100%</button>
+     <button onClick={()=>a4Export('PROTOCOL')}>Protocolo físico preenchível</button>
+     <button onClick={()=>a4Export('MAP')}>Mapa A4 de páginas e alinhamento JSON</button>
      <button onClick={()=>saveFile(exportCavaMangaOverlaySvg(project),'image/svg+xml','mi001-cava-manga-sobreposicao.svg')}>Comparação cava–manga SVG</button>
      <button onClick={()=>saveFile(JSON.stringify(cavityDiagnostic,null,2)+'\n','application/json','mi001-arestas-cava-manga-diagnostico.json')}>Classificação das 22 arestas · JSON</button>
     </div>
-    <small>PDF diagnóstico: folha personalizada de 1200 × 850 mm para plotter; sem paginação A4. Exportações falham se peças não couberem sem sobreposição. Imprimir sem ajustar à página. Conferir primeiro o PDF de calibração A4.</small>
+    <small>Plotter diagnóstico: 1200 × 850 mm. A4 paginado: 100% sem redimensionamento; uma peça por conjunto de folhas, faixas de registro sobrepostas 10 mm, cruzes e coordenadas mm. Para imprimir, usar 'Tamanho real / 100%', sem ajustar à página. Todas as provas físicas continuam NOT_RUN; use o protocolo preenchível e a ficha separada.</small>
    </section>
    <section className="mi001-drafting">
     <h2>Mesa de modelagem · projeção diagnóstica</h2>
