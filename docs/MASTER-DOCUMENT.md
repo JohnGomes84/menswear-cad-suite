@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.26 DRAFT — traços textuais CH02 auditados e desenhados pelo FreeSewing sem extrapolação
+**Versão da baseline:** 1.27 DRAFT — revisão documental da função industrial de entrepernas e da montagem CH02, sem promoção de corte
 **Data:** 13/10/2026  
-**Status:** 16 comandos explícitos de traçado de Aldrich CH02 mapeados (8 retas, 8 curvas pendentes); 8 retas geradas por FreeSewing em laboratório, 4 chamadas de 'no seam allowance' regionais registradas, nenhuma margem aplicada e nenhum corte aprovado. Testes de branch: 157/157 web com build e 34/34 integração PASS. 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO.
+**Status:** 16 comandos explícitos CH02 mapeados (8 retas, 8 curvas pendentes); auditoria documental adicional identifica 4 conjuntos candidatos de costura interna da perna e diferencia construção versus composição final de uma peça. As 4 exceções regionais de margem continuam sem associação a arestas. Nenhuma nova geometria/SeamPair/offset/corte aprovada; QA documental parcial, sem novos testes de código nesta revisão. CI anterior permanece 157/157 web + build e 34/34 integração PASS; 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO, comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -848,3 +848,20 @@ Na imagem real PDF p.34 observam-se rótulos `no seam allowance` próximos à **
 Evidência de branch: [Web CI #38487642126](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487642126) **157/157 testes + TS/Vite build PASS**; [FreeSewing CI #38487840635](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38487840635) **34/34 testes PASS** e artefatos gerados. O código reutiliza fórmulas, não registra novas geometrias de curva e mantém a infraestrutura do livro e dos fornecedores separadas.
 
 **Próximo gate:** mapear cada linha de função industrial e o alcance real de `no seam allowance` no diagrama; depois resolver curvas por técnica documentada, validar contornos, executar espelhamento quando geometria permitir, trueing, plotagem 1:1 e toile. Até lá, **nenhuma calça para corte ou distribuição comercial**.
+
+
+---
+
+## 45. CH02 — inventário de funções industriais candidatas e composição da peça única (1.27 DRAFT)
+
+Revisão direta da fonte primária de Aldrich, **PDF pp. 31–34**, confrontou os 16 comandos anteriormente catalogados com **as funções explicitamente nomeadas no texto** e a representação do diagrama p. 34. O relatório [CH02-INDUSTRIAL-TOPOLOGY-AUDIT-001](domain/CH02-INDUSTRIAL-TOPOLOGY-AUDIT-001.md) e o registro estruturado [CH02-INDUSTRIAL-TOPOLOGY-CANDIDATES-001](domain/CH02-INDUSTRIAL-TOPOLOGY-CANDIDATES-001.json) diferenciam `TEXT_EXPLICIT_FUNCTION`, `SOURCE_COMMAND`, `DIAGRAM_OBSERVED` e `INDUSTRIAL_EDGE_APPROVED` (último **não atingido**).
+
+**Descoberta textual documentada:** as instruções descrevem explicitamente costura interna da perna nos percursos frente/costas dos métodos de uma e duas peças. Foram registrados **quatro conjuntos candidatos**, cada qual referenciando a curva superior e a reta inferior anteriormente inventariadas, sem alterar `SemanticEdge.role` ou aceitar curvatura que ainda não existe.
+
+**Descoberta topológica:** a confecção da calça de uma peça exige traçar anterior/posterior, espelhar a frente e alinhar as laterais. O desenho de composição final na p. 34 mostra referência interna central **0–2**, que não pode ser automaticamente tratada como contorno de corte externo apenas por estar desenhada na construção; seu papel industrial definitivo não foi atribuído. No desenho de duas peças, as figuras de frente/costas superpostas são referências de construção, não licença para fundir as duas peças em um único contorno. Guias 1–12 e 18–22 também não ganham papéis industriais por suposição.
+
+**Margens:** a regra da p. 31 é **10 mm já incluídos** (com exceções). O diagrama confirma indicações de ausência de margem em regiões de cintura/barra de ambas as famílias; os **quatro registros** mantêm `edgeIds=[]`, `offsetAllowed=false`, `REGION_CONFIRMED_EDGE_SCOPE_NOT_MAPPED`. Não criar offset adicional nem transformar rótulo regional em escopo de trecho arbitrário.
+
+**Evidência e gate:** [QA-CH02-INDUSTRIAL-TOPOLOGY-001](qa/QA-CH02-INDUSTRIAL-TOPOLOGY-001.md) registra somente consistência documental (`PASS_DOC_PARTIAL`); **nenhum novo teste geométrico/automático foi executado** neste acréscimo. Curvas, orientação de percursos, contornos fechados, espelhamento executado, separação costura/corte, SeamPair, trueing, impressão 1:1 e toile permanecem **NOT_RUN/NOT_YET_DEFINED**. Gates: `APP EXPERIMENTAL_ONLY`, `A IN_REVIEW`, `B PILOT-001 NO_GO`, `COMERCIAL NO_GO`.
+
+**Próxima etapa:** construir uma tabela completa de perímetros orientados em três camadas (construção, composição, contorno industrial), com evidência textual/visual por aresta e exceção, exigindo revisão cruzada e verificação de conectividade antes de qualquer `SEAM_LINE`/`CUT_LINE`. A trilha de pesquisa CH02 **não altera** o piloto formal `PILOT-001 Flat Shirt Core` nem autoriza codificação de produção.
