@@ -1,8 +1,8 @@
 # Documento Mestre — Suíte CAD Paramétrica de Modelagem Masculina
 
-**Versão da baseline:** 1.27 DRAFT — revisão documental da função industrial de entrepernas e da montagem CH02, sem promoção de corte
+**Versão da baseline:** 1.28 DRAFT — contrato universal de topologia em pesquisa e cadeias orientadas CH02
 **Data:** 13/10/2026  
-**Status:** 16 comandos explícitos CH02 mapeados (8 retas, 8 curvas pendentes); auditoria documental adicional identifica 4 conjuntos candidatos de costura interna da perna e diferencia construção versus composição final de uma peça. As 4 exceções regionais de margem continuam sem associação a arestas. Nenhuma nova geometria/SeamPair/offset/corte aprovada; QA documental parcial, sem novos testes de código nesta revisão. CI anterior permanece 157/157 web + build e 34/34 integração PASS; 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO, comercial NO-GO.
+**Status:** além da auditoria documental CH02 (16 comandos, 4 entrepernas candidatas), a pesquisa passou a incluir contrato universal `topology-research/0.1.0`, validador determinístico e quatro cadeias orientadas de três comandos: gancho → entreperna superior → segmento inferior invertido. Oito curvas permanecem pendentes. Todas as quatro regiões de exceção de margem seguem não mapeadas, espelhamento não executado, nenhum perímetro industrial/corte aprovado. Checagem TypeScript de núcleo e execução local de fixture concluídas; CI de integração da branch aguarda confirmação. Histórico anterior: 157/157 web + build e 34/34 integração PASS (baseline 1.26). 53 métodos TOC_ONLY; ALD-CH02-01 TEXT_REVIEWED/DIAGRAM_PARTIAL. Gates APP experimental, A IN_REVIEW, B PILOT-001 NO-GO e comercial NO-GO.
 **Idioma inicial:** português brasileiro  
 **Unidades:** cm na interface; mm no kernel, no formato-fonte e em operações geométricas.  
 **Referência técnica principal:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5ª edição.  
@@ -865,3 +865,26 @@ Revisão direta da fonte primária de Aldrich, **PDF pp. 31–34**, confrontou o
 **Evidência e gate:** [QA-CH02-INDUSTRIAL-TOPOLOGY-001](qa/QA-CH02-INDUSTRIAL-TOPOLOGY-001.md) registra somente consistência documental (`PASS_DOC_PARTIAL`); **nenhum novo teste geométrico/automático foi executado** neste acréscimo. Curvas, orientação de percursos, contornos fechados, espelhamento executado, separação costura/corte, SeamPair, trueing, impressão 1:1 e toile permanecem **NOT_RUN/NOT_YET_DEFINED**. Gates: `APP EXPERIMENTAL_ONLY`, `A IN_REVIEW`, `B PILOT-001 NO_GO`, `COMERCIAL NO_GO`.
 
 **Próxima etapa:** construir uma tabela completa de perímetros orientados em três camadas (construção, composição, contorno industrial), com evidência textual/visual por aresta e exceção, exigindo revisão cruzada e verificação de conectividade antes de qualquer `SEAM_LINE`/`CUT_LINE`. A trilha de pesquisa CH02 **não altera** o piloto formal `PILOT-001 Flat Shirt Core` nem autoriza codificação de produção.
+
+
+---
+
+## 46. Topologia universal e quatro percursos orientados de Aldrich CH02 — baseline 1.28 DRAFT
+
+**Problema isolado:** conectividade de comandos da fonte não equivale a geometria resolvida, costura industrial, peça de tecido ou contorno de corte. O contrato universal [TOPOLOGY-RESEARCH-001](architecture/TOPOLOGY-RESEARCH-001.md) fornece um validador independente de Aldrich, FreeSewing, React e de família de vestuário: `prototype/web-app/src/topologyResearch.ts`. Aceita somente `RESEARCH_ONLY`, rejeita identidade repetida, inversão incoerente, lacunas entre comandos, fonte de outra seção/método, curva tratada como resolvida, papéis industriais escondidos, operações de espelhamento alegadamente executadas e margens não auditadas. Por definição `cutReady=false`, `isCutBoundary=false`.
+
+**Aplicação concreta:** [CH02-ORIENTED-SOURCE-PATHS-001](domain/CH02-ORIENTED-SOURCE-PATHS-001.json) e [auditoria](domain/CH02-ORIENTED-PATHS-AUDIT-001.md) transcrevem **quatro percursos abertos**, com três comandos de origem cada e duas curvas pendentes por cadeia:
+- uma peça/frente `6 → 7 → 8 → 11 → 9`;
+- uma peça/costas `13 → 14 → 16 → 18 → 17`;
+- duas peças/frente `6 → 7 → 8 → 15 → 13`;
+- duas peças/costas `17 → 19 → 21 → 25 → 24`.
+
+Os comandos de trecho inferior de entreperna são percorridos em **sentido inverso do registro do livro** apenas para estabelecer continuidade topológica nominal; isto não espelha geometrias nem reinterpreta curvas. O total mapeado é **12 referências de comandos** entre os 16 originais, incluindo as oito curvas ainda sem spline aprovada. Os outros quatro traços não são forçados a entrar em contorno.
+
+**Três camadas:** `SOURCE_CONSTRUCTION` guarda comandos/identidade/orientação; `pendingOperations` preserva o espelhamento de uma peça como `DOCUMENTED_NOT_EXECUTED`; `INDUSTRIAL_PERIMETER` contém quatro registros `NOT_YET_DEFINED`, `approvedEdgeIds=[]`. Todas as quatro exceções de `no seam allowance` continuam sem `edgeIds` e com `offsetAllowed=false`. A linha 0–2 da composição permanece referência interna não classificada.
+
+**QA:** [QA-TOPOLOGY-RESEARCH-001](qa/QA-TOPOLOGY-RESEARCH-001.md) e `prototype/web-app/src/topologyResearch.test.ts` cobrem sucesso das quatro cadeias, inversões, lacunas, fonte não pertencente ao método, IDs duplicados, promoção ilícita de papel industrial, offset indevido e fixture genérica de outra família. A checagem local de tipos do núcleo e a execução diagnóstica de fixture foram concluídas; **não atribuir status PASS a toda a CI de branch antes de observar a execução correspondente**.
+
+**Limites:** a conectividade comprovada é **combinatória, entre IDs da fonte**, não uma curva medida, tangenciada ou conformada. Não há contorno completo, espelhamento executado, função de corte aprovada, costura líquida, offset, SeamPair, piques, SVG/PDF de corte ou toile. Gate B PILOT-001 **NO-GO**; comercial **NO-GO**. O piloto da camisa e a arquitetura integral dos 14 capítulos permanecem preservados.
+
+**Próxima etapa justificada:** auditar os **trechos ausentes** dos perímetros na figura (cintura, lateral, barra, composição final), documentando evidência por ligação e escopo de exceção. Só após essa reconciliação e curvas revisadas por modelista poderá existir um perímetro geométrico provisório para testes de fabricação.
