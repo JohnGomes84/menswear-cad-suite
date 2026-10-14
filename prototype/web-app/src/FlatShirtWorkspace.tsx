@@ -17,6 +17,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
  const [selection,setSelection]=useState<string>('FRONT');
  const svg=useMemo(()=>exportShirtSvg(project,false),[project]);
  const cavityDiagnostic=useMemo(()=>compareShirtArmholesToHalfSleeve(project),[project]);
+ const lineClasses=useMemo(()=>new Map(cavityDiagnostic.edgeClassifications.map(x=>[x.edgeId,x])),[cavityDiagnostic]);
  const selected=project.pieces.find(p=>p.id===selection)??project.pieces[0];
  function diagnosticExport(kind:'SVG'|'PDF'){
   try{
@@ -68,6 +69,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
      <button onClick={()=>diagnosticExport('PDF')}>Exportar PDF nominal 1:1</button>
      <button onClick={()=>saveFile(exportCalibrationPdf(),'application/pdf','calibracao-a4-100percent.pdf')}>Ficha A4 de calibração</button>
      <button onClick={()=>saveFile(exportCavaMangaOverlaySvg(project),'image/svg+xml','mi001-cava-manga-sobreposicao.svg')}>Comparação cava–manga SVG</button>
+     <button onClick={()=>saveFile(JSON.stringify(cavityDiagnostic,null,2)+'\n','application/json','mi001-arestas-cava-manga-diagnostico.json')}>Classificação das 22 arestas · JSON</button>
     </div>
     <small>PDF diagnóstico: folha personalizada de 1200 × 850 mm para plotter; sem paginação A4. Exportações falham se peças não couberem sem sobreposição. Imprimir sem ajustar à página. Conferir primeiro o PDF de calibração A4.</small>
    </section>
@@ -80,12 +82,17 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
    <aside className="mi001-inspector">
     <h2>Propriedades e evidências</h2>
     <p><strong>{selected.id}</strong> · {selected.points.length} pontos, {selected.edges.length} linhas diagnósticas</p>
-    <p>ID e dependências preservados. Papéis industriais indefinidos até revisão.</p>
-    <div className="mi001-scroll">{selected.edges.map(e=><div key={e.id} className="mi001-edge"><strong>{e.id}</strong> · {e.kind}<small>{e.origin} / {e.role}</small><small>{e.solution}</small><small>{e.review.state} · {e.source}</small></div>)}</div>
+    <p>ID e dependências preservados. Classificação independente da origem geométrica: sem linhas de costura identificadas.</p>
+    <p data-testid="mi001-classification-count">Arestas: {cavityDiagnostic.edgeClassifications.length} | construção: {cavityDiagnostic.edgeClassifications.filter(x=>x.classification==='CONSTRUCTION_LINE').length} | indefinidas: {cavityDiagnostic.edgeClassifications.filter(x=>x.classification==='UNCLASSIFIED').length} | SEAM_LINE: 0</p>
+    <div className="mi001-scroll">{selected.edges.map(e=><div key={e.id} className="mi001-edge"><strong>{e.id}</strong> · {e.kind}
+      <small data-testid={'mi001-line-'+e.id}>{lineClasses.get(e.id)?.classification} | {lineClasses.get(e.id)?.classificationOrigin} (anterior: {lineClasses.get(e.id)?.previousRole})</small>
+      <small>{lineClasses.get(e.id)?.sourceLocation} — {lineClasses.get(e.id)?.sourceEvidence}</small>
+      <small>{lineClasses.get(e.id)?.justification}</small>
+      <small>Geometria: {e.origin} | {e.solution} | {e.review.state}</small></div>)}</div>
     <h3>Cava × meia cabeça · {cavityDiagnostic.verdict}</h3>
     <p data-testid="mi001-cava-comparison">Frente: <strong>{cavityDiagnostic.front.totalMm.toFixed(3)} mm</strong> | Costas: <strong>{cavityDiagnostic.back.totalMm.toFixed(3)} mm</strong> | Meia cabeça: <strong>{cavityDiagnostic.halfSleeveHead.totalMm.toFixed(3)} mm</strong></p>
     <p data-testid="mi001-excedente-total"><strong>Excedente geométrico total: {cavityDiagnostic.geometricExcess.excessTotalMm.toFixed(3)} mm</strong> = cabeça hipotética espelhada ({cavityDiagnostic.geometricExcess.headTotalHypothesisMm.toFixed(3)} mm) − cavas ({cavityDiagnostic.geometricExcess.armscyeTotalMm.toFixed(3)} mm).</p>
-    <p>Por metade: frente +{cavityDiagnostic.geometricExcess.excessFrontHalfMm.toFixed(3)} mm; costas +{cavityDiagnostic.geometricExcess.excessBackHalfMm.toFixed(3)} mm. <strong>Não é folga aprovada:</strong> linha de costura NÃO IDENTIFICADA; piques, zonas e alvo/tolerância indefinidos. Frente e costas usam curvas coincidentes.</p>
+    <p>Por metade: frente +{cavityDiagnostic.geometricExcess.excessFrontHalfMm.toFixed(3)} mm; costas +{cavityDiagnostic.geometricExcess.excessBackHalfMm.toFixed(3)} mm. <strong>Não é folga aprovada:</strong> stitchLineStatus={cavityDiagnostic.geometricExcess.stitchLineStatus}; piques, zonas e alvo/tolerância indefinidos. Frente e costas usam curvas coincidentes.</p>
     <h3>Decisões técnicas versionadas</h3>
     <div className="mi001-scroll">{project.decisions.map(d=><p key={d.id}><strong>{d.id}@{d.version}</strong><small> · {d.status}</small><br/><small>{d.description}</small></p>)}</div>
     <h3>Gate e provas</h3>
