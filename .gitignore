@@ -18,3 +18,5 @@ test-results/
 playwright-report/
 playwright/.cache/
 blob-report/
+prototype/integration-spike/generated/
+prototype/integration-spike/out/
