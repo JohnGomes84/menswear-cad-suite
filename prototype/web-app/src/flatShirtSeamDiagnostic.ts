@@ -31,6 +31,29 @@ export type SeamComparison={
   front:MeasuredChain;back:MeasuredChain;halfSleeveHead:MeasuredChain;
   construction:{bodyChord5to17Mm:number;sleeveDiagonal3to0Mm:number;sourceAddedToDiagonalMm:number;hollow5Mm:number;riseBetween7and8Mm:number;frontBackArcDifferenceMm:number};
   differences:{halfHeadMinusFrontMm:number;halfHeadMinusBackMm:number;twoMirroredHalvesMinusBothArmholesMm:number};
+  geometricExcess:{
+    basis:'MIRRORED_HALF_CAP_VS_UNCLASSIFIED_ARMHOLE_CONTOURS';
+    headTotalHypothesisMm:number;armscyeFrontMm:number;armscyeBackMm:number;armscyeTotalMm:number;
+    excessTotalMm:number;excessFrontHalfMm:number;excessBackHalfMm:number;
+    stitchLineStatus:'NOT_IDENTIFIED';approvedTargetMm:null;approvedToleranceMm:null;
+    frontNotch:null;backNotch:null;upperZoneMm:null;lowerFrontZoneMm:null;lowerBackZoneMm:null;
+    designIntent:'UNDEFINED';distribution:'UNDEFINED';releaseStatus:'GEOMETRIC_FACT_NOT_ASSEMBLY_APPROVAL';
+  };
+  geometricExcess:{
+    basis:'MIRRORED_HALF_CAP_VS_UNCLASSIFIED_ARMHOLE_CONTOURS',
+    headTotalHypothesisMm:2*halfSleeveHead.totalMm,
+    armscyeFrontMm:front.totalMm,
+    armscyeBackMm:back.totalMm,
+    armscyeTotalMm:front.totalMm+back.totalMm,
+    excessTotalMm:2*halfSleeveHead.totalMm-front.totalMm-back.totalMm,
+    excessFrontHalfMm:halfSleeveHead.totalMm-front.totalMm,
+    excessBackHalfMm:halfSleeveHead.totalMm-back.totalMm,
+    stitchLineStatus:'NOT_IDENTIFIED',
+    approvedTargetMm:null,approvedToleranceMm:null,
+    frontNotch:null,backNotch:null,upperZoneMm:null,lowerFrontZoneMm:null,lowerBackZoneMm:null,
+    designIntent:'UNDEFINED',distribution:'UNDEFINED',
+    releaseStatus:'GEOMETRIC_FACT_NOT_ASSEMBLY_APPROVAL'
+  },
   halfToFull:{representation:'HALF_SLEEVE_DIAGRAM';centreGuideId:'SLEEVE:E08';hypothesis:'MIRROR_ABOUT_0_TO_2_NOT_APPROVED';fullHeadIfMirroredMm:number;remark:string};
   matchCandidates:{sleeveEndpoint:string;bodyEndpoint:string;kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH';approved:false}[];
   classifications:{item:string;class:'SOURCE_DERIVED'|'GEOMETRY_CALCULATION'|'TECHNICAL_DECISION_PENDING';basis:string}[];
@@ -74,7 +97,7 @@ export function compareShirtArmholesToHalfSleeve(raw:ShirtProject):SeamCompariso
  const riseBetween7and8Mm=(point(sleevePiece,'7').y+point(sleevePiece,'8').y)/2-point(sleevePiece,'HEAD_RAISE_78').y;
  return {
   format:'MI001-CAVA-MANGA-DIAGNOSTIC/1.0.0',projectId:project.projectId,projectRevision:project.revision,method:project.method,unit:'mm',verdict:'INDEFINIDA',
-  reason:'O livro instrui as referências geométricas, mas o projeto possui curvas de frente/costas idênticas por proposta técnica, nenhuma atribuição de lados da meia manga a cava anterior/posterior, nenhum SeamPair/pique aprovado e nenhum valor de folga prescrito. Diferenças são métricas, não evidência de encaixe.',
+  reason:'Excedente geométrico total mensurável = 2 × cabeça da meia manga − (cava frente + cava costas). A hipótese de espelhamento não classifica o traço como linha de costura. Frente/costas possuem curvas idênticas por decisão provisória, sem correspondência de lados, SeamPair, piques, zonas, alvo ou tolerância aprovados. A intenção de modelagem permanece INDEFINIDA.',
   scope:{frontArmhole:'5→12→17',backArmhole:'5→12→17',halfSleeveHead:'3→HEAD_HOLLOW_5→6→HEAD_RAISE_78→0',source:'Aldrich 5, PDF pp.35–36 + p.38',currentGeometry:'ARMHOLE_INTERPOLATION@1.0.0 / SLEEVE_HEAD_INTERPOLATION@1.0.2'},
   front,back,halfSleeveHead,
   construction:{bodyChord5to17Mm,sleeveDiagonal3to0Mm,sourceAddedToDiagonalMm:clean(sleeveDiagonal3to0Mm-bodyChord5to17Mm),hollow5Mm,riseBetween7and8Mm,frontBackArcDifferenceMm:clean(front.totalMm-back.totalMm)},
@@ -87,6 +110,8 @@ export function compareShirtArmholesToHalfSleeve(raw:ShirtProject):SeamCompariso
    {item:'Bezier armhole geometry',class:'TECHNICAL_DECISION_PENDING',basis:'ARMHOLE_INTERPOLATION@1.0.0: front and back share identical control points'},
    {item:'Bezier half-sleeve geometry',class:'TECHNICAL_DECISION_PENDING',basis:'SLEEVE_HEAD_INTERPOLATION@1.0.2; derived 3D instruction converted to C1 cubic handles'},
    {item:'Numeric arc length and algebraic differences',class:'GEOMETRY_CALCULATION',basis:'cubicLength() in geometry.ts, mm units, independently reference-testable'},
+   {item:'Observed geometric excess, under mirrored-half hypothesis',class:'GEOMETRY_CALCULATION',basis:'2 × meia cabeça − (cava frente + cava costas); contour roles UNCLASSIFIED; not approved seamline ease'},
+   {item:'Easing distribution, pitch notches and desired assembly target',class:'TECHNICAL_DECISION_PENDING',basis:'No stitch-line mapping, ease target, zones, notches, seam pair or flat-sleeve assembly method yet approved'},
    {item:'Sleeve end registration 3↔5 and 0↔17',class:'TECHNICAL_DECISION_PENDING',basis:'Graphical anchor comparison only; no approved seam mapping or notch'},
    {item:'Full cap as mirrored halves',class:'TECHNICAL_DECISION_PENDING',basis:'Mathematical doubling about construction centre 0→2, NOT yet a garment instruction'}
   ],release:project.release
@@ -122,10 +147,20 @@ export function exportCavaMangaOverlaySvg(raw:ShirtProject):string{
  const matched=marker(base,'F/B:5 ≈ S:3 (registro de origem; não pique)','#1b283b',7,17);
  const labels=[matched,marker(tf(point(f,'12')),'F/B:12','#21669b',10,-1),marker(tf(point(f,'17')),'F/B:17','#21669b',10,-5),marker(ts(point(s,'0')),'S:0','#0a745e',12,-6),marker(ts(point(s,'6')),'S:6','#0a745e',11,-3),marker(ts(point(s,'HEAD_HOLLOW_5')),'S:H5','#0a745e',9,-2),marker(ts(point(s,'HEAD_RAISE_78')),'S:R78','#0a745e',13,3)];
  const sourceFifths=['5','6','7','8'].map(k=>{const pos=ts(point(s,k));return `<circle cx="${fixed(pos.x)}" cy="${fixed(pos.y)}" r="1.3" fill="#65758a"/><text x="${fixed(pos.x-12)}" y="${fixed(pos.y+3)}" font-size="4.5" fill="#65758a">${k}</text>`}).join('');
- const tableRows=[['Cava frente 5→12→17',r.front.totalMm],['Cava costas 5→12→17',r.back.totalMm],['Meia cabeça 3→0',r.halfSleeveHead.totalMm],['Δ meia cabeça − frente',r.differences.halfHeadMinusFrontMm],['Δ meia cabeça − costas',r.differences.halfHeadMinusBackMm],['2×meia cabeça (hipótese)',r.halfToFull.fullHeadIfMirroredMm],['Δ hipótese completa − cavas',r.differences.twoMirroredHalvesMinusBothArmholesMm],['Diagonal 3–0 − corda 5–17',r.construction.sourceAddedToDiagonalMm]];
+ const tableRows=[
+  ['Cava frente 5→12→17',r.front.totalMm],
+  ['Cava costas 5→12→17',r.back.totalMm],
+  ['TOTAL das cavas',r.geometricExcess.armscyeTotalMm],
+  ['Meia cabeça 3→0',r.halfSleeveHead.totalMm],
+  ['Cabeça 2× (hipótese)',r.geometricExcess.headTotalHypothesisMm],
+  ['EXCEDENTE geométrico',r.geometricExcess.excessTotalMm],
+  ['Δ meia cabeça − frente',r.geometricExcess.excessFrontHalfMm],
+  ['Δ meia cabeça − costas',r.geometricExcess.excessBackHalfMm],
+  ['Acréscimo à diagonal fonte',r.construction.sourceAddedToDiagonalMm]
+ ];
  const table=tableRows.map(([label,value],i)=>`<text x="535" y="${143+i*23}" font-size="8.2" fill="#203549">${xml(String(label))}</text><text x="855" y="${143+i*23}" font-size="9" text-anchor="end" font-weight="600" fill="#203549">${n(Number(value))} mm</text>`).join('');
  const refs=r.halfSleeveHead.segments.map((edge,i)=>`<text x="535" y="${362+i*17}" font-size="7.2" fill="#285b52">${xml(edge.edgeId)} ${xml(edge.from.split(':')[1])}→${xml(edge.to.split(':')[1])}: ${n(edge.lengthMm)} mm</text>`).join('');
- return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="910mm" height="520mm" viewBox="0 0 910 520" role="img" aria-label="Comparação diagnóstica de cavas e cabeça da meia manga, em milímetros, sem escala física verificada"><title>MI-001 — comparação cava e meia cabeça | ${xml(p.method.version)}</title><desc>SVG com sobreposição por registro de origem e rotação rígida, SEM escala alterada; áreas F/B coincidem exatamente por decisão provisória. DRAFT NO CUT. NO SEAM PAIR. physical NOT_RUN. Veredito INDEFINIDA.</desc><rect width="910" height="520" fill="#fff"/><text x="25" y="24" font-size="16" font-weight="700" fill="#17365b">MI-001 | CAVA × MEIA CABEÇA — ${r.verdict}</text><text x="25" y="39" font-size="8" fill="#ab2435">DRAFT · PROVISÓRIO · NÃO CORTAR · escala física NOT_RUN · método ${xml(p.method.version)} · revisão ${p.revision}</text><line x1="475" x2="475" y1="55" y2="485" stroke="#ced8e2" stroke-width=".4"/><text x="25" y="58" font-size="8.2" fill="#244560">SOBREPOSIÇÃO RÍGIDA — mesma escala em mm, sem deformação</text><text x="25" y="70" font-size="6.6" fill="#526777">Coincide S:3 com F/B:5; rotações independentes alinham cordas verticalmente.</text>
+ return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="910mm" height="520mm" viewBox="0 0 910 520" data-geometric-excess-mm="${n(r.geometricExcess.excessTotalMm)}" role="img" aria-label="Comparação diagnóstica de cavas e cabeça da meia manga, em milímetros, sem escala física verificada"><title>MI-001 — comparação cava e meia cabeça | ${xml(p.method.version)}</title><desc>SVG com sobreposição por registro de origem e rotação rígida, SEM escala alterada; áreas F/B coincidem exatamente por decisão provisória. DRAFT NO CUT. NO SEAM PAIR. physical NOT_RUN. Veredito INDEFINIDA.</desc><rect width="910" height="520" fill="#fff"/><text x="25" y="24" font-size="16" font-weight="700" fill="#17365b">MI-001 | CAVA × MEIA CABEÇA — ${r.verdict}</text><text x="25" y="39" font-size="8" fill="#ab2435">DRAFT · PROVISÓRIO · NÃO CORTAR · escala física NOT_RUN · método ${xml(p.method.version)} · revisão ${p.revision}</text><line x1="475" x2="475" y1="55" y2="485" stroke="#ced8e2" stroke-width=".4"/><text x="25" y="58" font-size="8.2" fill="#244560">SOBREPOSIÇÃO RÍGIDA — mesma escala em mm, sem deformação</text><text x="25" y="70" font-size="6.6" fill="#526777">Coincide S:3 com F/B:5; rotações independentes alinham cordas verticalmente.</text>
 <path d="M ${fixed(base.x)} ${fixed(base.y)} L ${fixed(tf(point(f,'17')).x)} ${fixed(tf(point(f,'17')).y)}" fill="none" stroke="#a8b3c2" stroke-width=".45" stroke-dasharray="4,4"/>
 <path d="M ${fixed(base.x)} ${fixed(base.y)} L ${fixed(ts(point(s,'0')).x)} ${fixed(ts(point(s,'0')).y)}" fill="none" stroke="#6a938a" stroke-width=".45" stroke-dasharray="3,4"/>
 <path id="front-armhole" data-edges="FRONT:E04 FRONT:E03" d="${armF}" fill="none" stroke="#2c7fb8" stroke-width="1.8"/>
@@ -134,7 +169,7 @@ export function exportCavaMangaOverlaySvg(raw:ShirtProject):string{
 ${sourceFifths}${labels.join('')}
 <rect x="18" y="83" width="315" height="365" fill="none" stroke="#d9e0e8" stroke-width=".45" rx="5"/>
 <text x="25" y="466" font-size="7.4" fill="#2c7fb8">━━ Frente: 5→12→17</text><text x="25" y="479" font-size="7.4" fill="#dd8a21">┄┄ Costas: 5→12→17 (mesma geometria da frente)</text><text x="25" y="492" font-size="7.4" fill="#0d8c73">━━ Manga: 3→H5→6→R78→0 (meia cabeça)</text>
-<text x="535" y="75" font-size="11" font-weight="700" fill="#1b3554">COMPRIMENTOS DIAGNÓSTICOS</text><text x="535" y="91" font-size="7" fill="#526777">Origem: Aldrich p.36/p.38; curvas propostas v1.0.0/v1.0.2</text><text x="535" y="106" font-size="7" fill="#526777">Δ positivos não constituem folga prescrita.</text>${table}
+<text x="535" y="75" font-size="11" font-weight="700" fill="#1b3554">COMPRIMENTOS DIAGNÓSTICOS</text><text x="535" y="91" font-size="7" fill="#526777">Origem: Aldrich p.36/p.38; curvas propostas v1.0.0/v1.0.2</text><text x="535" y="106" font-size="7" fill="#526777">Excedente geométrico ≠ folga de costura aprovada.</text>${table}
 <text x="535" y="345" font-size="9" font-weight="700" fill="#1b3554">TRECHOS INDIVIDUAIS DA MEIA CABEÇA</text>${refs}
-<text x="535" y="449" font-size="8.2" font-weight="700" fill="#b53e32">VEREDITO: INDEFINIDA</text><text x="535" y="464" font-size="6.7" fill="#4b5f74">Sem SeamPair, piques e papel de costura revisados.</text><text x="535" y="477" font-size="6.7" fill="#4b5f74">Espelhar/dobrar a meia manga é hipótese, não prova.</text><text x="535" y="490" font-size="6.7" fill="#4b5f74">Nenhum contorno, margem ou tolerância alterados.</text><text x="25" y="511" font-size="6.5" fill="#5d6f80">Pontos de registro = hipótese visual, NÃO são pontos de encaixe/costura aprovados. SVG mm NOMINAL. ${xml(p.projectId)}</text></svg>\n`;
+<text x="535" y="449" font-size="8.2" font-weight="700" fill="#b53e32">VEREDITO: INDEFINIDA</text><text x="535" y="464" font-size="6.7" fill="#4b5f74">Excedente medido; costura, piques, zonas indefinidos.</text><text x="535" y="477" font-size="6.7" fill="#4b5f74">Espelhar/dobrar a meia manga é hipótese, não prova.</text><text x="535" y="490" font-size="6.7" fill="#4b5f74">Nenhum contorno, margem ou tolerância alterados.</text><text x="25" y="511" font-size="6.5" fill="#5d6f80">Pontos de registro = hipótese visual, NÃO são pontos de encaixe/costura aprovados. SVG mm NOMINAL. ${xml(p.projectId)}</text></svg>\n`;
 }
