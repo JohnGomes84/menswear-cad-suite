@@ -32,6 +32,11 @@ describe('MI002 two-panel short — source-independent technical draft',()=>{
    expect(piece.points.find(x=>x.id.endsWith(':G0'))!.positionMm.y).toBe(35);
    expect(row.allEdges).toHaveLength(9);
   }
+  // Benchmarks calculated separately with scipy.integrate.quad on the declared cubic controls.
+  expect(d.pieces[0].crotchMm).toBeCloseTo(300.45233645434917,5);
+  expect(d.pieces[1].crotchMm).toBeCloseTo(311.745789787406,5);
+  expect(d.pieces[0].sideMm).toBeCloseTo(425.9174666869071,6);
+  expect(d.pieces[1].sideMm).toBeCloseTo(432.65418478689685,6);
   expect(p.method.authority).toBe('OWNER_SPECIFICATION_TECHNICAL_CANDIDATE');
  });
  it('rejects contradictory rises and inseam values; no silent adjustment to make fit',()=>{
