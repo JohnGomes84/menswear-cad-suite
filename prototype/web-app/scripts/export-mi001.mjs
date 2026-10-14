@@ -29,7 +29,7 @@ try{
   'Measure 100mm reference and 25x25mm square on a physical sheet. Fill the separate interactive physical protocol with printer/settings, measurements and evidence.',
   'Do NOT assume printed precision. scalePhysical=NOT_RUN until user submits physical observations. Assembly=NOT_RUN. Fit=NOT_RUN. cutReady=false.',
   'Commit SHA: '+sha,'Generated UTC: '+printMeta.generatedAtISO,'Pages: '+tiled.length
- ].join('\\n')+'\\n';
+ ].join('\n')+'\n';
  const files=[
   ['flat-shirt-core-initial.draft.json',x.serializeShirtProject(project)],
   ['flat-shirt-core-chest112.draft.json',x.serializeShirtProject(regenerated)],
