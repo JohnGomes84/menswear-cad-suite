@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,serializeShirtProject,parseShirtProject,validateShirtProject,evidenceFingerprint} from './flatShirtProject';
+import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,serializeShirtProject,createOwnerApprovedCalibrationProject,parseShirtProject,validateShirtProject,evidenceFingerprint} from './flatShirtProject';
 import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf} from './flatShirtExport';
 import {cubicPoint,cubicDerivative,cubicLength} from './geometry';
 const same=(a:unknown,b:unknown)=>expect(a).toEqual(b);
@@ -179,4 +179,56 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(p.decisions.every(x=>x.status==='PROVISIONAL')).toBe(true);
   expect(p.pieces.every(x=>x.edges.some(e=>e.origin==='TECHNICAL_DECISION'))).toBe(true);
  });
+ it('registers owner-approved 100mm and 25x25mm calibration ONLY for exact rev1 printed fixture',()=>{
+  const p=createOwnerApprovedCalibrationProject(),regular=createShirtProject();
+  const printed=changeShirtMeasurement(regular,'chest',1120);
+  expect(p.projectId).toBe('flat-shirt-core-experimental-001');
+  expect(p.revision).toBe(1);
+  expect(p.method.version).toBe('research-0.1.2');
+  expect(p.pieces).toEqual(printed.pieces);
+  expect(p.measurements).toEqual(printed.measurements);
+  expect(p.release).toEqual({cutReady:false,scalePhysical:'PASSED_WITH_EVIDENCE',assembly:'NOT_RUN',fit:'NOT_RUN'});
+  expect(p.calibrationEvidence).toMatchObject({
+   id:'MI001-CALIBRATION-OWNER-2026-10-14',
+   decisionState:'APPROVED_BY_OWNER',status:'PASSED_WITH_EVIDENCE',
+   approvalKind:'DIAGNOSTIC_REFERENCE_SCALE_ONLY',
+   ownerDecisionDate:'2026-10-14',reportedPrintSession:'ONE_REPORTED_PHYSICAL_PRINT',
+   sourceArtifactCommit:'4be146a39f2c9e4d5e40f847d52db62d98b41b7e',
+   sourceArtifactMatch:'REPORTED_NOT_INDEPENDENTLY_VERIFIED',
+   scope:{printer:null,driverConfiguration:null,paper:null,printDate:null,
+    selectedScale:'100% / tamanho real',scopeStatus:'RESTRICTED_TO_THIS_UNIDENTIFIED_SESSION_NOT_TRANSFERABLE'},
+   garmentMeasurements:'NOT_PROVIDED',seamLine:'NOT_IDENTIFIED',armholeSleeve:'INDEFINITE',
+   caveat:'PHYSICAL_REFERENCE_ONLY_NO_METHOD_OR_FIT_APPROVAL'
+  });
+  for(const [key,nominal] of [['ruler100',100],['squareWidth25',25],['squareHeight25',25]] as const){
+   expect(p.calibrationEvidence!.readings[key]).toEqual({
+    nominalMm:nominal,observedMm:nominal,signedDeviationMm:0,absoluteDeviationMm:0,deviationPercent:0
+   });
+  }
+  expect(p.pieces.every(x=>x.edges.every(e=>e.role!=='CUT'&&e.role!=='SEAM'&&e.role!=='FOLD'))).toBe(true);
+  expect(parseShirtProject(serializeShirtProject(p))).toEqual(p);
+  expect(regular.release.scalePhysical).toBe('NOT_RUN');
+  expect(printed.release.scalePhysical).toBe('NOT_RUN');
+ });
+ it('rejects silent physical approval and cannot transfer evidence to changed measurements, project IDs or different sessions',()=>{
+  const p=createOwnerApprovedCalibrationProject(),snapshot=serializeShirtProject(p);
+  const badNoEvidence={...p,calibrationEvidence:undefined};
+  expect(()=>validateShirtProject(badNoEvidence)).toThrow(/evidência vinculada/);
+  const badArbitraryEvidence={...p,calibrationEvidence:{...p.calibrationEvidence!,sourceArtifactCommit:'ab'.repeat(20)}};
+  expect(()=>validateShirtProject(badArbitraryEvidence)).toThrow(/evidência vinculada/);
+  expect(()=>validateShirtProject({...p,projectId:'other-experimental-project'})).toThrow();
+  expect(()=>validateShirtProject({...p,release:{...p.release,cutReady:true}})).toThrow(/release proibido/);
+  expect(()=>validateShirtProject({...p,release:{...p.release,assembly:'PASSED'}})).toThrow(/release proibido/);
+  expect(()=>validateShirtProject({...p,release:{...p.release,fit:'PASSED'}})).toThrow(/release proibido/);
+  expect(()=>validateShirtProject({...createShirtProject(),release:{...p.release}})).toThrow();
+  const changed=changeShirtMeasurement(p,'chest',1150);
+  expect(changed.revision).toBe(2);
+  expect(changed.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
+  expect(changed.calibrationEvidence).toBeUndefined();
+  const revised=changeShirtMeasurement(p,'garment_length',720);
+  expect(revised.release.scalePhysical).toBe('NOT_RUN');
+  expect(revised.calibrationEvidence).toBeUndefined();
+  expect(serializeShirtProject(p)).toBe(snapshot);
+ });
+
 });
