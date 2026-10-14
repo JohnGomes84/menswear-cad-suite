@@ -275,25 +275,25 @@ export function exportPhysicalCalibrationProtocolPdf(raw:ShirtProject,meta:Print
  writer.add('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
  writer.add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${n(210*PT)} ${n(297*PT)}] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R /Annots [${indexes.map(i=>`${i} 0 R`).join(' ')}] >>`);
  writer.add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
- let d=txt('MI-001 | PHYSICAL PRINT CALIBRATION | DRAFT / NO CUT',11,14,13,H);
+ let d=txt('MI-001 | PROTOCOLO DE CALIBRACAO FISICA | DRAFT / NO CUT',11,14,13,H);
  d+=txt(`Project ${p.projectId} | ${p.method.id}@${p.method.version}`,11,22,8,H);
  d+=txt(`SHA ${meta.commitSha}`,11,29,7,H);
  d+=txt(`Generated UTC ${meta.generatedAtISO} | cutReady=false`,11,35,8,H);
- d+=txt('DO NOT MARK AS VALIDATED UNTIL REAL PAPER MEASUREMENTS ARE SUPPLIED.',11,43,9,H);
+ d+=txt('NAO VALIDAR ESCALA SEM MEDICOES REAIS EM PAPEL.',11,43,9,H);
  d+=txt('Scale: NOT_RUN     Assembly: NOT_RUN     Fit: NOT_RUN',11,50,8,H);
  d+=line(11,55,199,55,H);
  const descriptors:[PhysicalFieldName,string,number,number][]=[
-  ['printer','Printer / model',64,10],['driverConfiguration','Driver / settings',82,10],
-  ['paper','Paper type / size',100,10],['selectedScale','Selected print scale (use 100%)',118,10],
-  ['printDate','Actual print date',136,10],['responsible','Measured by',154,10],
-  ['measuredRuler100Mm','Observed 100mm ruler (mm)',172,10],
-  ['measuredSquareWidth25Mm','Observed square width (mm)',190,10],
-  ['measuredSquareHeight25Mm','Observed square height (mm)',208,10],
-  ['observations','Observations',226,10],['evidenceReference','Evidence reference / file',244,10]
+  ['printer','Impressora / modelo',64,10],['driverConfiguration','Driver / configuracao',82,10],
+  ['paper','Papel / tamanho',100,10],['selectedScale','Escala selecionada (usar 100%)',118,10],
+  ['printDate','Data real da impressao',136,10],['responsible','Responsavel pela medicao',154,10],
+  ['measuredRuler100Mm','Regua real de 100mm (mm)',172,10],
+  ['measuredSquareWidth25Mm','Quadrado largura real (mm)',190,10],
+  ['measuredSquareHeight25Mm','Quadrado altura real (mm)',208,10],
+  ['observations','Observacoes',226,10],['evidenceReference','Evidencia / arquivo',244,10]
  ];
- for(const [,label,y] of descriptors)d+=txt(label,11,y,9,H);
- d+=txt('This form records observations only. It cannot approve physical scale, method, assembly or fit.',11,267,8,H);
- d+=txt('Return the filled PDF with actual measurements for independent review.',11,276,8,H);
+ for(const [,label,y] of descriptors){d+=txt(label,11,y,9,H);d+='0.7 G\n'+rect(78,y+1,121,11,H)+'0 G\n';}
+ d+=txt('Registro de observacoes, NAO aprovacao de escala, modelagem, montagem ou caimento.',11,267,8,H);
+ d+=txt('Preencha o PDF com medidas reais e devolva para revisao. Nenhum aceite automatico.',11,276,8,H);
  d+=txt('Status: PENDING_OWNER_DECISION / PHYSICALLY_VALIDATED = NOT_RUN',11,286,8,H);
  writer.add(`<< /Length ${new TextEncoder().encode(d).length} >>\nstream\n${d}\nendstream`);
  writer.add(`<< /Fields [${indexes.map(i=>`${i} 0 R`).join(' ')}] /DR << /Font << /F1 4 0 R >> >> /DA (/F1 10 Tf 0 g) /NeedAppearances true >>`);
