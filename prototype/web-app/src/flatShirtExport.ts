@@ -31,7 +31,7 @@ export function exportShirtSvg(raw:ShirtProject):string{
    return `<g id="${piece.id}"><text x="${placement[piece.id].x}" y="35" font-size="10">${piece.id} / EXPERIMENTAL</text>${items}</g>`;
  }).join('\n');
  const decisions=project.decisions.map(x=>x.id+'@'+x.version).join(', ');
- return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${SHEET.widthMm}mm" height="${SHEET.heightMm}mm" viewBox="0 0 ${SHEET.widthMm} ${SHEET.heightMm}">\n<title>Flat Shirt Core diagnostic - NOT FOR CUTTING</title><desc>PROJECT ${esc(project.projectId)} METHOD ${project.method.id}@${project.method.version}; cutReady=false; physical scale NOT_RUN. ${esc(decisions)}</desc><rect width="100%" height="100%" fill="white"/>\n<text x="25" y="17" font-size="12" font-weight="bold" fill="#a11d2d">${water}</text><text x="25" y="29" font-size="6">Projeto ${esc(project.projectId)} revision ${project.revision} | PDF pp. 35, 36, 38 | cm entrada / mm geometria | CutReady=false</text>\n${tags}\n<g stroke="black" stroke-width="0.35" fill="none"><rect x="40" y="785" width="25" height="25"/><path d="M 40 822 L 140 822"/></g><g font-size="5"><text x="40" y="781">Quadrado de 25 mm</text><text x="40" y="831">Referencia de 100 mm - imprimir a 100%</text><text x="350" y="824">Calibracao fisica: NOT_RUN | Montagem: NOT_RUN | Caimento: NOT_RUN</text></g></svg>\n`;
+ return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${SHEET.widthMm}mm" height="${SHEET.heightMm}mm" viewBox="0 0 ${SHEET.widthMm} ${SHEET.heightMm}">\n<title>Flat Shirt Core diagnostic - NOT FOR CUTTING</title><desc>PROJECT ${esc(project.projectId)} METHOD ${project.method.id}@${project.method.version}; cutReady=false; physical scale NOT_RUN. ${esc(decisions)}</desc><rect width="100%" height="100%" fill="white"/>\n<text x="25" y="17" font-size="12" font-weight="bold" fill="#a11d2d">${water}</text><text x="25" y="29" font-size="6">Projeto ${esc(project.projectId)} revision ${project.revision} | PDF pp. 35, 36, 38 | cm entrada / mm geometria | CutReady=false</text>\n${tags}\n<g stroke="black" stroke-width="0.35" fill="none"><rect x="990" y="785" width="25" height="25"/><path d="M 990 822 L 1090 822"/></g><g font-size="5"><text x="990" y="781">Quadrado de 25 mm</text><text x="990" y="831">Referencia de 100 mm - imprimir a 100%</text><text x="350" y="824">Calibracao fisica: NOT_RUN | Montagem: NOT_RUN | Caimento: NOT_RUN</text></g></svg>\n`;
 }
 class PdfBuilder{
  private objs:string[]=[];
@@ -71,7 +71,7 @@ export function exportShirtPdf(raw:ShirtProject):Uint8Array{
     else stream+=line(from.x,from.y,to.x,to.y,H);
   }
  }
- stream+='[] 0 d\n'+rect(40,785,25,25,H)+line(40,822,140,822,H)+txt('25 mm square',40,778,10,H)+txt('100 mm calibration bar - print at actual size 100%',40,832,10,H)+txt('Scale verification: NOT_RUN | Assembly: NOT_RUN | Fit: NOT_RUN',360,832,10,H);
+ stream+='[] 0 d\n'+rect(990,785,25,25,H)+line(990,822,1090,822,H)+txt('25 mm square',990,778,10,H)+txt('100 mm bar - print 100%',990,832,10,H)+txt('Scale verification: NOT_RUN | Assembly: NOT_RUN | Fit: NOT_RUN',360,832,10,H);
  return makePdf(SHEET.widthMm,H,stream);
 }
 export function exportCalibrationPdf():Uint8Array{
