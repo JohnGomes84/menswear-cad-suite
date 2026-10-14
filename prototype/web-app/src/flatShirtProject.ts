@@ -41,7 +41,7 @@ function checkMeasures(v:MeasureSet){
 }
 const evidenceInit=():Evidence[]=>[
  {id:'BODY_GEOMETRY',state:'PENDING',evidenceRef:null,dependsOn:{measurements:['chest','scye_depth','back_neck_to_waist','neck_size','half_back','garment_length'],decisions:['BODY_SPLIT','NECK_INTERPOLATION','ARMHOLE_INTERPOLATION','CLOSURE_EXPERIMENT'],exportConfig:false},evaluatedRevision:null,basisFingerprint:null},
- {id:'SLEEVE_GEOMETRY',state:'PENDING',evidenceRef:null,dependsOn:{measurements:[...SHIRT_KEYS],decisions:['ARMHOLE_INTERPOLATION','SLEEVE_HEAD_INTERPOLATION'],exportConfig:false},evaluatedRevision:null,basisFingerprint:null},
+ {id:'SLEEVE_GEOMETRY',state:'PENDING',evidenceRef:null,dependsOn:{measurements:['chest','scye_depth','half_back','one_piece_sleeve_length','close_wrist'],decisions:['ARMHOLE_INTERPOLATION','SLEEVE_HEAD_INTERPOLATION'],exportConfig:false},evaluatedRevision:null,basisFingerprint:null},
  {id:'PRINT_CALIBRATION',state:'PENDING',evidenceRef:null,dependsOn:{measurements:[],decisions:[],exportConfig:true},evaluatedRevision:null,basisFingerprint:null}
 ];
 const book='Metric Pattern Cutting for Menswear, 5th ed.';
@@ -98,7 +98,7 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
   const t=result.trace.find(x=>x.pointId===id);
   const step=(kind==='BODY'?bodyProgram():sleeveProgram()).instructions.find(x=>x.pointId===id);
   const ms=step?.op==='OFFSET'?measureRefs(step.lengthMm):[];
-  if(kind==='SLEEVE'&&id==='3')ms.push('chest','scye_depth','neck_size','half_back','BODY:5','BODY:17');
+  if(kind==='SLEEVE'&&id==='3')ms.push('chest','scye_depth','half_back','FRONT:5','FRONT:17');
   return [...new Set([...(t?.usedPoints.map(x=>kind+':'+x)??[]),...ms.filter(x=>x!=='sleeve_horizontal_0_3')])];
  };
  const bodyPoints=(kind:'FRONT'|'BACK')=>[...body.trace.map(t=>pnt(kind+':'+t.pointId,t.positionMm,'SOURCE_INSTRUCTION',`Aldrich5-PDF${t.source.pdfPage}: ${t.source.instruction}`,sourceDeps(t.pointId,'BODY').map(x=>x.replace('BODY:',kind+':')),'BODY_INTERPRETER@research-0.1.0'))];
@@ -149,7 +149,7 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
  const knots=[
   {id:'3',t:0,offset:0,offsetSlope:rise},
   {id:'HEAD_HOLLOW_5',t:.2,offset:7.5,offsetSlope:0},
-  {id:'6',t:.4,offset:0,offsetSlope:-45},
+  {id:'6',t:.4,offset:0,offsetSlope:(-15-7.5)/(.7-.2)},
   {id:'HEAD_RAISE_78',t:.7,offset:-15,offsetSlope:0},
   {id:'0',t:1,offset:0,offsetSlope:rise}
  ];
