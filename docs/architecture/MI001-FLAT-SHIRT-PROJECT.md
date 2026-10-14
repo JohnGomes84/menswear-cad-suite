@@ -2,7 +2,7 @@
 
 **Papel:** primeira integração vertical de pesquisa na aplicação web existente. **Não é novo laboratório**. Integra o interpretador `draftingInterpreter.ts`, o kernel Bézier de `geometry.ts` (modelo de curvas compatível), o shell React existente e saída SVG/PDF derivada de pontos/arestas, sem duplicar fórmulas na interface.
 
-**Origem:** Aldrich, *Metric Pattern Cutting for Menswear*, 5.ª ed., PDF pp. 35–36 (texto) e p. 38 (figuras), usando somente descrições técnicas originais. `ALD-FLAT-SHIRT-CORE@research-0.1.0` é versão de regras de pesquisa e **não** versão aprovada de método do livro. Os valores exemplares de torso/cava/pescoço etc. são citados da fonte, enquanto o comprimento da camisa é uma escolha explícita de estilo (700 mm nesta fixture).
+**Origem:** Aldrich, *Metric Pattern Cutting for Menswear*, 5.ª ed., PDF pp. 35–36 (texto) e p. 38 (figuras), usando somente descrições técnicas originais. `ALD-FLAT-SHIRT-CORE@research-0.1.1` é versão de regras de pesquisa e **não** versão aprovada de método do livro. Os valores exemplares de torso/cava/pescoço etc. são citados da fonte, enquanto o comprimento da camisa é uma escolha explícita de estilo (700 mm nesta fixture).
 
 ## Execução
 
@@ -28,7 +28,7 @@ Na interface inicial, selecione **Flat Shirt Core — projeto experimental**, al
 1. `BODY_SPLIT@1.0.0`: o diagrama único de corpo p. 38 é representado por duas projeções, frente e costas, com decotes diferentes. Separação não confere shape industrial.
 2. `NECK_INTERPOLATION@1.0.0`: controles de cúbicas para decotes não impressos no livro.
 3. `ARMHOLE_INTERPOLATION@1.0.0`: cúbicas passando por pontos 17,12,5, com tangências/handles técnicos.
-4. `SLEEVE_HEAD_INTERPOLATION@1.0.0`: reconstrução provisória por quintos, ajustes e curvas Bézier; sentido, tangências e encaixe ainda dependem de revisão.
+4. `SLEEVE_HEAD_INTERPOLATION@1.0.1`: proposta revisada com 7,5 mm de deslocamento no ponto 5 e elevação candidata de 15 mm no meio do trecho orientado 8→7. A fonte determina grandezas mas não controles matemáticos; sinal/direção/tangências continuam sob revisão. Versão anterior 1.0.0 não é reinterpretada silenciosamente.
 5. `SLEEVE_DIAGONAL_PROJECTION@1.0.0`: decomposição da diagonal 0–3 em componente horizontal usando a altura 0–1; não é um novo traço textual da fonte.
 6. `CLOSURE_EXPERIMENT@1.0.0`: fechamento diagnóstico das três figuras; não há papel industrial atribuído a essa linha.
 
@@ -36,7 +36,7 @@ A projeção da diagonal `0–3` da manga para a horizontal da linha `1` usa Pit
 
 ## Identidade, reabertura e segurança
 
-Projeto serializado `menswear-garment-project/0.1.0`; unidade `mm`; oito medidas com unidade de entrada, origem e valor; três peças com IDs de pontos/arestas estáveis e dependências explícitas; array de decisões com versão; evidências vinculadas a medidas/decisões; estado obrigatório `cutReady=false`, `scalePhysical=NOT_RUN`, `assembly=NOT_RUN`, `fit=NOT_RUN`.
+Projeto serializado `menswear-garment-project/0.1.0`; modo imutável `SOURCE_DRAFT_DIAGNOSTIC_ONLY`; aviso `DRAFT_NO_CUT_PROVISIONAL_GEOMETRY`; unidade `mm`; oito medidas com unidade de entrada, origem e valor; três peças com IDs de pontos/arestas estáveis e dependências explícitas; array de decisões com versão; evidências vinculadas a medidas/decisões; estado obrigatório `cutReady=false`, `scalePhysical=NOT_RUN`, `assembly=NOT_RUN`, `fit=NOT_RUN`.
 
 A importação reexecuta a receita congelada e rejeita geometria adulterada, versão desconhecida, decisão alterada, unidades incompatíveis ou bloqueio alterado. **Não migra silenciosamente** versões do método. Uma mudança inválida não substitui o último projeto válido. Uma alteração de medida regenera peças com IDs estáveis e marca como `STALE` apenas revisões cuja dependência mudou. Não existe registro de aprovação profissional fornecido por este módulo.
 
@@ -55,4 +55,14 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 
 **Proposta mínima para aprovação expressa do titular do produto/revisão dos gates:** permitir, dentro do mesmo web app, exclusivamente um **workspace isolado `SOURCE_DRAFT_DIAGNOSTIC_ONLY`** com coordenadas condicionais calculadas pelo interpretador existente, todas as soluções técnicas não literais explicitamente versionadas, sem atribuição de `SEAM`/`CUT`, sem margens aplicadas, sem produção e com toda exportação marcada `NO-CUT`; exigir testes negativos, rastreabilidade e preservação de estados `NOT_RUN`. Não promover qualquer aprovação de geometria, montagem, impressão física ou caimento. Essa exceção habilita uma experiência digital demonstrável, **não** libera o método no Gate B.
 
-**Estado da proposta:** `PENDING_APPROVAL`. PR MI-001 deve permanecer **Draft e sem merge** até aceite explícito da alteração limitada do escopo APP e revisão de modelagem dos elementos provisórios que seriam incorporados futuramente.
+**Estado corrigido:** autorização **EXPRESSAMENTE CONCEDIDA** pelo titular do produto em 14/10/2026 somente para `SOURCE_DRAFT_DIAGNOSTIC_ONLY`; formalizada no próprio [GATE-APP-001](../gates/GATE-APP-001.md) e na referência central [MASTER-DOCUMENT](../MASTER-DOCUMENT.md). Ela não autoriza merge automático e não depende de declarar curvas aprovadas. PR MI-001 permanece Draft até revisão do diff e checks do SHA final.
+
+## Revisão do diff na preparação para integrar
+
+- **Fórmulas textuais:** verificados os pontos 0–18 do corpo com fixture de medidas médias da p.35/36; comprimento de camisa 700 mm permanece escolha de estilo, não valor atribuído à obra. Manga 0–1, 0–2, 0–3 diagonal e 2–4 vinculadas ao livro; projeção horizontal e Béziers ficam separados como decisão técnica.
+- **Retificação versionada da manga:** deslocamento de 7,5 mm em ponto 5 é proposta de geometria derivada; elevar a seção orientada 8→7 é uma decisão de controles, não equivalência entre comprimento de costura e diagonal. Incrementou método de `research-0.1.0` para `research-0.1.1`, sem migração implícita de JSON anterior.
+- **Unidades e exportação:** medidas corporais persistem mm, entrada cm; SVG `width/height` mm e PDF `MediaBox` em pt pela relação `72/25.4`. Exportador recusa peça fora da página 1200×850, bbox sobreposta ou região de calibração ocupada (`EXPORT_PAGE_OVERFLOW`, `EXPORT_PIECE_OVERLAP`, `EXPORT_CALIBRATION_OVERLAP`). Não autoajusta escala ou recorta silenciosamente.
+- **Persistência / revisão:** validação reexecuta método fixado e compara entidades; formato e decisões diferentes falham; revisão, proveniência, decisões provisórias e avisos NO-CUT acompanham JSON. Alterações de medidas são atômicas e evidências declaradas dependentes são marcadas `STALE`. A reprodução não certifica aprovação de caimento.
+- **Próxima verificação independente:** profissional de modelagem deve revisar sinal, tangências e papel industrial das curvas, linha central, costura da cava/manga, piques e margens (#1–#5/#26). Não há assinatura ou aceite profissional simulado.
+
+**Status do Gate:** APP autorização restrita confirmada; A `IN_REVIEW`, B `NO-GO`, impressão física/montagem/caimento `NOT_RUN`. **Não** imprimir para corte.
