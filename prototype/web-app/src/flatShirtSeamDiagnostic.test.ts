@@ -1,0 +1,85 @@
+import {describe,it,expect} from 'vitest';
+import {createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
+import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg,ARMHOLE_CHAIN,HALF_SLEEVE_HEAD_CHAIN} from './flatShirtSeamDiagnostic';
+import {exportShirtSvg,exportShirtPdf} from './flatShirtExport';
+
+// Numeric references integrated independently using SciPy quad with absolute eps 1e-11,
+// directly from saved v0.1.2 fixture cubic controls (not from production cubicLength).
+const EXPECTED_100={
+ armE04:168.8194096954,armE03:115.7124236710,
+ capE04:56.5394253041,capE03:61.1737524013,capE02:93.4814192396,capE01:84.1241811482,
+ arm:284.5318333664,half:295.3187780932,
+ delta:10.7869447268,fullHypothesisDelta:21.5738894536
+} as const;
+const EXPECTED_112={front:299.3908625781,half:302.5985741183} as const;
+
+describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem SeamPair)',()=>{
+ it('declares 2 armhole segments per side and exactly 4 half-cap segments in underarm→top direction',()=>{
+  expect(ARMHOLE_CHAIN.map(x=>[x.edgeId,x.from,x.to])).toEqual([['E04','5','12'],['E03','12','17']]);
+  expect(HALF_SLEEVE_HEAD_CHAIN.map(x=>[x.edgeId,x.from,x.to])).toEqual([
+   ['E04','3','HEAD_HOLLOW_5'],['E03','HEAD_HOLLOW_5','6'],['E02','6','HEAD_RAISE_78'],['E01','HEAD_RAISE_78','0']]);
+  const result=compareShirtArmholesToHalfSleeve(createShirtProject());
+  expect(result.front.segments.map(x=>[x.edgeId,x.from,x.to])).toEqual([
+   ['FRONT:E04','FRONT:5','FRONT:12'],['FRONT:E03','FRONT:12','FRONT:17']]);
+  expect(result.back.segments.map(x=>x.edgeId)).toEqual(['BACK:E04','BACK:E03']);
+  expect(result.halfSleeveHead.segments.map(x=>x.edgeId)).toEqual(['SLEEVE:E04','SLEEVE:E03','SLEEVE:E02','SLEEVE:E01']);
+  for(const chain of [result.front,result.back,result.halfSleeveHead]){
+   expect(chain.industrialRole).toBe('UNCLASSIFIED');
+   for(const seg of chain.segments){expect(seg.role).toBe('UNCLASSIFIED');expect(seg.origin).toBe('TECHNICAL_DECISION');expect(seg.review).toBe('DRAFT');expect(seg.solution).toMatch(/INTERPOLATION@/);expect(seg.source).toContain('Aldrich5');}
+  }
+ });
+ it('matches independently calculated 100cm fixture lengths at segment granularity, without source-fitting',()=>{
+  const r=compareShirtArmholesToHalfSleeve(createShirtProject());
+  expect(r.front.segments[0].lengthMm).toBeCloseTo(EXPECTED_100.armE04,6);
+  expect(r.front.segments[1].lengthMm).toBeCloseTo(EXPECTED_100.armE03,6);
+  expect(r.back.segments[0].lengthMm).toBeCloseTo(EXPECTED_100.armE04,6);
+  for(const [i,len] of [EXPECTED_100.capE04,EXPECTED_100.capE03,EXPECTED_100.capE02,EXPECTED_100.capE01].entries())
+   expect(r.halfSleeveHead.segments[i].lengthMm).toBeCloseTo(len,6);
+  expect(r.front.totalMm).toBeCloseTo(EXPECTED_100.arm,6);
+  expect(r.back.totalMm).toBeCloseTo(EXPECTED_100.arm,6);
+  expect(r.halfSleeveHead.totalMm).toBeCloseTo(EXPECTED_100.half,6);
+  expect(r.differences.halfHeadMinusFrontMm).toBeCloseTo(EXPECTED_100.delta,6);
+  expect(r.differences.twoMirroredHalvesMinusBothArmholesMm).toBeCloseTo(EXPECTED_100.fullHypothesisDelta,6);
+  expect(r.construction.sourceAddedToDiagonalMm).toBeCloseTo(30,8);
+  expect(r.construction.hollow5Mm).toBeCloseTo(7.5,8);
+  expect(r.construction.riseBetween7and8Mm).toBeCloseTo(15,8);
+  expect(r.construction.frontBackArcDifferenceMm).toBe(0);
+  expect(r.verdict).toBe('INDEFINIDA');
+ });
+ it('regeneration with chest 112cm maintains segment provenance and no-cut release, and shifts only numeric lengths',()=>{
+  const initial=createShirtProject();const stored=serializeShirtProject(initial);
+  const edited=changeShirtMeasurement(initial,'chest',1120);
+  const reopened=parseShirtProject(serializeShirtProject(edited));
+  const a=compareShirtArmholesToHalfSleeve(edited);
+  expect(compareShirtArmholesToHalfSleeve(reopened)).toEqual(a);
+  expect(a.front.totalMm).toBeCloseTo(EXPECTED_112.front,6);
+  expect(a.halfSleeveHead.totalMm).toBeCloseTo(EXPECTED_112.half,6);
+  expect(a.method).toEqual(initial.method);
+  expect(a.front.segments.map(x=>x.edgeId)).toEqual(compareShirtArmholesToHalfSleeve(initial).front.segments.map(x=>x.edgeId));
+  expect(a.halfSleeveHead.segments.map(x=>x.edgeId)).toEqual(compareShirtArmholesToHalfSleeve(initial).halfSleeveHead.segments.map(x=>x.edgeId));
+  expect(serializeShirtProject(initial)).toBe(stored);
+  expect(a.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
+ });
+ it('exports same-scale rigid overlay with all relevant reference anchors but no manufactured notches',()=>{
+  const p=createShirtProject();const beforeSvg=exportShirtSvg(p),beforePdf=exportShirtPdf(p);
+  const svg=exportCavaMangaOverlaySvg(p);
+  expect(svg).toContain('width="910mm"');expect(svg).toContain('height="520mm"');
+  expect(svg).toContain('data-edges="FRONT:E04 FRONT:E03"');
+  expect(svg).toContain('data-edges="BACK:E04 BACK:E03"');
+  expect(svg).toContain('data-edges="SLEEVE:E04 SLEEVE:E03 SLEEVE:E02 SLEEVE:E01"');
+  expect(svg).toContain('INDEFINIDA');expect(svg).toContain('NOT_RUN');expect(svg).toContain('NÃO CORTAR');
+  expect(svg).toContain('não pique');expect(svg).toContain('Espelhar/dobrar a meia manga é hipótese');
+  expect(svg).toContain('295.319 mm');expect(svg).toContain('284.532 mm');
+  expect(exportShirtSvg(p)).toBe(beforeSvg);
+  expect(exportShirtPdf(p)).toEqual(beforePdf);
+ });
+ it('does not claim a manufactured seam or decide the front/back mapping even when both computed lengths coincide',()=>{
+  const r=compareShirtArmholesToHalfSleeve(createShirtProject());
+  expect(r.classifications.some(x=>x.item.includes('Numeric')&&x.class==='GEOMETRY_CALCULATION')).toBe(true);
+  expect(r.classifications.some(x=>x.item.includes('Full cap')&&x.class==='TECHNICAL_DECISION_PENDING')).toBe(true);
+  expect(r.halfToFull.hypothesis).toBe('MIRROR_ABOUT_0_TO_2_NOT_APPROVED');
+  expect(r.matchCandidates.every(x=>!x.approved&&x.kind==='GEOMETRIC_REGISTRATION_NOT_NOTCH')).toBe(true);
+  expect(r.reason).toMatch(/nenhum SeamPair/);
+  expect(r.front.totalMm).toBe(r.back.totalMm);
+ });
+});
