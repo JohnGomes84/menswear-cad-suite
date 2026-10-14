@@ -34,7 +34,7 @@ export const sampleShortMeasurements=():Record<ShortKey,number>=>({
 const copy=<T,>(v:T):T=>JSON.parse(JSON.stringify(v)) as T;
 const finite=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v);
 const close=(a:unknown,b:unknown)=>JSON.stringify(a)===JSON.stringify(b);
-const source=(description:string):SourceTrace=>({sourceId:'MI002-OWNER-BRIEF-2026-10-14',chapter:0,pdfPage:0,instruction:description,interpretation:'TEXT'});
+const source=(sourceId:string,description:string):SourceTrace=>({sourceId,chapter:0,pdfPage:1,instruction:'Owner design brief (logical page 1): '+description,interpretation:'TEXT'});
 const lit=(value:number)=>({op:'LITERAL_MM',value} as const);
 const m=(name:ShortKey)=>({op:'MEASURE_MM',name} as const);
 const q=(key:ShortKey,n:number)=>({op:'MULTIPLY',value:m(key),factor:n} as const);
@@ -56,20 +56,21 @@ function validateMeasurements(ms:Record<ShortKey,number>){
  }
 }
 function pieceProgram(id:'FRONT'|'BACK',ms:Record<ShortKey,number>,rise:number,extension:number,dx:number):DraftProgram{
+ const pid='MI002-'+id+'-OWNER-CANDIDATE';
  const hipDepth=Math.min(ms.front_rise,ms.back_rise)/2;
  const ins:DraftInstruction[]=[
-  {op:'ORIGIN',stepId:'W0',pointId:'W0',xMm:0,yMm:0,source:source('Waist centre candidate')},
-  {op:'OFFSET',stepId:'W1',pointId:'W1',from:'W0',direction:'RIGHT',lengthMm:q('waist',.25),source:source('Quarter waist: technical, no ease')},
-  {op:'OFFSET',stepId:'H0',pointId:'H0',from:'W0',direction:'DOWN',lengthMm:lit(hipDepth),source:source('Technical hip reference height')},
-  {op:'OFFSET',stepId:'HX',pointId:'HX',from:'W0',direction:'RIGHT',lengthMm:q('hip',.25),source:source('Quarter hip: technical, no ease')},
-  {op:'PROJECT_AXES',stepId:'H1',pointId:'H1',xFrom:'HX',yFrom:'H0',source:source('Project hip guide')},
-  {op:'ORIGIN',stepId:'R0',pointId:'R0',xMm:-extension,yMm:rise,source:source('Technical crotch tip from entered rise')},
-  {op:'ORIGIN',stepId:'B0',pointId:'B0',xMm:-extension+dx,yMm:ms.total_length,source:source('Hem-in point chosen so inseam length matches input')},
-  {op:'OFFSET',stepId:'B1',pointId:'B1',from:'B0',direction:'RIGHT',lengthMm:m('hem_width'),source:source('Entered hem panel width exactly')},
-  {op:'OFFSET',stepId:'G0',pointId:'G0',from:'W0',direction:'DOWN',lengthMm:m('elastic_width'),source:source('Elastic-width guide, not casing/fold')},
-  {op:'ORIGIN',stepId:'G1',pointId:'G1',xMm:ms.waist/4+(ms.hip/4-ms.waist/4)*ms.elastic_width/hipDepth,yMm:ms.elastic_width,source:source('Elastic guide interpolation, not industrial fold')}
+  {op:'ORIGIN',stepId:'W0',pointId:'W0',xMm:0,yMm:0,source:source(pid,'Waist centre candidate')},
+  {op:'OFFSET',stepId:'W1',pointId:'W1',from:'W0',direction:'RIGHT',lengthMm:q('waist',.25),source:source(pid,'Quarter waist: technical, no ease')},
+  {op:'OFFSET',stepId:'H0',pointId:'H0',from:'W0',direction:'DOWN',lengthMm:lit(hipDepth),source:source(pid,'Technical hip reference height')},
+  {op:'OFFSET',stepId:'HX',pointId:'HX',from:'W0',direction:'RIGHT',lengthMm:q('hip',.25),source:source(pid,'Quarter hip: technical, no ease')},
+  {op:'PROJECT_AXES',stepId:'H1',pointId:'H1',xFrom:'HX',yFrom:'H0',source:source(pid,'Project hip guide')},
+  {op:'ORIGIN',stepId:'R0',pointId:'R0',xMm:-extension,yMm:rise,source:source(pid,'Technical crotch tip from entered rise')},
+  {op:'ORIGIN',stepId:'B0',pointId:'B0',xMm:-extension+dx,yMm:ms.total_length,source:source(pid,'Hem-in point chosen so inseam length matches input')},
+  {op:'OFFSET',stepId:'B1',pointId:'B1',from:'B0',direction:'RIGHT',lengthMm:m('hem_width'),source:source(pid,'Entered hem panel width exactly')},
+  {op:'OFFSET',stepId:'G0',pointId:'G0',from:'W0',direction:'DOWN',lengthMm:m('elastic_width'),source:source(pid,'Elastic-width guide, not casing/fold')},
+  {op:'ORIGIN',stepId:'G1',pointId:'G1',xMm:ms.waist/4+(ms.hip/4-ms.waist/4)*ms.elastic_width/hipDepth,yMm:ms.elastic_width,source:source(pid,'Elastic guide interpolation, not industrial fold')}
  ];
- return {programId:'MI002-'+id+'-OWNER-CANDIDATE',purpose:'RESEARCH_ONLY',unit:'mm',sourceBook:'USER_PRODUCT_SPECIFICATION_NO_EXTERNAL_METHOD',instructions:ins};
+ return {programId:pid,purpose:'RESEARCH_ONLY',unit:'mm',sourceBook:'USER_PRODUCT_SPECIFICATION_NO_EXTERNAL_METHOD',instructions:ins};
 }
 function draftPiece(id:'FRONT'|'BACK',ms:Record<ShortKey,number>):ShortPiece{
  const rise=ms[id==='FRONT'?'front_rise':'back_rise'];
