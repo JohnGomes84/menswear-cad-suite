@@ -24,6 +24,22 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(Math.hypot(sl['SLEEVE:3'].x,sl['SLEEVE:3'].y)).toBeCloseTo(Math.hypot(coords['FRONT:5'].x-coords['FRONT:17'].x,coords['FRONT:5'].y-coords['FRONT:17'].y)+30,6);
   expect(sl['SLEEVE:4'].x).toBeCloseTo(-139,8);
  });
+ it('reconstructs the chapter 2 body scalar matrix from source pp.35-36 without premature rounding',()=>{
+  const p=createShirtProject(), pts=Object.fromEntries(p.pieces[0].points.map(x=>[x.id,x.positionMm]));
+  const known:Record<string,{x:number;y:number}>={
+   '0':{x:0,y:0}, '1':{x:0,y:30}, '2':{x:0,y:314},
+   '3':{x:0,y:472}, '4':{x:0,y:730}, '5':{x:315,y:314},
+   '6':{x:315,y:0}, '7':{x:315,y:472}, '8':{x:315,y:730},
+   '9':{x:74,y:30}, '10':{x:74,y:0}, '11':{x:0,y:172},
+   '12':{x:250,y:172}, '13':{x:250,y:314}, '14':{x:250,y:0},
+   '15':{x:0,y:57.5}, '16':{x:250,y:57.5}, '17':{x:265,y:57.5},
+   '18':{x:0,y:90}
+  };
+  for(const [id,expected] of Object.entries(known)){
+   expect(pts['FRONT:'+id].x).toBeCloseTo(expected.x,8);
+   expect(pts['FRONT:'+id].y).toBeCloseTo(expected.y,8);
+  }
+ });
  it('regenerates changed measurements while preserving point/edge identities and untouched input',()=>{
   const before=createShirtProject();const after=changeShirtMeasurement(before,'chest',1120);
   expect(before.measurements.chest.valueMm).toBe(1000);
