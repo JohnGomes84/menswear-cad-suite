@@ -85,7 +85,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
     <p>ID e dependências preservados. Classificação independente da origem geométrica: sem linhas de costura identificadas.</p>
     <p data-testid="mi001-classification-count">Arestas: {cavityDiagnostic.edgeClassifications.length} | construção: {cavityDiagnostic.edgeClassifications.filter(x=>x.classification==='CONSTRUCTION_LINE').length} | indefinidas: {cavityDiagnostic.edgeClassifications.filter(x=>x.classification==='UNCLASSIFIED').length} | SEAM_LINE: 0</p>
     <div className="mi001-scroll">{selected.edges.map(e=><div key={e.id} className="mi001-edge"><strong>{e.id}</strong> · {e.kind}
-      <small data-testid={'mi001-line-'+e.id}>{lineClasses.get(e.id)?.classification} | {lineClasses.get(e.id)?.classificationOrigin} (anterior: {lineClasses.get(e.id)?.previousRole})</small>
+      <small data-testid={'mi001-line-'+e.id}>{lineClasses.get(e.id)?.classification} | {lineClasses.get(e.id)?.classificationOrigin} (anterior: {lineClasses.get(e.id)?.previousRole}) — {lineClasses.get(e.id)?.decisionState}</small>
       <small>{lineClasses.get(e.id)?.sourceLocation} — {lineClasses.get(e.id)?.sourceEvidence}</small>
       <small>{lineClasses.get(e.id)?.justification}</small>
       <small>Geometria: {e.origin} | {e.solution} | {e.review.state}</small></div>)}</div>
