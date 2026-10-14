@@ -43,3 +43,17 @@ test('MI-001 downloads a PDF and a separate A4 calibration form',async({page})=>
  expect(calib.suggestedFilename()).toContain('calibracao-a4');
  expect((await readFile(await calib.path())).subarray(0,8).toString()).toMatch(/^%PDF-1/);
 });
+
+test('MI-001 keeps diagnostic workspace usable but rejects clipped PDF and persists no-cut mode',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:/Flat Shirt Core — projeto experimental/}).click();
+ await page.getByRole('spinbutton',{name:'Comprimento da camisa'}).fill('180');
+ await page.getByRole('spinbutton',{name:'Comprimento da camisa'}).blur();
+ await expect(page.getByText(/revisão 1/)).toBeVisible();
+ await page.getByRole('button',{name:/Exportar PDF nominal 1:1/}).click();
+ await expect(page.getByRole('alert')).toContainText('EXPORT_PAGE_OVERFLOW');
+ const [saved]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Salvar projeto'}).click()]);
+ const project=JSON.parse(await readFile(await saved.path(),'utf8'));
+ expect(project.purpose).toBe('SOURCE_DRAFT_DIAGNOSTIC_ONLY');
+ expect(project.warning).toBe('DRAFT_NO_CUT_PROVISIONAL_GEOMETRY');
+ expect(project.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
+});
