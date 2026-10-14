@@ -39,21 +39,6 @@ export type SeamComparison={
     frontNotch:null;backNotch:null;upperZoneMm:null;lowerFrontZoneMm:null;lowerBackZoneMm:null;
     designIntent:'UNDEFINED';distribution:'UNDEFINED';releaseStatus:'GEOMETRIC_FACT_NOT_ASSEMBLY_APPROVAL';
   };
-  geometricExcess:{
-    basis:'MIRRORED_HALF_CAP_VS_UNCLASSIFIED_ARMHOLE_CONTOURS',
-    headTotalHypothesisMm:2*halfSleeveHead.totalMm,
-    armscyeFrontMm:front.totalMm,
-    armscyeBackMm:back.totalMm,
-    armscyeTotalMm:front.totalMm+back.totalMm,
-    excessTotalMm:2*halfSleeveHead.totalMm-front.totalMm-back.totalMm,
-    excessFrontHalfMm:halfSleeveHead.totalMm-front.totalMm,
-    excessBackHalfMm:halfSleeveHead.totalMm-back.totalMm,
-    stitchLineStatus:'NOT_IDENTIFIED',
-    approvedTargetMm:null,approvedToleranceMm:null,
-    frontNotch:null,backNotch:null,upperZoneMm:null,lowerFrontZoneMm:null,lowerBackZoneMm:null,
-    designIntent:'UNDEFINED',distribution:'UNDEFINED',
-    releaseStatus:'GEOMETRIC_FACT_NOT_ASSEMBLY_APPROVAL'
-  },
   halfToFull:{representation:'HALF_SLEEVE_DIAGRAM';centreGuideId:'SLEEVE:E08';hypothesis:'MIRROR_ABOUT_0_TO_2_NOT_APPROVED';fullHeadIfMirroredMm:number;remark:string};
   matchCandidates:{sleeveEndpoint:string;bodyEndpoint:string;kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH';approved:false}[];
   classifications:{item:string;class:'SOURCE_DERIVED'|'GEOMETRY_CALCULATION'|'TECHNICAL_DECISION_PENDING';basis:string}[];
@@ -102,6 +87,21 @@ export function compareShirtArmholesToHalfSleeve(raw:ShirtProject):SeamCompariso
   front,back,halfSleeveHead,
   construction:{bodyChord5to17Mm,sleeveDiagonal3to0Mm,sourceAddedToDiagonalMm:clean(sleeveDiagonal3to0Mm-bodyChord5to17Mm),hollow5Mm,riseBetween7and8Mm,frontBackArcDifferenceMm:clean(front.totalMm-back.totalMm)},
   differences:{halfHeadMinusFrontMm:halfSleeveHead.totalMm-front.totalMm,halfHeadMinusBackMm:halfSleeveHead.totalMm-back.totalMm,twoMirroredHalvesMinusBothArmholesMm:2*halfSleeveHead.totalMm-front.totalMm-back.totalMm},
+  geometricExcess:{
+    basis:'MIRRORED_HALF_CAP_VS_UNCLASSIFIED_ARMHOLE_CONTOURS',
+    headTotalHypothesisMm:2*halfSleeveHead.totalMm,
+    armscyeFrontMm:front.totalMm,
+    armscyeBackMm:back.totalMm,
+    armscyeTotalMm:front.totalMm+back.totalMm,
+    excessTotalMm:2*halfSleeveHead.totalMm-front.totalMm-back.totalMm,
+    excessFrontHalfMm:halfSleeveHead.totalMm-front.totalMm,
+    excessBackHalfMm:halfSleeveHead.totalMm-back.totalMm,
+    stitchLineStatus:'NOT_IDENTIFIED',
+    approvedTargetMm:null,approvedToleranceMm:null,
+    frontNotch:null,backNotch:null,upperZoneMm:null,lowerFrontZoneMm:null,lowerBackZoneMm:null,
+    designIntent:'UNDEFINED',distribution:'UNDEFINED',
+    releaseStatus:'GEOMETRIC_FACT_NOT_ASSEMBLY_APPROVAL'
+  },
   halfToFull:{representation:'HALF_SLEEVE_DIAGRAM',centreGuideId:'SLEEVE:E08',hypothesis:'MIRROR_ABOUT_0_TO_2_NOT_APPROVED',fullHeadIfMirroredMm:2*halfSleeveHead.totalMm,remark:'O desenho executado representa a meia manga. Duplicar por espelhamento sobre 0–2 só fornece hipótese matemática; não identifica qual metade encontra frente/costas e não define piques, folga, margens, dobra ou costura.'},
   matchCandidates:[{sleeveEndpoint:'SLEEVE:3',bodyEndpoint:'FRONT:5',kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH',approved:false},{sleeveEndpoint:'SLEEVE:3',bodyEndpoint:'BACK:5',kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH',approved:false},{sleeveEndpoint:'SLEEVE:0',bodyEndpoint:'FRONT:17',kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH',approved:false},{sleeveEndpoint:'SLEEVE:0',bodyEndpoint:'BACK:17',kind:'GEOMETRIC_REGISTRATION_NOT_NOTCH',approved:false}],
   classifications:[
