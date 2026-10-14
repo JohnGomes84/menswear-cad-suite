@@ -1,7 +1,7 @@
 import './mi001.css';
 import {useMemo,useRef,useState} from 'react';
 import type {ChangeEvent} from 'react';
-import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject} from './flatShirtProject';
+import {SHIRT_KEYS,createShirtProject,changeShirtMeasurement,parseShirtProject,serializeShirtProject,createOwnerApprovedCalibrationProject} from './flatShirtProject';
 import type {ShirtProject,ShirtMeasureKey} from './flatShirtProject';
 import {exportShirtSvg,exportShirtPdf,exportCalibrationPdf,exportShirtTiledA4Pdf,exportPhysicalCalibrationProtocolPdf,paginateFlatShirtA4} from './flatShirtExport';
 import {compareShirtArmholesToHalfSleeve,exportCavaMangaOverlaySvg} from './flatShirtSeamDiagnostic';
@@ -66,7 +66,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
  <input ref={input} type="file" accept=".json,application/json" onChange={open} hidden aria-label="Abrir projeto Flat Shirt"/>
  <div className="content">
   <div className="heading"><div><h1>Flat Shirt Core — projeto versionado</h1><p>Método {project.method.id} / {project.method.version} · revisão {project.revision} · mm canônicos</p></div><span className="pill">NÃO CORTAR</span></div>
-  <div className="warning" role="status"><strong>Curvas e fechamentos PROVISÓRIOS.</strong> Contornos experimentais para validar o fluxo digital. Escala física, montagem e caimento: NOT_RUN. Não são moldes industriais.</div>
+  <div className="warning" role="status"><strong>Curvas e fechamentos PROVISÓRIOS.</strong> Contornos experimentais para validar o fluxo digital. Escala física: {project.release.scalePhysical} (somente a impressão de referência registrada); montagem e caimento: NOT_RUN. Não são moldes industriais.</div>
   {error&&<div className="error" role="alert">{error}</div>}
   <div className="mi001-layout">
    <section className="mi001-library">
@@ -78,6 +78,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
       <small>{project.measurements[key].origin}</small>
      </label>)}
     <button className="primary" onClick={()=>{setProject(createShirtProject());setError('');}}>Reiniciar exemplo</button>
+    <button onClick={()=>{setProject(createOwnerApprovedCalibrationProject());setSelection('FRONT');setError('');}}>Abrir registro físico aprovado · impressão de referência</button>
     <h3>Exportação diagnóstica</h3>
     <div className="mi001-buttons">
      <button onClick={()=>diagnosticExport('SVG')}>Exportar SVG nominal 1:1</button>
@@ -89,7 +90,7 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
      <button onClick={()=>saveFile(exportCavaMangaOverlaySvg(project),'image/svg+xml','mi001-cava-manga-sobreposicao.svg')}>Comparação cava–manga SVG</button>
      <button onClick={()=>saveFile(JSON.stringify(cavityDiagnostic,null,2)+'\n','application/json','mi001-arestas-cava-manga-diagnostico.json')}>Classificação das 22 arestas · JSON</button>
     </div>
-    <small>Plotter diagnóstico: 1200 × 850 mm. A4 paginado: 100% sem redimensionamento; uma peça por conjunto de folhas, faixas de registro sobrepostas 10 mm, cruzes e coordenadas mm. Para imprimir, usar 'Tamanho real / 100%', sem ajustar à página. Todas as provas físicas continuam NOT_RUN; use o protocolo preenchível e a ficha separada.</small>
+    <small>Plotter diagnóstico: 1200 × 850 mm. A4 paginado: 100% sem redimensionamento; uma peça por conjunto de folhas, faixas de registro sobrepostas 10 mm. A impressão específica aprovada só é recuperada pelo botão de registro físico; cada nova impressão exige evidência própria. Usar tamanho real/100%, sem ajustar à página. Montagem e caimento permanecem NOT_RUN.</small>
    </section>
    <section className="mi001-drafting">
     <h2>Mesa de modelagem · projeção diagnóstica</h2>
@@ -114,7 +115,17 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
     <h3>Decisões técnicas versionadas</h3>
     <div className="mi001-scroll">{project.decisions.map(d=><p key={d.id}><strong>{d.id}@{d.version}</strong><small> · {d.status}</small><br/><small>{d.description}</small></p>)}</div>
     <h3>Gate e provas</h3>
-    <p>cutReady: <strong>false</strong></p><p>Escala física: <strong>{project.release.scalePhysical}</strong></p><p>Montagem: <strong>{project.release.assembly}</strong></p><p>Caimento: <strong>{project.release.fit}</strong></p>
+    <p>cutReady: <strong>false</strong></p>
+    <p data-testid="mi001-scale-physical">Escala física: <strong>{project.release.scalePhysical}</strong></p>
+    {project.calibrationEvidence&&<section data-testid="mi001-owner-calibration" className="mi001-edge">
+      <strong>Calibração física APROVADA PELO TITULAR · somente referência diagnóstica</strong>
+      <small>Decisão: {project.calibrationEvidence.decisionState} em {project.calibrationEvidence.ownerDecisionDate}; protocolo {project.calibrationEvidence.id}</small>
+      <small>Régua: 100 / 100 mm, desvio 0 mm (0%); quadrado: largura 25 / 25 mm (0%); altura 25 / 25 mm (0%).</small>
+      <small>Impressora: não identificada; driver/configuração: não identificado; papel: não identificado; data real da impressão: não informada.</small>
+      <small>Escopo: somente a sessão de impressão relatada, sem transferência para outros projetos/impressões. Artefato digital de referência: commit {project.calibrationEvidence.sourceArtifactCommit} (arquivo físico não confirmado independentemente).</small>
+      <small>Este aceite não valida o molde, as curvas, montagem, caimento, margens ou corte.</small>
+    </section>}
+    <p>Montagem: <strong>{project.release.assembly}</strong></p><p>Caimento: <strong>{project.release.fit}</strong></p>
     <div>{project.evidence.map(x=><p key={x.id}>{x.id}: <strong>{x.state}</strong>{x.evidenceRef?' ('+x.evidenceRef+')':''}</p>)}</div>
    </aside>
   </div>
