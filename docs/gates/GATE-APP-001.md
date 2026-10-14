@@ -1,7 +1,7 @@
 # GATE-APP-001 — Critérios para iniciar o aplicativo sem validar o molde
 
-**Data:** 13/10/2026  
-**Decisão:** GO **somente para a fundação experimental da aplicação web** conforme `APP-FOUNDATION-001`; NO-GO para a implementação funcional de modelagem do `PILOT-001` e qualquer alegação de molde apto para corte.  
+**Data:** 13/10/2026; emenda restrita autorizada em 14/10/2026  
+**Decisão:** GO para a fundação web e, por autorização limitada do titular em 14/10/2026, para `SOURCE_DRAFT_DIAGNOSTIC_ONLY`. Gate B do Flat Shirt e release industrial permanecem NO-GO. A autorização não promove geometria, corte, montagem, caimento, impressão física ou comercialização.  
 **Autoridade:** decisão técnica limitada; não substitui aceite de modelista, usuário como dono do produto, QA físico ou direitos de distribuição.
 
 ## 1. Três gates independentes
@@ -9,7 +9,7 @@
 | Gate | Pergunta | Estado | Resultado permitido |
 |---|---|---|---|
 | Gate A — Geometria sintética | Os mecanismos genéricos têm evidência? | IN_REVIEW: 27/27 testes CI; revisão independente/escala física pendentes | Continuar testes/POC e experimentar API com fixtures sintéticas |
-| Gate APP-001 — Fundação web | Podemos desenvolver UX, estrutura e serialização sem usar moldes reais? | **GO limitado** com isolamento e requisitos deste documento | Desenvolvimento de protótipo web de engenharia, não lançamento |
+| Gate APP-001 — Fundação web | Podemos desenvolver UX e diagnóstico rastreável da fonte sem reivindicar molde aprovado? | **GO restrito**: `SOURCE_DRAFT_DIAGNOSTIC_ONLY` autorizado | Visualização/projeto/exportação exclusivamente diagnósticos, não lançamento |
 | Gate B — Molde `PILOT-001` | Fórmulas, curvas, margens e montagem foram aprovadas? | **NO-GO**, Issues #1–#5 | Não gerar/aprovar camisa real |
 | Release industrial | Há qualidade, impressão e provas físicas suficientes? | **NO-GO** | Nenhum molde declarado apto para corte/comercialização |
 
@@ -23,7 +23,7 @@
 | APP-02 | Kernel de geometria separado de SVG e regras de vestuário | CONTRACT_DEFINED |
 | APP-03 | Unidades internas mm e interface cm | CONTRACT_DEFINED |
 | APP-04 | Semântica de edição parametrizada/override/livre descrita | CONTRACT_DEFINED |
-| APP-05 | Prototipagem apenas com fixtures sintéticas e aviso visível | REQUIRED_BEFORE_MERGE |
+| APP-05 | Fixtures sintéticas ou `SOURCE_DRAFT_DIAGNOSTIC_ONLY` com avisos em UI/JSON/SVG/PDF, proveniência e decisões versionadas | REQUIRED_BEFORE_MERGE |
 | APP-06 | JSON de protótipo identificado e versionado (não schema de produção) | REQUIRED_BEFORE_MERGE |
 | APP-07 | CI de geometria e de interface com testes de determinismo, undo, import/export | REQUIRED_BEFORE_MERGE |
 | APP-08 | Dependências/licenças front-end registradas com versão | REQUIRED_BEFORE_MERGE |
@@ -39,7 +39,7 @@
 | #1 — medida one-piece | Protocolo físico ainda requer revisão | Shell usa campo sintético distinto de `shirt_sleeve_length`; não implementa medição pessoal real |
 | #2 — `close_wrist` | Alias para `wrist_circumference` não aprovado | Não aplicar alias automático; preservar semântica distinta e pendência |
 | #3 — margens | Linha líquida/corte e junções não aprovadas | Não exportar corte nem derivar offset de camisa |
-| #4 — pontos/curvas | Coordenadas condicionais, curvas não aprovadas | Nunca usar a matriz como fixture canônica do aplicativo |
+| #4 — pontos/curvas | Coordenadas condicionais, curvas não aprovadas | Uso limitado a projeto diagnóstico de origem e decisões técnicas explícitas; vedada promoção a método ou geometria canônica aprovada |
 | #5 — `SeamPair` | Orientação/piques/ease não aprovados | Estrutura genérica pode ser prototipada apenas com pares sintéticos |
 | #21 — integrador | Comparador independente/casos difíceis incompletos | Não prometer tolerância comercial nem portar como motor final |
 | #22 — PDF físico | Escala não medida em papel | Não liberar impressão de molde |
@@ -66,3 +66,21 @@ O início experimental do web app **não revoga** a decisão de manter bloqueado
 ## 6. Evidência inicial da fundação web
 
 Há uma implementação em `prototype/web-app` sob branch/PR de protótipo. Foram testados em CI o contrato de JSON sintético, conversão de unidade, recusa de formato e valores inválidos, edição FREE/undo/redo e reconstrução de arquivos. A suíte inicial tem **8 testes unitários**; o compilador TypeScript e o bundler Vite passaram. Ainda são `NOT_RUN` os testes manuais de interação por browser, o teste cruzado do motor TS (Issue #25), o undo após reabrir a sessão e a auditoria completa de licenças. `APP-01` e `APP-02` podem avançar isoladamente, mas nenhuma barra de saída de produto foi concluída.
+
+---
+
+## 7. Autorização restrita MI-001 — 14/10/2026
+
+O titular do produto **autorizou a alteração de escopo do Gate APP-001**, exclusivamente para revisar e oferecer o modo `SOURCE_DRAFT_DIAGNOSTIC_ONLY` dentro do aplicativo já existente, com:
+
+- instruções de Aldrich rastreadas à página, passo e figura, sem confundir instrução da fonte com solução de curva;
+- `origin`, `solution`, `role` e `review` independentes por entidade; decisões técnicas `PROVISIONAL` versionadas e auditáveis;
+- três construções diagnósticas de frente/costas/manga, recálculo dependente de medidas, projeto JSON com versão fixa, SVG/PDF em unidades físicas **nominais** e ficha A4 de calibração;
+- avisos visíveis no workspace, JSON, SVG e PDF, sem classificação automática como `SEAM`/`CUT`, margem não auditada ou alegação de impressão/montagem/caimento aprovados;
+- nenhuma transmissão de medidas a backend pelo incremento; dados usados localmente pelo navegador.
+
+**Antes de decisão de integração do PR #62:** revisar diff/fonte e unidades, validar fórmulas e classificação de decisões; rejeitar importação/tamanho inválido sem estado parcial; conferir clipping da página e metadados de exportação; refazer unitários, build, E2E no **SHA final** e inspecionar os arquivos exportados. O titular **não autorizou merge automático**.
+
+**Invariantes inalterados:** `cutReady=false`, `scalePhysical=NOT_RUN`, `assembly=NOT_RUN`, `fit=NOT_RUN`. Gate A `IN_REVIEW`, Gate B `NO-GO` e release `NO-GO`. Issues #1–#5/#26 seguem abertas. Esta autorização de escopo não é parecer profissional de modelagem.
+
+**Próximas entregas possíveis após autorização de integração independente:** paginação A4 e conferência física documentada; diagnóstico dos comprimentos cava–manga somente para contornos provisórios, sem forçar igualdade ou declarar encaixe aprovado.

@@ -17,12 +17,16 @@ permissions:
 jobs:
   web-shell:
     runs-on: ubuntu-latest
+    env:
+      MI001_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     timeout-minutes: 15
     defaults:
       run:
         working-directory: prototype/web-app
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -34,4 +38,14 @@ jobs:
         run: npm run build
       - name: Verify build without shipping as product
         run: test -s dist/index.html
+      - name: Generate MI-001 example and nominal print diagnostics
+        run: node scripts/export-mi001.mjs
+      - name: Upload MI-001 digital evidence (not scale or fit proof)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi001-flatshirt-experimental-artifacts
+          path: prototype/web-app/mi001-artifacts/
+          if-no-files-found: error
+          retention-days: 14
 

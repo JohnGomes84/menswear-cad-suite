@@ -1,0 +1,13 @@
+/* MI-001 extends the existing three-column editor; no additional app shell. */
+.mi001-layout{display:grid;grid-template-columns:minmax(190px,240px) minmax(0,1fr) minmax(220px,280px);gap:14px;align-items:start}
+.mi001-layout>section,.mi001-inspector{background:#fff;border:1px solid #dbe5f1;border-radius:11px;padding:14px;min-width:0}
+.mi001-layout h2{font-size:15px;margin:4px 0 12px}.mi001-layout h3{font-size:13px;margin:15px 0 9px}
+.mi001-layout p,.mi001-layout small{font-size:11px;color:#5a6e8a;line-height:1.45}
+.mi001-field{display:flex;flex-direction:column;gap:3px;margin:9px 0;font-size:12px;color:#34526d}
+.mi001-field input{width:100%;padding:7px;border:1px solid #d0dce9;border-radius:5px;color:#123051}
+.mi001-buttons{display:flex;flex-direction:column;gap:6px}.mi001-buttons button,.mi001-pieces button{padding:8px;border-radius:6px;border:1px solid #d2dceb;cursor:pointer}
+.mi001-canvas{width:100%;overflow:auto;border:1px dashed #b4c3d3;background:#fff}.mi001-canvas svg{display:block;width:100%;height:auto;min-height:280px}
+.mi001-pieces{display:flex;gap:7px;flex-wrap:wrap}.mi001-scroll{max-height:250px;overflow:auto}.mi001-edge{border-bottom:1px solid #e9edf2;padding:7px 0;font-size:11px;color:#234466;overflow-wrap:anywhere}
+.mi001-edge small{display:block}.mi001-inspector p{overflow-wrap:anywhere}
+@media(max-width:1050px){.mi001-layout{grid-template-columns:minmax(180px,230px) minmax(0,1fr)}.mi001-inspector{grid-column:1/-1}}
+@media(max-width:650px){.mi001-layout{grid-template-columns:minmax(0,1fr)}.mi001-inspector{grid-column:auto}}

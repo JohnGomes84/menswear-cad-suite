@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import SceneLab from "./SceneLab";
+import FlatShirtWorkspace from "./FlatShirtWorkspace";
 import Ch02ResearchLab from "./Ch02ResearchLab";
 import type { ChangeEvent, PointerEvent } from "react";
 import {
@@ -20,6 +21,7 @@ const formatMm = (value: number) => value.toFixed(2) + " mm";
 
 export default function App() {
   const [multiEntity, setMultiEntity] = useState(false);
+  const [shirtWorkspace, setShirtWorkspace] = useState(false);
   const [ch02Research, setCh02Research] = useState(false);
   const [editor, setEditor] = useState<EditorState>(() => createEditor());
   const [view, setView] = useState<ViewBox>(initialView);
@@ -142,6 +144,7 @@ export default function App() {
   }
 
   const active = selected === null ? null : points[selected];
+  if (shirtWorkspace) return <FlatShirtWorkspace onBack={() => setShirtWorkspace(false)} />;
   if (ch02Research) return <Ch02ResearchLab onBack={() => setCh02Research(false)} />;
   if (multiEntity) return <SceneLab onBack={() => setMultiEntity(false)} />;
   return (
@@ -153,6 +156,7 @@ export default function App() {
         </div>
         <div className="menu-title">PROJETO</div>
         <button className="nav-button active">▧ Visão geométrica</button>
+        <button className="nav-button" onClick={() => setShirtWorkspace(true)}>◇ Flat Shirt Core <small>Marco Integrador 001 · draft</small></button>
         <button className="nav-button" onClick={() => setCh02Research(true)}>◇ Construção Aldrich CH02 <small>fonte auditada · pesquisa</small></button>
         <button className="nav-button" disabled>◉ Medidas do vestuário <small>bloqueado</small></button>
         <button className="nav-button" disabled>♧ Montagem e piques <small>bloqueado</small></button>
@@ -164,6 +168,7 @@ export default function App() {
         <header className="topbar">
           <div><span className="breadcrumb">Workspace / Projetos / </span><strong>Curva sintética 001</strong></div>
           <div className="top-actions">
+            <button onClick={() => setShirtWorkspace(true)}>Flat Shirt Core — projeto experimental</button>
             <button onClick={() => setCh02Research(true)}>Construção Aldrich CH02</button>
             <button onClick={() => setMultiEntity(true)}>Editor multi-entidades</button>
             <button onClick={() => { setEditor(createEditor(demoProject())); setSelected(null); setView(initialView); setError(""); }}>Novo exemplo</button>
