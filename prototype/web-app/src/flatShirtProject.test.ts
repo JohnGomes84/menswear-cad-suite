@@ -147,7 +147,8 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
    expect(cubicLength(controls)).toBeGreaterThan(0);
   }
   // Independent SciPy quad benchmark of the four exported cubics, 100cm chest fixture.
-  const measured=cap.reduce((acc,e)=>acc+cubicLength([p[e.from],...e.controlsMm!,p[e.to]]),0);\n  expect(measured).toBeCloseTo(295.31877809317655,4);
+  const measured=cap.reduce((acc,e)=>acc+cubicLength([p[e.from],...e.controlsMm!,p[e.to]]),0);
+  expect(measured).toBeCloseTo(295.31877809317655,4);
   for(let i=0;i<cap.length-1;i++){
    const e=cap[i],next=cap[i+1];
    const exit=cubicDerivative([p[e.from],...e.controlsMm!,p[e.to]],1);
