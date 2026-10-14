@@ -14,9 +14,16 @@
 8. Retas selecionadas correspondem ao registro explícito, não a conectores de dependência.
 9. Em todos os métodos: curvas continuam sem spline, exportAllowed=false e cutReady=false.
 
+## Evidência executada — 14/10/2026 (branch do PR #57)
+
+- Unitários: **182/182 PASS**; TypeScript/Vite build: **PASS**.
+- Playwright Chromium: **10/10 PASS**, incluindo quatro casos do workspace CH02: entrada e avisos de segurança, regeneração ao mudar método/variante/medidas, alternância frente/costas e inspeção de reta, além de layout móvel de 390 px sem overflow horizontal.
+- Revisão visual manual das capturas E2E em desktop 1440×1000 e móvel 390×844: controles legíveis, viewport e inspetor empilhados no móvel, sem overflow horizontal observado. O canvas comprido exige rolagem vertical e continua sendo apenas um diagnóstico.
+- O workspace web usa o interpretador próprio; não executa APIs FreeSewing no browser. As capturas e traces ficam como artefatos temporários da CI, não como evidência física permanente.
+
 ## Limites de teste
 
-A CI pode verificar TypeScript, testes unitários e build da interface, mas **não equivale** a navegação E2E em browser, aprovação visual, fidelidade do ajuste ou validação de escala física. O novo workspace **não** executa APIs FreeSewing no browser: consume o interpretador próprio, cuja prova com FreeSewing permanece em laboratório isolado.
+Os testes e a inspeção visual confirmam navegação, renderização, interações e os avisos de bloqueio. **Não** confirmam fidelidade de caimento, completude do perímetro, escala de impressão, geometria de costura/corte ou qualidade de confecção. Continua necessária revisão de modelista e prova física/toile antes de qualquer promoção industrial.
 
 ## Oráculos de segurança
 

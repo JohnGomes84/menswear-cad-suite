@@ -1,8 +1,8 @@
-# Web App — laboratório geométrico sintético
+# Web App — laboratório CAD sintético e pesquisa paramétrica CH02
 
-**Status:** protótipo de engenharia, **não** produto. Escopo do `GATE-APP-001`.
+**Status:** protótipo de engenharia, baseline **1.29 DRAFT**, **não** produto. Escopo do `GATE-APP-001`.
 
-Este shell web implementa um viewport SVG, seleção/arraste de quatro pontos de controle de uma curva Bézier inventada, zoom/pan, JSON sintético de laboratório e edição com undo/redo em memória. Não contém regras do livro, medidas antropométricas reais, bloco de camisa, `SeamPair`, engine CAD aprovada, corte ou impressão industrial.
+O app contém dois laboratórios separados: um editor de geometria sintética (curva Bézier artificial, viewport e JSON) e um workspace CH02 de pesquisa que executa o interpretador paramétrico já existente de Aldrich com fixtures de calça. Nenhum dos dois é um molde industrial. O workspace CH02 não contém bloco de camisa aprovado, `SeamPair`/`AssemblyEase` de produção, corte nem impressão industrial.
 
 ## Executar
 
@@ -26,7 +26,7 @@ A aplicação abre no endereço informado por Vite.
 - Não faz persistência automática, autenticação, backend, telemetria nem exportação para corte.
 - Os limites de importação são provisórios e não substituem revisão de segurança.
 - As dependências diretas estão fixadas e o `package-lock.json` registra a árvore usada na CI; licenças/avisos das dependências transitivas ainda exigem auditoria antes de qualquer release. Bibliotecas do protótipo não ficam automaticamente aprovadas para produção.
-- O portal GitHub já possui CI para geometria Python; este protótipo terá pipeline próprio.
+- CI do app verifica unitários, TypeScript/Vite e E2E Chromium; os workflows não substituem validação de domínio, inspeção de artefatos nem prova física.
 
 Documentos: `../../docs/gates/GATE-APP-001.md`, `../../docs/architecture/APP-FOUNDATION-001.md` e `../../docs/qa/QA-APP-001.md`.
 
@@ -55,3 +55,12 @@ Menu **Editor multi-entidades**: criar/remover linhas e curvas, undo/redo com hi
 ## Documento experimental de constraints 0.4 (motor, ainda sem UI)
 
 `src/constrainedSceneV4.ts` registra regras `COINCIDENT/HORIZONTAL/VERTICAL/DISTANCE` como comandos persistidos, separando `driverEntities` de `resolvedEntities`. Após importação JSON `0.4.0`, o motor refaz os eventos e permite undo/redo. As projeções se atualizam após movimentar a origem de uma regra. O laboratório visível `SceneLab` **continua no esquema 0.3.0** e não expõe os novos comandos; não há migração silenciosa nem E2E de UI 0.4. Uma regra por destino, limite de 256 eventos, sem solver simultâneo ou moldes reais.
+
+
+## Workspace de pesquisa paramétrica CH02 — baseline 1.29
+
+Pelo botão **Construção Aldrich CH02**, é possível escolher `ONE_PIECE`/`TWO_PIECE`, variante `BASIC`/`EASY`, editar quadril/altura do gancho/entreperna em centímetros, alternar a vista entre frente e costas e inspecionar os comandos registrados, sua página e comprimento das retas. As coordenadas são recalculadas pelo interpretador existente; os testes confirmam a identidade das regras-fonte.
+
+O workspace é `RESEARCH_ONLY`: as curvas continuam sem geometria, retas são somente os comandos textuais que foram auditados, margem por aresta permanece não mapeada, o espelhamento não é executado e o corte/exportação ficam desabilitados. A tela não gera camisa, molde pronto, PDF 1:1 nem saída de fabricação. A inspeção visual em browser não comprova caimento ou montagem física.
+
+**Validação atual do workspace:** `npm test` — 182/182 unitários; `npm run build` — TypeScript/Vite PASS; `npm run test:e2e` — 10/10 Playwright Chromium, incluindo interações CH02 em desktop e viewport móvel de 390 px. O app web usa `vite@7.3.7` e `vitest@5.0.4`; `npm audit` reportou 0 vulnerabilidades no pacote do app na data da baseline. A integração FreeSewing fica em `prototype/integration-spike`, isolada do bundle do browser e com análise de dependências/licenças separada.

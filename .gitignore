@@ -12,3 +12,11 @@ dist/
 build/
 .tmp/
 *.log
+
+# Browser E2E artifacts (screenshots, traces, reports)
+**/test-results/
+**/playwright-report/
+
+# Generated files from the isolated FreeSewing research spike
+prototype/integration-spike/generated/
+prototype/integration-spike/out/
