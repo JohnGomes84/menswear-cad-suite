@@ -6,16 +6,16 @@
 
 ## Prioridade de entrega — 14/10/2026
 
-- **Duas trilhas, sem confusão:** enquanto se aguarda revisão de modelagem das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26), podem ser concluídas entregas técnicas já especificadas (por exemplo, APP-004/#49) que não introduzam regras de vestuário. Revisão independente do Gate A segue via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7); só parecer qualificado autoriza golden case e POC do bloco de camisa.
+- **Prioridade única até nova decisão explícita:** obter revisão de modelagem das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26) e fechar a revisão independente do Gate A via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7), com #21/#22. Novas funcionalidades do editor, CH02 e FreeSewing, mesmo se previamente especificadas, ficam suspensas até repriorização expressa; manutenção e segurança permanecem permitidas.
 - **Métrica de progresso:** número de decisões formalmente aprovadas/corrigidas com evidências, e bloqueios efetivamente fechados. Testes de pesquisa, documentação, PRs e versões não constituem aprovação de modelagem.
-- **Status atual:** Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
+- **Status atual:** **0/5 pareceres profissionais aprovados**; Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
 - **Integração concluída:** [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclado em 14/10/2026 (commit `8f1e1d80`); a baseline 1.29 está na `main`. O workspace CH02 é de pesquisa, não gera molde de camisa ou saída de corte.
-- **Limite de expansão:** não iniciar novas famílias de vestuário nem lógica de produção sem fechar domínio/QA. Entregas técnicas limitadas a Issues existentes são permitidas quando seu escopo não inventa método, curva, facilidade, margem ou tolerância de roupa.
+- **Limite de expansão:** qualquer nova funcionalidade, inclusive uma Issue técnica já existente, requer decisão explícita de repriorização; somente manutenção, segurança, revisão de modelagem e QA dos gates seguem autorizados.
 - **Segurança:** `npm audit` do web app reporta **0 achados conhecidos** com `vite@7.3.7` e `vitest@5.0.4`. O spike FreeSewing reporta **10 (9 altos, 1 moderado)** e continua isolado/`NO_RELEASE`. O PR #58 integrou auditoria reproduzível com artefatos JSON; workflow verde não significa vulnerabilidade zero.
 
 ## Snapshot atual
 
-- Baseline integrada: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS na CI do PR #57. A branch do [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) acrescenta validação local limpa de **184/184 unitários**, **21/21 E2E Chromium** e build PASS; aguarda CI remoto antes de integrar.
+- Baseline **1.29 DRAFT** e APP-004 integradas: PR #57 e [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) mesclados na `main`. Para APP-004: **184/184 unitários**, **21/21 E2E Chromium**, build no relatório de PR e [CI web #38565614807](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38565614807) / [E2E #38565614781](https://github.com/JohnGomes84/menswear-cad-suite/actions/runs/38565614781) concluídos com sucesso. Nenhum desses testes valida o molde da camisa.
 - **Gate A:** `IN_REVIEW`, requer revisão geométrica independente e escala física documentada. **Gate B:** `NO-GO`, depende de parecer de modelista para Issues #1–#5 via Issue #26. Issues #1–#5, #7 e #26 permanecem abertas.
 - Não há molde de camisa validado, impressão calibrada, toile aprovada ou serviço de produção publicado. A interface CH02 expõe somente pesquisa da construção flat de calça, com corte/exportação bloqueados.
 - [PR #58](https://github.com/JohnGomes84/menswear-cad-suite/pull/58) foi mesclado em 14/10/2026 (commit `1d65c8c`); integrou manutenção de reprodutibilidade/auditoria, sem mudar regras de modelagem nem os estados de Gate A/B.

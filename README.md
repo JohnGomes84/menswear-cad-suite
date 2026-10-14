@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Prioridade operacional (14/10/2026)
 
-**Limite de expansão:** não iniciar novas famílias de vestuário nem lógica de produção sem resolver domínio/QA. Entregas técnicas já especificadas e sem regras de roupa — como a interface 0.4 da Issue #49 — podem avançar isoladamente. A [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclada em 14/10/2026 (commit `8f1e1d80`), integrando a baseline 1.29 à `main`; o app contém um workspace CH02 de **pesquisa**, não um molde de produção.
+**Congelamento de novas funcionalidades:** não abrir novas frentes nem expandir editor, CH02, FreeSewing ou outras famílias sem revisão expressa de prioridades. A interface 0.4 da Issue #49 já foi entregue pelo PR #60, mas não libera continuação automática. Apenas manutenção/segurança e validação dos gates estão priorizadas. A [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclada em 14/10/2026 (commit `8f1e1d80`), integrando a baseline 1.29 à `main`; o app contém um workspace CH02 de **pesquisa**, não um molde de produção.
 
 **Marco crítico = [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26):** parecer profissional com evidência sobre as pendências do bloco da camisa (#1–#5). Sem decisão formal, **Gate B NO-GO**. [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7) mantém **Gate A IN_REVIEW** até revisão geométrica/QA, referência independente e escala física. O pacote de revisão já está em `docs/domain/MODELING-REVIEW-PACKET-001.md`.
 
@@ -19,7 +19,7 @@ Entregas técnicas limitadas não alteram as regras de modelagem nem autorizam p
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
 - Gate B (aplicação ao `PILOT-001`): **NO-GO**
-- Fundação experimental do web app: a baseline 1.29 passou **182/182 unitários, 10/10 E2E Chromium e build** na CI do PR #57; a branch [APP-004/PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) passou localmente **184/184 unitários, 21/21 E2E Chromium e build**, aguardando CI remoto
+- Fundação experimental do web app: baseline 1.29 com PRs #57 e #60 integrados; [PR #60](https://github.com/JohnGomes84/menswear-cad-suite/pull/60) documentou 184/184 testes, 21/21 E2E e build, com checks remotos de web/Chromium aprovados. Ainda é laboratório sintético; nenhuma camisa aprovada.
 - Código de produção / implementação web funcional de molde real: **bloqueados**
 - `npm audit` do pacote web: **0 achados conhecidos** após patches Vite 7.3.7 / Vitest 5.0.4; spike FreeSewing: **10 achados (9 altos, 1 moderado), ISOLATED / NO_RELEASE**
 - Saídas iniciais previstas: SVG e PDF
