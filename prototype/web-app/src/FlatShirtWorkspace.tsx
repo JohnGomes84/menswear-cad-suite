@@ -14,8 +14,15 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
  const [project,setProject]=useState<ShirtProject>(()=>createShirtProject());
  const [error,setError]=useState('');const input=useRef<HTMLInputElement>(null);
  const [selection,setSelection]=useState<string>('FRONT');
- const svg=useMemo(()=>exportShirtSvg(project),[project]);
+ const svg=useMemo(()=>exportShirtSvg(project,false),[project]);
  const selected=project.pieces.find(p=>p.id===selection)??project.pieces[0];
+ function diagnosticExport(kind:'SVG'|'PDF'){
+  try{
+   const data=kind==='SVG'?exportShirtSvg(project):exportShirtPdf(project);
+   saveFile(data,kind==='SVG'?'image/svg+xml':'application/pdf',kind==='SVG'?'flat-shirt-core-diagnostic-1to1.svg':'flat-shirt-core-diagnostic-1to1.pdf');
+   setError('');
+  }catch(err){setError(err instanceof Error?err.message:String(err));}
+ }
  function change(key:ShirtMeasureKey,text:string){
   const cm=Number(text);
   try{if(text.trim()===''||!Number.isFinite(cm))throw Error('Informe um número em cm');
@@ -55,11 +62,11 @@ export default function FlatShirtWorkspace({onBack}:{onBack:()=>void}){
     <button className="primary" onClick={()=>{setProject(createShirtProject());setError('');}}>Reiniciar exemplo</button>
     <h3>Exportação diagnóstica</h3>
     <div className="mi001-buttons">
-     <button onClick={()=>saveFile(svg,'image/svg+xml','flat-shirt-core-diagnostic-1to1.svg')}>Exportar SVG nominal 1:1</button>
-     <button onClick={()=>saveFile(exportShirtPdf(project),'application/pdf','flat-shirt-core-diagnostic-1to1.pdf')}>Exportar PDF nominal 1:1</button>
+     <button onClick={()=>diagnosticExport('SVG')}>Exportar SVG nominal 1:1</button>
+     <button onClick={()=>diagnosticExport('PDF')}>Exportar PDF nominal 1:1</button>
      <button onClick={()=>saveFile(exportCalibrationPdf(),'application/pdf','calibracao-a4-100percent.pdf')}>Ficha A4 de calibração</button>
     </div>
-    <small>PDF de molde: folha personalizada de 1200 × 850 mm para plotter; sem paginação A4. Imprimir sem ajustar à página. Conferir primeiro o PDF de calibração A4.</small>
+    <small>PDF diagnóstico: folha personalizada de 1200 × 850 mm para plotter; sem paginação A4. Exportações falham se peças não couberem sem sobreposição. Imprimir sem ajustar à página. Conferir primeiro o PDF de calibração A4.</small>
    </section>
    <section className="mi001-drafting">
     <h2>Mesa de modelagem · projeção diagnóstica</h2>
