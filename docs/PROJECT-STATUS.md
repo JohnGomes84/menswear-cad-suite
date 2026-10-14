@@ -4,6 +4,14 @@
 **Fonte de verdade:** `docs/MASTER-DOCUMENT.md`  
 **Baseline corrente:** 1.26 DRAFT — registro de comandos de desenho do CH02 e teste vetorial com FreeSewing
 
+## Prioridade congelada — 14/10/2026 (sem alteração da baseline 1.26)
+
+- **Ordem obrigatória:** revisão de modelagem documentada das Issues #1–#5 via [Issue #26](https://github.com/JohnGomes84/menswear-cad-suite/issues/26), sem inventar parecer; revisão independente e decisão formal do Gate A via [Issue #7](https://github.com/JohnGomes84/menswear-cad-suite/issues/7); só então golden case e POC do bloco de camisa.
+- **Métrica de progresso:** número de decisões formalmente aprovadas/corrigidas com evidências, e bloqueios efetivamente fechados. Testes de pesquisa, documentação, PRs e versões não constituem aprovação de modelagem.
+- **Status atual:** Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
+- **Freeze:** não ampliar laboratório de calças, FreeSewing ou editor. [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) permanece Draft **fora da main**; não atribuir sua baseline 1.29 ao código consolidado. Manutenção de higiene de testes, docs e dependências pode ocorrer em PR separado sem modificar método/fixture de vestuário.
+- **Segurança:** vulnerabilidades reportadas em árvores experimentais demandam auditoria reproduzível, triagem, versões corrigidas compatíveis e nova CI antes de considerar habilitação/redistribuição; manter integração FreeSewing isolada enquanto houver pendência.
+
 ## Situação executiva
 
 O projeto possui base suficiente para continuar a engenharia controlada. A POC geométrica sintética foi incorporada à `main` e registra 27/27 testes aprovados em CI para mecanismos genéricos. Isso não valida o molde real.
