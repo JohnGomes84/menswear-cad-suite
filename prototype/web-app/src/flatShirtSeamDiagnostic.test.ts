@@ -101,7 +101,8 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect(r.classifications.some(x=>x.item.includes('Full cap')&&x.class==='TECHNICAL_DECISION_PENDING')).toBe(true);
   expect(r.halfToFull.hypothesis).toBe('MIRROR_ABOUT_0_TO_2_NOT_APPROVED');
   expect(r.matchCandidates.every(x=>!x.approved&&x.kind==='GEOMETRIC_REGISTRATION_NOT_NOTCH')).toBe(true);
-  expect(r.reason).toMatch(/nenhum SeamPair/);
+  expect(r.reason).toMatch(/Excedente geométrico total mensurável/);
+  expect(r.reason).toMatch(/SeamPair/);
   expect(r.front.totalMm).toBe(r.back.totalMm);
  });
 });
