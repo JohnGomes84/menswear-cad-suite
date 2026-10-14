@@ -56,10 +56,10 @@ jobs:
             scopes:rows
           },null,2)+"\n");
           NODE
-      - name: Try npm-advised compatible web patches on ephemeral runner
+      - name: Try security-fixed web toolchain candidate on ephemeral runner
         shell: bash
         run: |
-          npm install --prefix prototype/web-app --save-dev --save-exact --no-audit --no-fund vite@7.3.7 vitest@3.2.7
+          npm install --prefix prototype/web-app --save-dev --save-exact --no-audit --no-fund vite@7.3.7 vitest@5.0.4
           npm ci --prefix prototype/web-app --no-audit --no-fund
           npm test --prefix prototype/web-app
           npm run build --prefix prototype/web-app
