@@ -16,10 +16,10 @@ const path=(p:ShortPiece,e:ShortEdge,transform:(v:{x:number;y:number})=>{x:numbe
 };
 export function exportShortSvg(raw:ShortProject):string{
  const p=validateShortProject(raw);const fb=bounds(p.pieces[0]),bb=bounds(p.pieces[1]);
- const offset={FRONT:{x:20-fb.x0,y:52-fb.y0},BACK:{x:45+(fb.x1-fb.x0)-bb.x0,y:52-bb.y0}};
- const width=Math.ceil(70+(fb.x1-fb.x0)+(bb.x1-bb.x0)),height=Math.ceil(90+Math.max(fb.y1-fb.y0,bb.y1-bb.y0));
+ const offset={FRONT:{x:20-fb.x0,y:66-fb.y0},BACK:{x:45+(fb.x1-fb.x0)-bb.x0,y:66-bb.y0}};
+ const width=Math.ceil(70+(fb.x1-fb.x0)+(bb.x1-bb.x0)),height=Math.ceil(115+Math.max(fb.y1-fb.y0,bb.y1-bb.y0));
  const groups=p.pieces.map(piece=>{
-  const off=offset[piece.id];
+  const off=offset[piece.id],labelBounds=piece.id==='FRONT'?fb:bb;
   const drawings=piece.edges.map(edge=>{
    const role=edge.classification==='CONSTRUCTION_LINE'?'stroke="#7892b1" stroke-dasharray="3 3"':'stroke="#243a5a"';
    return '<path id="'+edge.id+'" d="'+path(piece,edge,v=>({x:v.x+off.x,y:v.y+off.y}))+
@@ -29,7 +29,7 @@ export function exportShortSvg(raw:ShortProject):string{
     '"><title>'+esc(edge.id+' '+edge.evidence+' | '+edge.classification+' | '+edge.classificationOrigin)+'</title></path>';
   }).join('\n');
   const points=piece.points.map(x=>{const v=x.positionMm;return '<g><circle cx="'+number(v.x+off.x)+'" cy="'+number(v.y+off.y)+'" r="1.3" fill="#2b6cb0"/><text x="'+number(v.x+off.x+3)+'" y="'+number(v.y+off.y-2)+'" font-size="5">'+esc(x.id.split(':')[1])+'</text></g>'}).join('');
-  return '<g id="'+piece.id+'"><text x="'+number(off.x+fb.x0)+'" y="33" font-size="13" font-weight="bold">'+piece.id+' · DIAGNOSTIC</text>'+drawings+points+'</g>';
+  return '<g id="'+piece.id+'"><text x="'+number(off.x+labelBounds.x0)+'" y="46" font-size="13" font-weight="bold">'+piece.id+' · DIAGNOSTIC</text>'+drawings+points+'</g>';
  }).join('\n');
  return '<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'mm" height="'+height+
   'mm" viewBox="0 0 '+width+' '+height+'"><title>MI-002 elastic boxer short — NOT FOR CUTTING</title><desc>'+
