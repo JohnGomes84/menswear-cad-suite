@@ -267,8 +267,10 @@ export function validateShirtProject(raw:unknown):ShirtProject{
  if(p.unit!=='mm'||p.release?.cutReady!==false||!['NOT_RUN','PASSED_WITH_EVIDENCE'].includes(p.release.scalePhysical)||p.release.assembly!=='NOT_RUN'||p.release.fit!=='NOT_RUN')throw new Error('Estado de release proibido');
  // Fail closed on unrecognized approval, and never allow a PASSED flag alone.
  if(p.release.scalePhysical==='PASSED_WITH_EVIDENCE'){
+  const printedFixture=exampleShirtMeasurements();
+  printedFixture.chest={valueMm:1120,displayUnit:'cm',origin:'USER_INPUT',source:'USER'};
   if(p.projectId!=='flat-shirt-core-experimental-001'||p.revision!==1||
-    p.measurements.chest.valueMm!==1120||
+    !equals(p.measurements,printedFixture)||
     !equals(p.calibrationEvidence,ownerApprovalFor(p)))
    throw new Error('Aprovação física sem evidência vinculada ao projeto, impressão e decisão do titular');
  }else if(p.calibrationEvidence!==undefined){
