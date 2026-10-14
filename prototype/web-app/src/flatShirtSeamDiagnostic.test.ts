@@ -113,7 +113,7 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect(roles.filter(x=>x.classification==='CONSTRUCTION_LINE').map(x=>x.edgeId))
    .toEqual(['FRONT:E07','BACK:E07','SLEEVE:E05','SLEEVE:E08']);
   expect(roles.filter(x=>x.classification==='UNCLASSIFIED')).toHaveLength(18);
-  expect(roles.every(x=>x.classification!=='SEAM_LINE'&&x.classification!=='FOLD_LINE')).toBe(true);
+  expect(new Set(roles.map(x=>x.classification))).toEqual(new Set(['UNCLASSIFIED','CONSTRUCTION_LINE']));
   expect(roles.every(x=>x.stitchLineConfirmed===false&&x.roleRevision==='DRAFT'&&x.decisionState==='PENDING_OWNER_DECISION')).toBe(true);
   expect(roles.every(x=>['CONSTRUCTION_LINE','UNCLASSIFIED'].includes(x.classification))).toBe(true);
   expect(roles.find(x=>x.edgeId==='SLEEVE:E08')).toMatchObject({
