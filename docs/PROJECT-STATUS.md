@@ -11,14 +11,14 @@
 - **Status atual:** Issues #1–#5 e #26 seguem abertas, sem parecer conclusivo. Gate A **IN_REVIEW**, Gate B **NO-GO**. Nenhum molde real validado.
 - **Integração concluída:** [PR #57](https://github.com/JohnGomes84/menswear-cad-suite/pull/57) foi mesclado em 14/10/2026 (commit `8f1e1d80`); a baseline 1.29 está na `main`. O workspace CH02 é de pesquisa, não gera molde de camisa ou saída de corte.
 - **Freeze de expansão:** não ampliar laboratório de calças, FreeSewing ou editor sem resolver bloqueios de domínio/QA. Manutenção de higiene de testes, documentação e dependências pode ocorrer em PR separado sem modificar método/fixture de vestuário.
-- **Segurança:** `npm audit` do web app passou a **0 achados conhecidos** após `vite@7.3.7` e `vitest@5.0.4`. O spike FreeSewing reporta **10 achados (9 altos, 1 moderado)** e continua isolado/NO_RELEASE. O PR #58 propõe auditoria reproduzível; workflow verde não significa vulnerabilidade zero.
+- **Segurança:** `npm audit` do web app reporta **0 achados conhecidos** com `vite@7.3.7` e `vitest@5.0.4`. O spike FreeSewing reporta **10 (9 altos, 1 moderado)** e continua isolado/`NO_RELEASE`. O PR #58 integrou auditoria reproduzível com artefatos JSON; workflow verde não significa vulnerabilidade zero.
 
 ## Snapshot atual
 
 - Testes atuais do web app: **182/182 unitários**, **10/10 Playwright Chromium**, TypeScript/Vite build PASS; quatro checks GitHub do PR #57 passaram antes do merge. Foram inspecionadas capturas desktop 1440×1000 e móvel 390×844, sem overflow horizontal observado.
 - **Gate A:** `IN_REVIEW`, requer revisão geométrica independente e escala física documentada. **Gate B:** `NO-GO`, depende de parecer de modelista para Issues #1–#5 via Issue #26. Issues #1–#5, #7 e #26 permanecem abertas.
 - Não há molde de camisa validado, impressão calibrada, toile aprovada ou serviço de produção publicado. A interface CH02 expõe somente pesquisa da construção flat de calça, com corte/exportação bloqueados.
-- PR #58 registra manutenção de reprodutibilidade/auditoria; seu estado deve ser conferido no GitHub, mas seu escopo não muda regras de modelagem nem os estados de Gate A/B.
+- [PR #58](https://github.com/JohnGomes84/menswear-cad-suite/pull/58) foi mesclado em 14/10/2026 (commit `1d65c8c`); integrou manutenção de reprodutibilidade/auditoria, sem mudar regras de modelagem nem os estados de Gate A/B.
 
 ## Histórico de gates — snapshot anterior à baseline 1.29
 
