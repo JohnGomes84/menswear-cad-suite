@@ -151,3 +151,42 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 > A IA não pode alterar um estado de `PENDING_OWNER_DECISION` para aprovado sem instrução explícita do titular.
 
 **Aplicação neste incremento:** a autorização recebida é para **executar e demonstrar** a classificação provisória, não para aprovar a classificação industrial. Todas as propostas de papel de aresta permanecem `PENDING_OWNER_DECISION`, inclusive as referências identificadas como linhas auxiliares da fonte. `SOURCE_EXPLICIT` identifica a procedência da evidência, **não** aprovação. Nenhuma classe `SEAM_LINE`, `FOLD_LINE` ou `MARK` será criada sem embasamento específico e revisão pertinente; Gate B continua NO-GO. O titular permanece a única autoridade para integrar o PR #62.
+
+## Inventário de todas as 22 arestas — classificação de construção (14/10/2026)
+
+**Autorização específica do titular:** neste incremento, os únicos valores legais de `classification` são `CONSTRUCTION_LINE` e `UNCLASSIFIED`; os valores de origem são `SOURCE_EXPLICIT`, `SOURCE_INFERRED`, `TECHNICAL_DECISION`, `PENDING_OWNER_DECISION`. O estado de decisão de **todas** as classificações é `PENDING_OWNER_DECISION`, inclusive as explicitamente documentadas pelo livro. A leitura de uma fonte não constitui aprovação industrial. Não existem `SEAM_LINE`/`CUT_LINE`, nem margem, tolerância, pique, folga ou distribuição aprovada.
+
+**Corpus da comparação:** Winifred Aldrich, *Metric Pattern Cutting for Menswear*, 5.ª ed., Flat Shirt Core, PDF pp. 35–36 e diagrama p. 38. A fonte orienta a construção por pontos, curvas e margens já incluídas com exceções; **isso não demonstra qual traço digital é uma linha de costura**. Referências abaixo são sumários curtos, sem reproduzir páginas ou diagramas.
+
+| Aresta | Trecho (como gravado) | Papel anterior | Classificação candidata | classificationOrigin | Evidência do livro e consequência |
+|---|---|---|---|---|---|
+| FRONT:E01 | 18→10 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | pp.35–36, figura p.38: decote dianteiro próximo à linha de ajuste; função costura/corte não indicada |
+| FRONT:E02 | 10→17 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: ligar 10–17; traço não identificado como linha de costura |
+| FRONT:E03 | 17→12 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: curva de cava por 17–12–5; controles Bézier provisórios, sem linha de costura identificada |
+| FRONT:E04 | 12→5 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: segundo trecho da mesma curva; papel industrial indefinido |
+| FRONT:E05 | 5→8 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.35, figura p.38: projeção lateral para a bainha; potencial lado da peça não demonstra linha de costura |
+| FRONT:E06 | 8→4 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | figura p.38: área de bainha sem margem extra; não demonstra linha de dobra ou costura |
+| FRONT:E07 | 4→18 | UNCLASSIFIED | CONSTRUCTION_LINE | SOURCE_INFERRED | pp.35–36, figura p.38: coincidência com o eixo central auxiliar do bloco; **não** constitui dobra aprovada |
+| BACK:E01 | 1→10 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | pp.35–36, figura p.38: decote posterior; falta identificação industrial |
+| BACK:E02 | 10→17 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: unir 10–17; não prova costura |
+| BACK:E03 | 17→12 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: cava 17–12–5; geometria candidata equivalente à frente |
+| BACK:E04 | 12→5 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: restante da cava; função não especificada |
+| BACK:E05 | 5→8 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.35, figura p.38: projeção até barra; não atribuir costura |
+| BACK:E06 | 8→4 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | figura p.38: bainha sem margem adicional; não atribuir dobra |
+| BACK:E07 | 4→1 | UNCLASSIFIED | CONSTRUCTION_LINE | SOURCE_INFERRED | p.35, figura p.38: eixo central da construção das costas; sem comando comprovado de dobra |
+| SLEEVE:E01 | 0→HEAD_RAISE_78 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36 e figura p.38: elevação da cabeça entre referências 7–8; solução curva provisória |
+| SLEEVE:E02 | HEAD_RAISE_78→6 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: curva da cabeça sobre subdivisões da diagonal; sem papel de costura |
+| SLEEVE:E03 | 6→HEAD_HOLLOW_5 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: rebaixo da cabeça próximo à referência 5; curva não aprovada |
+| SLEEVE:E04 | HEAD_HOLLOW_5→3 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36, figura p.38: continuação da curva da cabeça; função industrial não identificada |
+| SLEEVE:E05 | 3→0 | CONSTRUCTION | CONSTRUCTION_LINE | SOURCE_INFERRED | p.36: diagonal 0–3 usada para dividir em cinco partes; linha auxiliar, não contorno da cabeça |
+| SLEEVE:E06 | 3→4 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | p.36: ligar pontos 3–4; papel de costura não especificado |
+| SLEEVE:E07 | 4→2 | UNCLASSIFIED | UNCLASSIFIED | PENDING_OWNER_DECISION | figura p.38: bainha da manga sem margem adicional; não equivale a linha de dobra |
+| SLEEVE:E08 | 2→0 | CONSTRUCTION | CONSTRUCTION_LINE | SOURCE_EXPLICIT | p.36, figura p.38: linha central da manga; é referência de construção, **não** prova linha de dobra |
+
+**Arestas que permanecem `UNCLASSIFIED` (18):** `FRONT:E01–E06`, `BACK:E01–E06`, `SLEEVE:E01–E04`, `SLEEVE:E06–E07`. Nenhuma aresta foi promovida a linha industrial de costura ou corte. As duas arestas centrais do corpo são **inferências sujeitas ao titular**, não equivalem a aprovação de dobra.
+
+**Serialização e evidências:** `flatShirtSeamDiagnostic.ts` disponibiliza `edgeClassifications[]` no diagnóstico JSON exportado pela aplicação e pela CI, com papel anterior, classificação, origem, resumo da fonte, justificativa e `decisionState=PENDING_OWNER_DECISION`. O SVG diagnóstico contém por caminho `data-line-class`, `data-class-origin` e `data-role-source`. O SVG de sobreposição inclui o mesmo inventário em `metadata#mi001-line-classification-json`; o painel lista a classificação e a origem ao selecionar cada peça. O **projeto canônico e o método continuam `research-0.1.2`**, sem migração/revisão silenciosa de geometria.
+
+**Impacto na cava–manga:** ZERO em curvas, coordenadas, controles e comprimentos. As oito arestas das cavas e da meia cabeça (`FRONT/BACK:E03–E04`, `SLEEVE:E01–E04`) permanecem `UNCLASSIFIED`. Na fixture de 100 cm, o excedente geométrico da hipótese de espelhamento segue **+21,573889 mm** (não folga aprovada). `stitchLineStatus=NOT_IDENTIFIED`; o veredito formal na API é **`INDEFINITE`** (isto é, adequação **indefinida**). `cutReady=false`, `scalePhysical=NOT_RUN`, `assembly=NOT_RUN`, `fit=NOT_RUN`.
+
+**Próxima ação mínima:** submeter ao titular, com suporte de modelista e p.35–38, uma decisão explícita sobre **qual** contorno, se algum, é a linha de costura, sem classificar pela aparência nem derivar autorização das margens indicadas no livro. Esta documentação não aprova o método.
