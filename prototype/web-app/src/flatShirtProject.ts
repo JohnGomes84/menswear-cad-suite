@@ -22,7 +22,27 @@ export type ShirtEdge={id:string;from:string;to:string;kind:'LINE'|'CUBIC_BEZIER
 export type ShirtPiece={id:'FRONT'|'BACK'|'SLEEVE';points:ShirtPoint[];edges:ShirtEdge[];status:'EXPERIMENTAL_CONTOUR_ONLY'};
 export type TechDecision={id:string;version:string;status:'PROVISIONAL';description:string;sourceBasis:string};
 export type Evidence={id:string;state:'PENDING'|'REVIEWED'|'STALE';evidenceRef:string|null;dependsOn:{measurements:ShirtMeasureKey[];decisions:string[];exportConfig:boolean};evaluatedRevision:number|null;basisFingerprint:string|null};
-export type ShirtProject={format:typeof SHIRT_FORMAT;purpose:'SOURCE_DRAFT_DIAGNOSTIC_ONLY';warning:'DRAFT_NO_CUT_PROVISIONAL_GEOMETRY';projectId:string;method:{id:typeof SHIRT_METHOD;version:typeof SHIRT_VERSION;book:'Aldrich5';pdfPages:number[]};unit:'mm';measurements:MeasureSet;decisions:TechDecision[];revision:number;pieces:ShirtPiece[];evidence:Evidence[];release:{cutReady:false;scalePhysical:'NOT_RUN';assembly:'NOT_RUN';fit:'NOT_RUN'};};
+/**
+ * Owner-approved PHYSICAL calibration for one reported paper/driver/printer event.
+ * This is neither a method review nor a transferable printer profile.
+ */
+export type PhysicalReference={
+ nominalMm:number;observedMm:number;signedDeviationMm:number;absoluteDeviationMm:number;deviationPercent:number;
+};
+export type PhysicalCalibrationEvidence={
+ id:'MI001-CALIBRATION-OWNER-2026-10-14';decisionState:'APPROVED_BY_OWNER';status:'PASSED_WITH_EVIDENCE';
+ approvalKind:'DIAGNOSTIC_REFERENCE_SCALE_ONLY';ownerDecisionDate:'2026-10-14';
+ reportedPrintSession:'ONE_REPORTED_PHYSICAL_PRINT';source:'OWNER_REPORTED_PHYSICAL_MEASUREMENTS';
+ sourceArtifactCommit:'4be146a39f2c9e4d5e40f847d52db62d98b41b7e';
+ sourceArtifact:'flat-shirt-core-a4-100percent.pdf';sourceArtifactMatch:'REPORTED_NOT_INDEPENDENTLY_VERIFIED';
+ projectId:string;projectRevision:number;methodVersion:typeof SHIRT_VERSION;
+ projectFingerprint:string;
+ scope:{printer:null;driverConfiguration:null;paper:null;printDate:null;selectedScale:'100% / tamanho real';scopeStatus:'RESTRICTED_TO_THIS_UNIDENTIFIED_SESSION_NOT_TRANSFERABLE'};
+ readings:{ruler100:PhysicalReference;squareWidth25:PhysicalReference;squareHeight25:PhysicalReference};
+ garmentMeasurements:'NOT_PROVIDED';seamLine:'NOT_IDENTIFIED';armholeSleeve:'INDEFINITE';
+ caveat:'PHYSICAL_REFERENCE_ONLY_NO_METHOD_OR_FIT_APPROVAL';
+};
+export type ShirtProject={format:typeof SHIRT_FORMAT;purpose:'SOURCE_DRAFT_DIAGNOSTIC_ONLY';warning:'DRAFT_NO_CUT_PROVISIONAL_GEOMETRY';projectId:string;method:{id:typeof SHIRT_METHOD;version:typeof SHIRT_VERSION;book:'Aldrich5';pdfPages:number[]};unit:'mm';measurements:MeasureSet;decisions:TechDecision[];revision:number;pieces:ShirtPiece[];evidence:Evidence[];release:{cutReady:false;scalePhysical:'NOT_RUN'|'PASSED_WITH_EVIDENCE';assembly:'NOT_RUN';fit:'NOT_RUN'};calibrationEvidence?:PhysicalCalibrationEvidence;};
 const decisionList:TechDecision[]=[
  {id:'BODY_SPLIT',version:'1.0.0',status:'PROVISIONAL',description:'Treat the common body block as two independent front/back diagnostic shapes, retaining different neck curves.',sourceBasis:'PDF p38 common body schematic; separation not uniquely specified'},
  {id:'NECK_INTERPOLATION',version:'1.0.0',status:'PROVISIONAL',description:'Choose editable cubic Bezier handles for the front and back neckline.',sourceBasis:'PDF p35-36 order neck curve, no handle coordinates'},
@@ -179,6 +199,48 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
  const slp:ShirtPiece={id:'SLEEVE',points:spoints,edges:sl.edges,status:'EXPERIMENTAL_CONTOUR_ONLY'};
  return [front,back,slp];
 }
+
+// Record only the specific decision expressly authorized by the product owner.
+// Changing measurements or reprinting cannot inherit this physical evidence.
+const PHYSICAL_CAL_ID='MI001-CALIBRATION-OWNER-2026-10-14' as const;
+const referenceReading=(nominalMm:number):PhysicalReference=>({
+ nominalMm,observedMm:nominalMm,signedDeviationMm:0,absoluteDeviationMm:0,deviationPercent:0
+});
+const referenceProjectFingerprint=(p:ShirtProject):string=>JSON.stringify({
+ projectId:p.projectId,method:p.method,revision:p.revision,unit:p.unit,
+ measurements:p.measurements,geometry:p.pieces
+});
+function ownerApprovalFor(p:ShirtProject):PhysicalCalibrationEvidence{
+ return {
+  id:PHYSICAL_CAL_ID,decisionState:'APPROVED_BY_OWNER',
+  status:'PASSED_WITH_EVIDENCE',approvalKind:'DIAGNOSTIC_REFERENCE_SCALE_ONLY',
+  ownerDecisionDate:'2026-10-14',
+  reportedPrintSession:'ONE_REPORTED_PHYSICAL_PRINT',
+  source:'OWNER_REPORTED_PHYSICAL_MEASUREMENTS',
+  sourceArtifactCommit:'4be146a39f2c9e4d5e40f847d52db62d98b41b7e',
+  sourceArtifact:'flat-shirt-core-a4-100percent.pdf',
+  sourceArtifactMatch:'REPORTED_NOT_INDEPENDENTLY_VERIFIED',
+  projectId:p.projectId,projectRevision:p.revision,methodVersion:p.method.version,
+  projectFingerprint:referenceProjectFingerprint(p),
+  scope:{printer:null,driverConfiguration:null,paper:null,printDate:null,
+    selectedScale:'100% / tamanho real',
+    scopeStatus:'RESTRICTED_TO_THIS_UNIDENTIFIED_SESSION_NOT_TRANSFERABLE'},
+  readings:{ruler100:referenceReading(100),squareWidth25:referenceReading(25),squareHeight25:referenceReading(25)},
+  garmentMeasurements:'NOT_PROVIDED',seamLine:'NOT_IDENTIFIED',armholeSleeve:'INDEFINITE',
+  caveat:'PHYSICAL_REFERENCE_ONLY_NO_METHOD_OR_FIT_APPROVAL'
+ };
+}
+/** This registered fixture corresponds to the example printed in the MI-001 CI,
+ * chest=112cm, revision=1. It is not the default for any new/other project.
+ */
+export function createOwnerApprovedCalibrationProject():ShirtProject{
+ const original=createShirtProject();
+ const printed=changeShirtMeasurement(original,'chest',1120);
+ const approved:ShirtProject={...printed,release:{...printed.release,scalePhysical:'PASSED_WITH_EVIDENCE'},
+  calibrationEvidence:ownerApprovalFor(printed)};
+ return validateShirtProject(approved);
+}
+
 export const exampleShirtMeasurements=():MeasureSet=>{
  const values:Record<ShirtMeasureKey,number>={chest:1000,scye_depth:244,back_neck_to_waist:442,neck_size:400,half_back:200,garment_length:700,one_piece_sleeve_length:650,close_wrist:178};
  return Object.fromEntries(SHIRT_KEYS.map(k=>[k,{valueMm:values[k],displayUnit:'cm',origin:k==='garment_length'?'USER_INPUT':'BOOK_SIZE_EXAMPLE',source:k==='garment_length'?'USER':'Aldrich5-p35'}])) as MeasureSet;
@@ -202,7 +264,16 @@ export function validateShirtProject(raw:unknown):ShirtProject{
  const p=raw as ShirtProject;
  if(p.format!==SHIRT_FORMAT||p.method?.id!==SHIRT_METHOD||p.method.version!==SHIRT_VERSION||p.method.book!=='Aldrich5'||!equals(p.method.pdfPages,[35,36,38]))throw new Error('Versão de método incompatível: requer migração explícita; original não alterado');
  if(p.purpose!=='SOURCE_DRAFT_DIAGNOSTIC_ONLY'||p.warning!=='DRAFT_NO_CUT_PROVISIONAL_GEOMETRY')throw new Error('Projeto deve preservar aviso DRAFT/NO-CUT');
- if(p.unit!=='mm'||p.release?.cutReady!==false||p.release.scalePhysical!=='NOT_RUN'||p.release.assembly!=='NOT_RUN'||p.release.fit!=='NOT_RUN')throw new Error('Estado de release proibido');
+ if(p.unit!=='mm'||p.release?.cutReady!==false||!['NOT_RUN','PASSED_WITH_EVIDENCE'].includes(p.release.scalePhysical)||p.release.assembly!=='NOT_RUN'||p.release.fit!=='NOT_RUN')throw new Error('Estado de release proibido');
+ // Fail closed on unrecognized approval, and never allow a PASSED flag alone.
+ if(p.release.scalePhysical==='PASSED_WITH_EVIDENCE'){
+  if(p.projectId!=='flat-shirt-core-experimental-001'||p.revision!==1||
+    p.measurements.chest.valueMm!==1120||
+    !equals(p.calibrationEvidence,ownerApprovalFor(p)))
+   throw new Error('Aprovação física sem evidência vinculada ao projeto, impressão e decisão do titular');
+ }else if(p.calibrationEvidence!==undefined){
+  throw new Error('Evidência aprovada incompatível com scalePhysical=NOT_RUN');
+ }
  if(!Number.isSafeInteger(p.revision)||p.revision<0||!equals(p.decisions,decisionList)||!/^[a-z0-9][a-z0-9-]{1,79}$/.test(p.projectId))throw new Error('Decisões, identidade ou revisão incompatíveis');
  checkMeasures(p.measurements);
  if(!equals(p.pieces,generate(p.measurements)))throw new Error('Peças não reproduzem a fonte e as decisões fixadas');
@@ -214,7 +285,10 @@ export function changeShirtMeasurement(original:ShirtProject,key:ShirtMeasureKey
  if(!SHIRT_KEYS.includes(key))throw new Error('Campo de medida não reconhecido');
  if(!num(valueMm)||valueMm<=0)throw new RangeError('Medida não finita ou não positiva');
  if(p.measurements[key].valueMm===valueMm)return p;
- const next:ShirtProject={...p,revision:p.revision+1,measurements:{...p.measurements,[key]:{valueMm,displayUnit:'cm',origin:'USER_INPUT',source:'USER'}}};
+ const next:ShirtProject={...p,revision:p.revision+1,measurements:{...p.measurements,[key]:{valueMm,displayUnit:'cm',origin:'USER_INPUT',source:'USER'}},
+  release:{...p.release,scalePhysical:'NOT_RUN'}};
+ // This exact print's approval is not transferable to a different pattern revision.
+ delete next.calibrationEvidence;
  next.pieces=generate(next.measurements); // all-or-nothing, original object unchanged
  next.evidence=p.evidence.map(ev=>ev.dependsOn.measurements.includes(key)&&ev.state==='REVIEWED'?{...ev,state:'STALE' as const}:ev);
  return validateShirtProject(next);
