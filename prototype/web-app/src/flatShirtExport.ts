@@ -282,7 +282,7 @@ export function exportPhysicalCalibrationProtocolPdf(raw:ShirtProject,meta:Print
  d+=txt('DO NOT MARK AS VALIDATED UNTIL REAL PAPER MEASUREMENTS ARE SUPPLIED.',11,43,9,H);
  d+=txt('Scale: NOT_RUN     Assembly: NOT_RUN     Fit: NOT_RUN',11,50,8,H);
  d+=line(11,55,199,55,H);
- const descriptors:[PhysicalFieldName,string,number][]=[
+ const descriptors:[PhysicalFieldName,string,number,number][]=[
   ['printer','Printer / model',64,10],['driverConfiguration','Driver / settings',82,10],
   ['paper','Paper type / size',100,10],['selectedScale','Selected print scale (use 100%)',118,10],
   ['printDate','Actual print date',136,10],['responsible','Measured by',154,10],
