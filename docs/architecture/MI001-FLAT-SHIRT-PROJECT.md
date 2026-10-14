@@ -137,3 +137,17 @@ O texto vigente de `docs/gates/GATE-APP-001.md` concede GO à **fundação sint�
 **Rastreabilidade causal:** o acréscimo de **30 mm** à diagonal 0–3 é regra da fonte e altera a construção, mas **não demonstramos** que ele explica integralmente os 21,574 mm de excedente: a diferença depende também das duas curvas candidatas e muda com o tórax. Não é adequado descontar ou reatribuir esse excesso automaticamente.
 
 **Veredito preservado: `INDEFINIDA` quanto à montagem, embora o excedente geométrico seja `MEASURED`.** A menor revisão seguinte é confirmar, com a fonte e modelista, quais arcos representam as linhas de costura e qual a correspondência das metades dianteira/traseira da manga plana; **só depois** decidir se a montagem requer meta, zonas de distribuição e piques. Até lá, a ASG não autoriza desenho industrial, corte ou alteração da curva.
+
+## Autoridade de decisão — regra vinculante do MI-001 (14/10/2026)
+
+> **Autoridade de decisão**
+>
+> A IA executa, calcula, propõe e documenta. O titular do produto decide escopo, prioridade, critérios de aceitação, classificação industrial, folga, piques, margens, aprovação de curvas, integração e merge.
+>
+> Nenhuma decisão de modelagem, montagem, produção ou liberação pode ser assumida automaticamente pela IA. Toda recomendação deve ser apresentada como opção rastreável, com origem, consequências e estado de aprovação.
+>
+> Estados possíveis para decisões pendentes: `PENDING_OWNER_DECISION`, `PENDING_TECHNICAL_REVIEW`, `APPROVED_BY_OWNER`, `REJECTED_BY_OWNER`.
+>
+> A IA não pode alterar um estado de `PENDING_OWNER_DECISION` para aprovado sem instrução explícita do titular.
+
+**Aplicação neste incremento:** a autorização recebida é para **executar e demonstrar** a classificação provisória, não para aprovar a classificação industrial. Todas as propostas de papel de aresta permanecem `PENDING_OWNER_DECISION`, inclusive as referências identificadas como linhas auxiliares da fonte. `SOURCE_EXPLICIT` identifica a procedência da evidência, **não** aprovação. Nenhuma classe `SEAM_LINE`, `FOLD_LINE` ou `MARK` será criada sem embasamento específico e revisão pertinente; Gate B continua NO-GO. O titular permanece a única autoridade para integrar o PR #62.
