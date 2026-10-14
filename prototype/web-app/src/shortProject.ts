@@ -89,7 +89,7 @@ function draftPiece(id:'FRONT'|'BACK',ms:Record<ShortKey,number>):ShortPiece{
   edges.push({id:id+':E'+String(n).padStart(2,'0'),from:id+':'+from,to:id+':'+to,
    kind:controls?'CUBIC_BEZIER':'LINE',controlsMm:controls,origin:classification==='CONSTRUCTION_LINE'?'DERIVED_GEOMETRY':'TECHNICAL_DECISION',
    solution:'MI002-CANDIDATE@research-0.1.0',role,classification,
-   classificationOrigin:classification==='CONSTRUCTION_LINE'?'SOURCE_INFERRED':'PENDING_OWNER_DECISION',
+   classificationOrigin:classification==='CONSTRUCTION_LINE'?'TECHNICAL_DECISION':'PENDING_OWNER_DECISION',
    review:'PENDING_OWNER_DECISION',evidence:details,dependsOn:[...SHORT_KEYS],allowanceMm:null});
  };
  add(1,'W0','W1','UNCLASSIFIED','UNCLASSIFIED','Top waist line, elastic on upper edge; no seam/cut');
