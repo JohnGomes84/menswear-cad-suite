@@ -6,7 +6,7 @@ Suíte CAD paramétrica web para modelagem masculina, com editor avançado e sup
 
 ## Estado atual
 
-- Documento Mestre: **baseline 1.25 DRAFT**
+- Documento Mestre: **baseline 1.26 DRAFT**
 - Piloto formal: `PILOT-001 — Flat Shirt Core`
 - POC geométrica sintética: **incorporada à `main`; 27/27 testes aprovados no GitHub Actions (escopo sintético)**
 - Gate A (POC sintética): revisão formal de geometria/QA ainda pendente
@@ -107,3 +107,8 @@ A segunda etapa da integração FreeSewing usa os contêineres `Part` para refer
 ## Semântica independente de fornecedor — com bloqueios de produção
 
 A [especificação de entidades](docs/architecture/GARMENT-SEMANTICS-001.md) distingue construção, costura, corte, barra, dobra, margem, fio e pique, com proveniência por instrução e esquema próprio `garment-semantic/0.1.0`. Os testes [QA-GARMENT-SEMANTICS-001](docs/qa/QA-GARMENT-SEMANTICS-001.md) impedem rótulos industriais em dados ainda `RESEARCH_ONLY`. O [lab FreeSewing](prototype/integration-spike/) compara coordenadas, arestas e passos e gera o relatório adicional `ch02-semantic-contract.json`. **Aldrich CH02 informa 10 mm de costura já incluídos, com exceções**; nenhuma margem é adicionada automaticamente sem identificar linha real e exceção no diagrama. Não há molde de produção validado.
+
+
+## Linhas expressamente mandadas desenhar pela obra — capítulo 2
+
+A auditoria [CH02-EXPLICIT-STROKES-AUDIT-001](docs/domain/CH02-EXPLICIT-STROKES-AUDIT-001.md) separa **16 comandos explícitos** da calça plana (8 retas, 8 curvas) dos conectores de cálculo. Os comandos são registrados em [JSON de origem](docs/domain/CH02-SOURCE-LINES-001.json) com páginas, referências e estado. A integração real do FreeSewing gera **somente as retas**; curvas, costuras, cortes, espelhamento e margens continuam não aprovados. O diagrama PDF p.34 possui rótulos de ausência de margem na cintura/barra, porém a abrangência por aresta permanece pendente. [QA](docs/qa/QA-CH02-EXPLICIT-STROKES-001.md).
