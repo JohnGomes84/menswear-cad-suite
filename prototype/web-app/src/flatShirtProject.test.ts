@@ -12,6 +12,7 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   expect(p.pieces.some(x=>x.edges.some(e=>e.origin==='SOURCE_LINE'))).toBe(true);
   expect(p.pieces.every(x=>x.edges.every(e=>e.role!=='CUT'&&e.role!=='SEAM'))).toBe(true);
   expect(p.pieces.every(x=>x.points.every(v=>v.origin&&v.source&&v.solution&&v.role&&v.review&&v.dependsOn))).toBe(true);
+  expect(p.purpose).toBe('SOURCE_DRAFT_DIAGNOSTIC_ONLY');expect(p.warning).toContain('NO_CUT');
   expect(p.release).toEqual({cutReady:false,scalePhysical:'NOT_RUN',assembly:'NOT_RUN',fit:'NOT_RUN'});
  });
  it('uses original interpreter for body and sleeve deterministic geometric relations',()=>{
@@ -48,6 +49,7 @@ describe('MI-001 real Flat Shirt source plus explicit provisional decisions',()=
   const p=createShirtProject();
   expect(()=>parseShirtProject(JSON.stringify({...p,method:{...p.method,version:'research-0.2.0'}}))).toThrow(/migra/);
   expect(()=>validateShirtProject({...p,release:{...p.release,cutReady:true}})).toThrow();
+  expect(()=>validateShirtProject({...p,warning:'APPROVED'}})).toThrow(/DRAFT\/NO-CUT/);
   const bad=structuredClone(p);bad.pieces[0].points[0].positionMm.x+=1;
   expect(()=>validateShirtProject(bad)).toThrow(/reproduz/);
   expect(()=>validateShirtProject({...p,decisions:[...p.decisions,{...p.decisions[0],id:'EXTRA'}]})).toThrow();
