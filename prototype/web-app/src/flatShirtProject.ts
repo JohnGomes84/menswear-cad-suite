@@ -130,7 +130,7 @@ function generate(measurements:MeasureSet):ShirtPiece[]{
   const prev=coords[ids[Math.max(0,i-1)]],next=coords[ids[Math.min(ids.length-1,i+2)]];
   const c1={x:a.x+(b2.x-prev.x)/6,y:a.y+(b2.y-prev.y)/6};
   const c2={x:b2.x-(next.x-a.x)/6,y:b2.y-(next.y-a.y)/6};
-  if(ids[i]==='7'&&ids[i+1]==='8'){c1.y-=20;c2.y-=20;} // 15mm at cubic midpoint relative to unmodified segment
+  if(ids[i]==='8'&&ids[i+1]==='7'){c1.y-=20;c2.y-=20;} // 15mm at cubic midpoint relative to unmodified segment
   sl.e(ids[i],ids[i+1],'TECHNICAL_DECISION','SLEEVE_HEAD_INTERPOLATION@1.0.1','Aldrich5 PDF p36: sleeve head follows fifths; cubic controls proposed','UNCLASSIFIED',['one_piece_sleeve_length','close_wrist','scye_depth','chest','half_back','SLEEVE_HEAD_INTERPOLATION'],[c1,c2]);
  }
  sl.e('3','4','SOURCE_LINE','JOIN_3_4','Aldrich5 PDF p36: join 3-4','UNCLASSIFIED',['close_wrist','one_piece_sleeve_length','chest']);
