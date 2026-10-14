@@ -59,7 +59,7 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect(r.construction.hollow5Mm).toBeCloseTo(7.5,8);
   expect(r.construction.riseBetween7and8Mm).toBeCloseTo(15,8);
   expect(r.construction.frontBackArcDifferenceMm).toBe(0);
-  expect(r.verdict).toBe('INDEFINIDA');
+  expect(r.verdict).toBe('INDEFINITE');
  });
  it('regeneration with chest 112cm maintains segment provenance and no-cut release, and shifts only numeric lengths',()=>{
   const initial=createShirtProject();const stored=serializeShirtProject(initial);
@@ -84,7 +84,7 @@ describe('MI-001 — diagnóstico rastreável cava versus meia cabeça (sem Seam
   expect(svg).toContain('data-edges="FRONT:E04 FRONT:E03"');
   expect(svg).toContain('data-edges="BACK:E04 BACK:E03"');
   expect(svg).toContain('data-edges="SLEEVE:E04 SLEEVE:E03 SLEEVE:E02 SLEEVE:E01"');
-  expect(svg).toContain('INDEFINIDA');expect(svg).toContain('NOT_RUN');expect(svg).toContain('NÃO CORTAR');
+  expect(svg).toContain('INDEFINITE');expect(svg).toContain('NOT_RUN');expect(svg).toContain('NÃO CORTAR');
   expect(svg).toContain('não pique');expect(svg).toContain('Espelhar/dobrar a meia manga é hipótese');
   expect(svg).toContain('295.319 mm');expect(svg).toContain('284.532 mm');
   expect(svg).toContain('data-geometric-excess-mm="21.574"');
