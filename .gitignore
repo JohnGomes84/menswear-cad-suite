@@ -13,10 +13,12 @@ build/
 .tmp/
 *.log
 
-# Playwright execution reports and captures (all packages)
-test-results/
-playwright-report/
+# Browser E2E artifacts (screenshots, traces, reports)
+**/test-results/
+**/playwright-report/
 playwright/.cache/
 blob-report/
+
+# Generated files from the isolated FreeSewing research spike
 prototype/integration-spike/generated/
 prototype/integration-spike/out/
