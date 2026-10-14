@@ -40,6 +40,16 @@ jobs:
         run: test -s dist/index.html
       - name: Generate MI-001 example and nominal print diagnostics
         run: node scripts/export-mi001.mjs
+      - name: Generate MI-002 owner-specified short diagnostic artifacts
+        run: node scripts/export-mi002.mjs
+      - name: Upload MI-002 draft evidence (not sewing approval)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi002-elastic-boxer-diagnostic-artifacts
+          path: prototype/web-app/mi002-artifacts/
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload MI-001 digital evidence (not scale or fit proof)
         if: always()
         uses: actions/upload-artifact@v4
